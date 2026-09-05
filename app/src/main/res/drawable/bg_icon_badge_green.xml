@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_icon_badge_green.xml — Soft circular tint badge behind Quick Access icons -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient android:startColor="#DCFCE7" android:endColor="#A7F3D0" android:angle="135"/>
+</shape>

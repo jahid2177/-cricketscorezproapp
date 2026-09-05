@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_home_logo_ring.xml — Layered glass glow ring behind the app logo -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#14FFFFFF"/>
+        </shape>
+    </item>
+    <item
+        android:left="6dp"
+        android:top="6dp"
+        android:right="6dp"
+        android:bottom="6dp">
+        <shape android:shape="oval">
+            <solid android:color="#26FFFFFF"/>
+            <stroke android:width="1.5dp" android:color="#59FFFFFF"/>
+        </shape>
+    </item>
+</layer-list>
