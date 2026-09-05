@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="3"
+    android:gravity="center_vertical"
+    android:paddingVertical="6dp"
+    android:paddingHorizontal="4dp">
+
+    <TextView
+        android:id="@+id/tvVal1"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="44dp"
+        android:text="0"
+        android:gravity="center"
+        android:background="@drawable/bg_pill_blue_modern"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="Metric"
+        android:gravity="center"
+        android:textColor="#555555"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvVal2"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="44dp"
+        android:text="0"
+        android:gravity="center"
+        android:background="@drawable/bg_pill_orange_modern"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
+</LinearLayout>

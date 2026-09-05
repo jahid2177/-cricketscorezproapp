@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="#F8FAFC"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_height="64dp"
+        android:layout_width="match_parent"
+        android:background="@drawable/bg_hero_header"
+        android:paddingHorizontal="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:elevation="6dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_height="38dp"
+            android:layout_width="38dp"
+            android:background="@drawable/bg_header_action_circle"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_revert"
+            app:tint="#FFFFFF"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="8dp"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:text="⚙️ Tournament Settings"
+            android:letterSpacing="0.01"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnSaveSettings"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:paddingHorizontal="14dp"
+            android:background="@drawable/bg_btn_gold"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:includeFontPadding="false"
+            android:text="Save" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:clipToPadding="false"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_card_modern"
+                android:elevation="2dp"
+                android:padding="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:textColor="#059669"
+                    android:textSize="15sp"
+                    android:text="General Info"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etTournamentName"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_input_modern"
+                    android:hint="Enter Tournament Name"
+                    android:textColor="#1E293B"
+                    android:textColorHint="#94A3B8"
+                    android:paddingHorizontal="16dp"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="64dp"
+                        android:layout_height="64dp">
+
+                        <ImageView
+                            android:id="@+id/ivTournamentLogo"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_team_card"
+                            android:scaleType="centerCrop"
+                            android:padding="4dp"
+                            android:src="@android:drawable/ic_menu_gallery" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnUploadLogo"
+                            android:layout_width="0dp"
+                            android:layout_height="42dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_outline"
+                            android:text="🖼️ Choose Logo"
+                            android:textAllCaps="false"
+                            android:textColor="#1B5E20"
+                            android:textSize="13sp" />
+
+                        <Button
+                            android:id="@+id/btnRemoveLogo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="42dp"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_action_delete"
+                            android:text="🗑️"
+                            android:visibility="gone"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_card_modern"
+                android:elevation="2dp"
+                android:padding="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:textColor="#059669"
+                    android:textSize="15sp"
+                    android:text="Match Format"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textColor="#1E293B"
+                        android:textSize="15sp"
+                        android:layout_weight="1"
+                        android:text="Overs per match:"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/etOvers"
+                        android:layout_height="44dp"
+                        android:layout_width="80dp"
+                        android:gravity="center"
+                        android:background="@drawable/bg_input_modern"
+                        android:inputType="number"
+                        android:textColor="#1E293B"
+                        android:textStyle="bold"
+                        android:text="20" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_card_modern"
+                android:elevation="2dp"
+                android:padding="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:textColor="#059669"
+                    android:textSize="15sp"
+                    android:text="Point System"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textColor="#1E293B"
+                        android:textSize="15sp"
+                        android:layout_weight="1"
+                        android:text="Points for a Win:"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/etWinPts"
+                        android:layout_height="44dp"
+                        android:layout_width="80dp"
+                        android:gravity="center"
+                        android:background="@drawable/bg_input_modern"
+                        android:inputType="number"
+                        android:textColor="#1E293B"
+                        android:textStyle="bold"
+                        android:text="2" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textColor="#1E293B"
+                        android:textSize="15sp"
+                        android:layout_weight="1"
+                        android:text="Points for Tie/No Result:"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/etTiePts"
+                        android:layout_height="44dp"
+                        android:layout_width="80dp"
+                        android:gravity="center"
+                        android:background="@drawable/bg_input_modern"
+                        android:inputType="number"
+                        android:textColor="#1E293B"
+                        android:textStyle="bold"
+                        android:text="1" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnResetData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="20dp"
+                android:background="#FEF2F2"
+                android:text="⚠️ Reset All Tournament Data"
+                android:textAllCaps="false"
+                android:textColor="#EF4444"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     android:fitsSystemWindows="true"
+     android:background="#F8FAFC"
+     android:orientation="vertical">
+
+    <LinearLayout
+         android:layout_height="64dp"
+         android:layout_width="match_parent"
+         android:background="@drawable/bg_hero_header"
+         android:elevation="6dp"
+         android:gravity="center_vertical"
+         android:orientation="horizontal"
+         android:paddingHorizontal="12dp">
+
+        <ImageView
+             android:layout_height="38dp"
+             android:layout_width="38dp"
+             android:src="@android:drawable/ic_menu_revert"
+             android:background="@drawable/bg_header_action_circle"
+             android:clickable="true"
+             android:focusable="true"
+             android:padding="8dp"
+             app:tint="#FFFFFF"
+             android:contentDescription="Back"
+             android:id="@+id/btnBack" />
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:layout_weight="1"
+             android:layout_marginStart="10dp"
+             android:textSize="18sp"
+             android:textColor="#FFFFFF"
+             android:letterSpacing="0.01"
+             android:text="🏆 Tournament Zone"
+             android:singleLine="true"
+             android:ellipsize="end"
+             android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <ScrollView
+         android:layout_height="match_parent"
+         android:layout_width="match_parent"
+         android:paddingBottom="24dp"
+         android:clipToPadding="false">
+
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:orientation="vertical"
+             android:paddingHorizontal="20dp"
+             android:paddingTop="20dp">
+
+            <!-- Tournament Profile Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_modern"
+                android:elevation="3dp"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:id="@+id/cardTournamentProfile">
+
+                <FrameLayout
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="14dp"
+                    android:id="@+id/layoutTournamentLogoContainer"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/ivMenuTournamentLogo"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/bg_avatar_circle"
+                        android:scaleType="centerCrop"
+                        android:src="@android:drawable/ic_menu_gallery"
+                        android:padding="4dp" />
+
+                    <FrameLayout
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_action_edit"
+                        android:elevation="2dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="📷"
+                            android:textSize="10sp" />
+                    </FrameLayout>
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvMenuTournamentName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tournament"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="#0F172A"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+
+                    <TextView
+                        android:id="@+id/tvMenuTournamentDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap to change logo or settings"
+                        android:textSize="12sp"
+                        android:textColor="#16A34A"
+                        android:layout_marginTop="2dp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚙️"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <TextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:layout_marginBottom="16dp"
+                 android:textSize="13sp"
+                 android:textColor="#94A3B8"
+                 android:text="MANAGEMENT MENU"
+                 android:textStyle="bold" />
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:layout_marginBottom="14dp"
+                 android:background="@drawable/bg_card_modern"
+                 android:gravity="center_vertical"
+                 android:clickable="true"
+                 android:elevation="2dp"
+                 android:padding="16dp"
+                 android:orientation="horizontal"
+                 android:focusable="true"
+                 android:id="@+id/btnFixtures">
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:layout_marginEnd="16dp"
+                     android:textSize="28sp"
+                     android:text="🏆📅" />
+
+                <LinearLayout
+                     android:layout_height="wrap_content"
+                     android:layout_width="0dp"
+                     android:orientation="vertical"
+                     android:layout_weight="1">
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="16sp"
+                         android:textColor="#1E293B"
+                         android:text="Fixtures and Schedule"
+                         android:textStyle="bold" />
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="12sp"
+                         android:textColor="#64748B"
+                         android:layout_marginTop="2dp"
+                         android:text="Manage groups and matches" />
+
+                </LinearLayout>
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="18sp"
+                     android:textColor="#CBD5E1"
+                     android:text="❯"
+                     android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:layout_marginBottom="14dp"
+                 android:background="@drawable/bg_card_modern"
+                 android:gravity="center_vertical"
+                 android:clickable="true"
+                 android:elevation="2dp"
+                 android:padding="16dp"
+                 android:orientation="horizontal"
+                 android:focusable="true"
+                 android:id="@+id/btnPointTable">
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:layout_marginEnd="16dp"
+                     android:textSize="28sp"
+                     android:text="🏆📅📊" />
+
+                <LinearLayout
+                     android:layout_height="wrap_content"
+                     android:layout_width="0dp"
+                     android:orientation="vertical"
+                     android:layout_weight="1">
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="16sp"
+                         android:textColor="#1E293B"
+                         android:text="Point Table"
+                         android:textStyle="bold" />
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="12sp"
+                         android:textColor="#64748B"
+                         android:layout_marginTop="2dp"
+                         android:text="Live team standings" />
+
+                </LinearLayout>
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="18sp"
+                     android:textColor="#CBD5E1"
+                     android:text="❯"
+                     android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:layout_marginBottom="14dp"
+                 android:background="@drawable/bg_card_modern"
+                 android:gravity="center_vertical"
+                 android:clickable="true"
+                 android:elevation="2dp"
+                 android:padding="16dp"
+                 android:orientation="horizontal"
+                 android:focusable="true"
+                 android:id="@+id/btnResult">
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:layout_marginEnd="16dp"
+                     android:textSize="28sp"
+                     android:text="🏆📅📊🏅" />
+
+                <LinearLayout
+                     android:layout_height="wrap_content"
+                     android:layout_width="0dp"
+                     android:orientation="vertical"
+                     android:layout_weight="1">
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="16sp"
+                         android:textColor="#1E293B"
+                         android:text="Tournament Result"
+                         android:textStyle="bold" />
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="12sp"
+                         android:textColor="#64748B"
+                         android:layout_marginTop="2dp"
+                         android:text="View all match outcomes" />
+
+                </LinearLayout>
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="18sp"
+                     android:textColor="#CBD5E1"
+                     android:text="❯"
+                     android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:layout_marginBottom="24dp"
+                 android:background="@drawable/bg_card_modern"
+                 android:gravity="center_vertical"
+                 android:clickable="true"
+                 android:elevation="2dp"
+                 android:padding="16dp"
+                 android:orientation="horizontal"
+                 android:focusable="true"
+                 android:id="@+id/btnRanking">
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:layout_marginEnd="16dp"
+                     android:textSize="28sp"
+                     android:text="⭐" />
+
+                <LinearLayout
+                     android:layout_height="wrap_content"
+                     android:layout_width="0dp"
+                     android:orientation="vertical"
+                     android:layout_weight="1">
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="16sp"
+                         android:textColor="#1E293B"
+                         android:text="Player Rankings"
+                         android:textStyle="bold" />
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="12sp"
+                         android:textColor="#64748B"
+                         android:layout_marginTop="2dp"
+                         android:text="Top batsmen and bowlers" />
+
+                </LinearLayout>
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="18sp"
+                     android:textColor="#CBD5E1"
+                     android:text="❯"
+                     android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <TextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:layout_marginBottom="16dp"
+                 android:textSize="13sp"
+                 android:textColor="#94A3B8"
+                 android:text="CONFIGURATION"
+                 android:textStyle="bold" />
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:layout_marginBottom="14dp"
+                 android:background="@drawable/bg_card_modern"
+                 android:gravity="center_vertical"
+                 android:clickable="true"
+                 android:elevation="2dp"
+                 android:padding="16dp"
+                 android:orientation="horizontal"
+                 android:focusable="true"
+                 android:id="@+id/btnSettings">
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:layout_marginEnd="16dp"
+                     android:textSize="28sp"
+                     android:text="⚙️" />
+
+                <LinearLayout
+                     android:layout_height="wrap_content"
+                     android:layout_width="0dp"
+                     android:orientation="vertical"
+                     android:layout_weight="1">
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="16sp"
+                         android:textColor="#1E293B"
+                         android:text="Tournament Settings"
+                         android:textStyle="bold" />
+
+                    <TextView
+                         android:layout_height="wrap_content"
+                         android:layout_width="wrap_content"
+                         android:textSize="12sp"
+                         android:textColor="#64748B"
+                         android:layout_marginTop="2dp"
+                         android:text="Rules, overs and basic setup" />
+
+                </LinearLayout>
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="18sp"
+                     android:textColor="#CBD5E1"
+                     android:text="❯"
+                     android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

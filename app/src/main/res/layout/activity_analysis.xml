@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     android:background="#F0F4F0"
+     android:fitsSystemWindows="true"
+     android:orientation="vertical">
+
+    <RelativeLayout
+         android:layout_height="64dp"
+         android:layout_width="match_parent"
+         android:background="@drawable/bg_hero_header"
+         android:elevation="6dp"
+         android:paddingHorizontal="14dp">
+
+        <ImageView
+             android:layout_height="38dp"
+             android:layout_width="38dp"
+             android:src="@android:drawable/ic_menu_revert"
+             android:layout_centerVertical="true"
+             android:background="@drawable/bg_header_action_circle"
+             android:clickable="true"
+             android:focusable="true"
+             android:padding="8dp"
+             app:tint="#FFFFFF"
+             android:contentDescription="Back"
+             android:id="@+id/btnBackAnalysis" />
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:layout_centerInParent="true"
+             android:textSize="18sp"
+             android:textColor="#FFFFFF"
+             android:id="@+id/tvTeam1Name"
+             android:text="Over-by-Over Analysis"
+             android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:background="@drawable/bg_card_modern"
+         android:elevation="3dp"
+         android:layout_margin="14dp"
+         android:padding="12dp"
+         android:orientation="horizontal"
+         android:id="@+id/layoutLegend">
+
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:gravity="center"
+             android:orientation="horizontal"
+             android:layout_weight="1">
+
+            <View
+                 android:layout_height="12dp"
+                 android:layout_width="12dp"
+                 android:background="#1B5E20" />
+
+            <TextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:textSize="13sp"
+                 android:textColor="#1B5E20"
+                 android:paddingStart="6dp"
+                 android:id="@+id/tvLegendTeam1"
+                 android:text="Team 1"
+                 android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:gravity="center"
+             android:orientation="horizontal"
+             android:layout_weight="1">
+
+            <View
+                 android:layout_height="12dp"
+                 android:layout_width="12dp"
+                 android:background="#E65100" />
+
+            <TextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:textSize="13sp"
+                 android:textColor="#E65100"
+                 android:paddingStart="6dp"
+                 android:id="@+id/tvLegendTeam2"
+                 android:text="Team 2"
+                 android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+         android:layout_height="36dp"
+         android:layout_width="match_parent"
+         android:background="#E8F5E9"
+         android:layout_marginHorizontal="14dp"
+         android:orientation="horizontal"
+         android:paddingHorizontal="14dp">
+
+        <TextView
+             android:layout_height="match_parent"
+             android:layout_width="0dp"
+             android:gravity="center_vertical"
+             android:textSize="11sp"
+             android:textColor="#2E7D32"
+             android:letterSpacing="0.08"
+             android:layout_weight="1"
+             android:text="OVER"
+             android:textStyle="bold" />
+
+        <TextView
+             android:layout_height="match_parent"
+             android:layout_width="0dp"
+             android:gravity="center"
+             android:textSize="11sp"
+             android:textColor="#1B5E20"
+             android:letterSpacing="0.06"
+             android:layout_weight="1.5"
+             android:id="@+id/tvColTeam1"
+             android:text="TEAM 1"
+             android:textStyle="bold" />
+
+        <TextView
+             android:layout_height="match_parent"
+             android:layout_width="0dp"
+             android:gravity="center"
+             android:textSize="11sp"
+             android:textColor="#E65100"
+             android:letterSpacing="0.06"
+             android:layout_weight="1.5"
+             android:id="@+id/tvColTeam2"
+             android:text="TEAM 2"
+             android:textStyle="bold" />
+
+        <TextView
+             android:layout_height="match_parent"
+             android:layout_width="0dp"
+             android:gravity="center"
+             android:textSize="11sp"
+             android:textColor="#546E7A"
+             android:letterSpacing="0.06"
+             android:layout_weight="1"
+             android:text="DIFF"
+             android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <ListView
+         android:layout_height="match_parent"
+         android:layout_width="match_parent"
+         android:divider="#E0E0E0"
+         android:background="#FFFFFF"
+         android:layout_marginHorizontal="14dp"
+         android:id="@+id/listAnalysis"
+         android:dividerHeight="1dp">
+
+    </ListView>
+
+</LinearLayout>

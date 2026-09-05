@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F4F0">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="2" android:layout_marginBottom="10dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical" android:padding="10dp" android:layout_margin="2dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Catches" android:textStyle="bold" android:textColor="#000000"/>
+                <TextView android:id="@+id/tvFieldCatch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textColor="#4CAF50" android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical" android:padding="10dp" android:layout_margin="2dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Run Outs" android:textStyle="bold" android:textColor="#000000"/>
+                <TextView android:id="@+id/tvFieldRO" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textColor="#4CAF50" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+

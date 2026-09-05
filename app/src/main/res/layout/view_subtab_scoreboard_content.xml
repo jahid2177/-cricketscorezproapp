@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Top Card: Live (Updated) & Team Summary -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_viewer_card"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Live (Updated)"
+            android:textColor="#16A34A"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Team 1 Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvSbTeam1Name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bzbz"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#0F172A" />
+
+            <TextView
+                android:id="@+id/tvSbTeam1Score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6/0 overs 0.3"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#0F172A" />
+        </LinearLayout>
+
+        <!-- Team 2 Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="14dp">
+
+            <TextView
+                android:id="@+id/tvSbTeam2Name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nzhsh"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#0F172A" />
+
+            <TextView
+                android:id="@+id/tvSbTeam2Score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/0 overs 0.0"
+                android:textSize="14sp"
+                android:textColor="#64748B" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F1F5F9"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Toss Result Info -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🟢"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvSbTossInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bzbz won the toss and opted to bat."
+                android:textSize="13sp"
+                android:textColor="#334155" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Innings Breakdown Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_viewer_card"
+        android:layout_marginTop="12dp"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvSbInningsHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BZBZ INNINGS"
+            android:textColor="#16A34A"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Over 1 Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#F8FAFC"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/tvSbOverNum"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Over 1"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#334155" />
+
+            <TextView
+                android:id="@+id/tvSbOverBowler"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bowler: Vvg"
+                android:textSize="12sp"
+                android:textColor="#64748B" />
+        </LinearLayout>
+
+        <!-- Over 1 Balls Chips Row (Matching Screenshot 2) -->
+        <LinearLayout
+            android:id="@+id/layoutSbOverBalls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:paddingStart="6dp">
+
+            <!-- 1 -->
+            <FrameLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_ball_chip_gray"
+                android:layout_marginEnd="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textColor="#1E293B"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <!-- 1 -->
+            <FrameLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_ball_chip_gray"
+                android:layout_marginEnd="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textColor="#1E293B"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <!-- 4 -->
+            <FrameLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_ball_chip_blue"
+                android:layout_marginEnd="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <!-- 1 -->
+            <FrameLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_ball_chip_gray"
+                android:layout_marginEnd="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textColor="#1E293B"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <!-- 1 -->
+            <FrameLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_ball_chip_gray"
+                android:layout_marginEnd="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textColor="#1E293B"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <!-- 1 -->
+            <FrameLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_ball_chip_gray"
+                android:layout_marginEnd="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textColor="#1E293B"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- Dynamic Additional Overs Container -->
+        <LinearLayout
+            android:id="@+id/containerAdditionalOvers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

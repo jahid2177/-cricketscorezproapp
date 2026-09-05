@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F4F0">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Scoring Breakdown" android:textSize="20sp"
+            android:textStyle="bold" android:gravity="center" android:paddingBottom="20dp"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingBottom="10dp">
+            <TextView android:id="@+id/tvTeam1Name" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Team 1" android:textStyle="bold"/>
+            <TextView android:id="@+id/tvTeam2Name" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Team 2" android:textStyle="bold" android:gravity="end"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1PowerPlay" style="@style/StatBoxBlue" android:text="0/0"/>
+            <TextView style="@style/LabelText" android:text="Power Play"/>
+            <TextView android:id="@+id/tvT2PowerPlay" style="@style/StatBoxGray" android:text="0/0"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1Middle" style="@style/StatBoxGray" android:text="0/0"/>
+            <TextView style="@style/LabelText" android:text="Middle Overs"/>
+            <TextView android:id="@+id/tvT2Middle" style="@style/StatBoxOrange" android:text="0/0"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1Final" style="@style/StatBoxGray" android:text="0/0"/>
+            <TextView style="@style/LabelText" android:text="Final Overs"/>
+            <TextView android:id="@+id/tvT2Final" style="@style/StatBoxOrange" android:text="0/0"/>
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEE" android:layout_marginVertical="10dp"/>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1Sixes" style="@style/StatBoxGray" android:text="0"/>
+            <TextView style="@style/LabelText" android:text="Sixes"/>
+            <TextView android:id="@+id/tvT2Sixes" style="@style/StatBoxOrange" android:text="0"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1Fours" style="@style/StatBoxBlue" android:text="0"/>
+            <TextView style="@style/LabelText" android:text="Fours"/>
+            <TextView android:id="@+id/tvT2Fours" style="@style/StatBoxGray" android:text="0"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1BoundRuns" style="@style/StatBoxGray" android:text="0"/>
+            <TextView style="@style/LabelText" android:text="Boundary Runs"/>
+            <TextView android:id="@+id/tvT2BoundRuns" style="@style/StatBoxOrange" android:text="0"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1Dots" style="@style/StatBoxGray" android:text="0%"/>
+            <TextView style="@style/LabelText" android:text="Dot balls"/>
+            <TextView android:id="@+id/tvT2Dots" style="@style/StatBoxOrange" android:text="0%"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/BreakdownRow">
+            <TextView android:id="@+id/tvT1Extras" style="@style/StatBoxGray" android:text="0"/>
+            <TextView style="@style/LabelText" android:text="Runs In Extras"/>
+            <TextView android:id="@+id/tvT2Extras" style="@style/StatBoxOrange" android:text="0"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+

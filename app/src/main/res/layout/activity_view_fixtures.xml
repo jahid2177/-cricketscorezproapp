@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="#F0F7F0"
+    android:orientation="vertical">
+
+    <!-- Premium Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_hero_header"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp">
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:paddingHorizontal="10dp"
+            android:background="@drawable/bg_btn_white_green"
+            android:text="← Back"
+            android:textColor="#1B5E20"
+            android:textSize="11sp"
+            android:includeFontPadding="false"
+            android:textStyle="bold" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:text="📋 View Fixtures"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <!-- PDF Button -->
+        <Button
+            android:id="@+id/btnPdf"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:paddingHorizontal="12dp"
+            android:background="@drawable/bg_btn_gold"
+            android:text="⬇ PDF"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:includeFontPadding="false"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="24dp"
+        android:clipToPadding="false">
+
+        <LinearLayout
+            android:id="@+id/mainContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+            <!-- Matches will be added dynamically by ViewFixturesActivity -->
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

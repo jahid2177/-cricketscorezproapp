@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:weightSum="10"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="10dp"
+    android:background="@drawable/bg_card_modern"
+    android:layout_marginBottom="6dp"
+    android:elevation="2dp">
+
+    <TextView
+        android:id="@+id/tvTeamName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.8"
+        android:text="Team Name"
+        android:textColor="#1B1B1B"
+        android:textStyle="bold"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <EditText
+        android:id="@+id/etPlayed"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_weight="1.1"
+        android:hint="M"
+        android:inputType="number"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="#6B7280"
+        android:background="@drawable/bg_input_modern" />
+
+    <EditText
+        android:id="@+id/etWon"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_weight="1.1"
+        android:layout_marginStart="3dp"
+        android:hint="W"
+        android:inputType="number"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="#16A34A"
+        android:background="@drawable/bg_input_modern" />
+
+    <EditText
+        android:id="@+id/etLost"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_weight="1.1"
+        android:layout_marginStart="3dp"
+        android:hint="L"
+        android:inputType="number"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="#DC2626"
+        android:background="@drawable/bg_input_modern" />
+
+    <EditText
+        android:id="@+id/etNR"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_weight="1.1"
+        android:layout_marginStart="3dp"
+        android:hint="NR"
+        android:inputType="number"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="#EA580C"
+        android:background="@drawable/bg_input_modern" />
+
+    <EditText
+        android:id="@+id/etPoints"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_weight="1.3"
+        android:layout_marginStart="3dp"
+        android:hint="Pt"
+        android:inputType="number"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:textColor="#1B5E20"
+        android:textStyle="bold"
+        android:background="@drawable/bg_input_modern" />
+
+    <EditText
+        android:id="@+id/etNRR"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="38dp"
+        android:layout_weight="1.5"
+        android:layout_marginStart="3dp"
+        android:hint="NRR"
+        android:inputType="numberDecimal|numberSigned"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="#3B82F6"
+        android:background="@drawable/bg_input_modern" />
+
+</LinearLayout>

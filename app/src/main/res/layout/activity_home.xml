@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_home.xml — Simple & Premium Executive Cricket Dashboard
+    Clean, elegant vertical menu layout with SwipeRefreshLayout and Favorite Matches tracking.
+    Theme-Aware with smooth ripple effects and crisp typography.
+-->
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeRefreshHome"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/rootScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_dashboard_canvas"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- ╔══════════════════════════════════════════════════╗ -->
+            <!-- ║  1. TOP UTILITY BAR (THEME & SETTINGS)           ║ -->
+            <!-- ╚══════════════════════════════════════════════════╝ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <!-- Theme Toggle Button -->
+                <LinearLayout
+                    android:id="@+id/btnTheme"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:contentDescription="Switch Theme">
+
+                    <TextView
+                        android:id="@+id/tvThemeIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="☀️"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+                <!-- About / Info Button -->
+                <LinearLayout
+                    android:id="@+id/btnAbout"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:contentDescription="About App">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ℹ️"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <!-- Share Match Result Button -->
+                <LinearLayout
+                    android:id="@+id/btnShare"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:contentDescription="Share Match Result">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📤"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ╔══════════════════════════════════════════════════╗ -->
+            <!-- ║  2. APP HEADER TITLE                             ║ -->
+            <!-- ╚══════════════════════════════════════════════════╝ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginTop="26dp"
+                android:layout_marginBottom="28dp">
+
+                <TextView
+                    android:id="@+id/tvAppTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cricket Scorez Pro"
+                    android:textSize="29sp"
+                    android:textStyle="bold|italic"
+                    android:fontFamily="serif"
+                    android:textColor="#1D4ED8"
+                    android:letterSpacing="0.01" />
+
+                <TextView
+                    android:id="@+id/tvGreeting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pull down to refresh match scores"
+                    android:textSize="12sp"
+                    android:textColor="#64748B"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+            <!-- ╔══════════════════════════════════════════════════╗ -->
+            <!-- ║  3. MAIN PILL MENU BUTTONS                       ║ -->
+            <!-- ╚══════════════════════════════════════════════════╝ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginHorizontal="2dp">
+
+                <!-- 1. Start New Match -->
+                <LinearLayout
+                    android:id="@+id/btnStartNewMatch"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleStartNewMatch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Start New Match"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#1E293B" />
+                </LinearLayout>
+
+                <!-- 2. Tournament -->
+                <LinearLayout
+                    android:id="@+id/btnTournament"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleTournament"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tournament"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#1E293B" />
+                </LinearLayout>
+
+                <!-- 3. Teams -->
+                <LinearLayout
+                    android:id="@+id/btnTeams"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleTeams"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Teams"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#1E293B" />
+                </LinearLayout>
+
+                <!-- 4. Match History -->
+                <LinearLayout
+                    android:id="@+id/btnHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleHistory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Match History"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#1E293B" />
+                </LinearLayout>
+
+                <!-- 5. Match Setting -->
+                <LinearLayout
+                    android:id="@+id/btnMatchSetting"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleMatchSetting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Match Setting"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#1E293B" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Spacer for balanced vertical visual rhythm -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- ╔══════════════════════════════════════════════════╗ -->
+            <!-- ║  4. OPTIONAL RECENT MATCH SNIPPET (MINIMAL)      ║ -->
+            <!-- ╚══════════════════════════════════════════════════╝ -->
+            <LinearLayout
+                android:id="@+id/cardRecentMatch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/bg_pill_menu_button"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🏏"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="10dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvRecentTeams"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Last Match"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#1E293B" />
+
+                    <TextView
+                        android:id="@+id/tvRecentScore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Score"
+                        android:textSize="11sp"
+                        android:textColor="#64748B" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvRecentResult"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View ›"
+                    android:textSize="12sp"
+                    android:textColor="#2563EB"
+                    android:textStyle="bold" />
+
+                <!-- Quick Share in recent match card -->
+                <LinearLayout
+                    android:id="@+id/btnRecentShare"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_pill_menu_button"
+                    android:contentDescription="Share Match Result">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📤"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

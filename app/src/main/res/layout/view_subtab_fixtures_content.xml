@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TOURNAMENT FIXTURES &amp; SCHEDULE"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#64748B"
+        android:letterSpacing="0.05"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="4dp" />
+
+    <!-- Dynamic Fixtures Container (Populated with real matches or clean empty state) -->
+    <LinearLayout
+        android:id="@+id/containerDynamicFixtures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+</LinearLayout>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="#0A1F0D">
+
+    <View android:layout_height="280dp" android:layout_width="280dp" android:layout_marginEnd="-60dp" android:background="@drawable/bg_glow_blob_top" android:alpha="0.45" android:layout_marginTop="-60dp" android:layout_gravity="top|end" />
+    <View android:layout_height="240dp" android:layout_width="240dp" android:layout_marginBottom="-80dp" android:background="@drawable/bg_glow_blob_bottom" android:alpha="0.35" android:layout_marginStart="-60dp" android:layout_gravity="bottom|start" />
+    <View android:layout_height="match_parent" android:layout_width="match_parent" android:background="@drawable/bg_field_pattern" android:alpha="0.06" />
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View android:layout_height="0dp" android:layout_width="match_parent" android:layout_weight="0.8" />
+
+        <FrameLayout android:layout_height="100dp" android:layout_width="100dp" android:layout_marginBottom="6dp">
+            <View android:layout_height="100dp" android:layout_width="100dp" android:background="@drawable/bg_logo_glow_ring" android:alpha="0.5" />
+            <View android:layout_height="80dp" android:layout_width="80dp" android:background="@drawable/bg_logo_glass" android:alpha="0.9" android:layout_gravity="center" />
+            <ImageView android:id="@+id/imgLogo" android:layout_height="52dp" android:layout_width="52dp" android:src="@drawable/ic_launcher" android:scaleType="fitCenter" android:layout_gravity="center" />
+        </FrameLayout>
+
+        <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginBottom="24dp" android:textSize="30sp" android:fontFamily="sans-serif-black" android:textColor="#FFFFFF" android:text="CricketScorez" android:textStyle="bold" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            app:cardElevation="24dp"
+            app:cardBackgroundColor="#122016"
+            app:cardCornerRadius="24dp">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:padding="24dp"
+                android:orientation="vertical">
+
+                <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginBottom="16dp" android:textSize="12sp" android:textColor="#4CAF50" android:text="SIGN IN SECURELY" android:textStyle="bold" android:layout_gravity="center_horizontal" />
+
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Email Address"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#5A8A60"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:inputType="textEmailAddress"
+                    android:layout_marginBottom="12dp"
+                    android:textSize="15sp"/>
+
+                <FrameLayout android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginBottom="12dp">
+                    <EditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Password"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#5A8A60"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="50dp"
+                        android:inputType="textPassword"
+                        android:textSize="15sp"/>
+
+                    <ImageView
+                        android:id="@+id/btnEyeToggle"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:padding="14dp"
+                        android:src="@android:drawable/ic_menu_view"
+                        android:alpha="0.6"/>
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="24dp">
+                    <CheckBox
+                        android:id="@+id/cbRememberMe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save Password"
+                        android:textColor="#81C784"
+                        android:buttonTint="#4CAF50"
+                        android:textSize="13sp"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:id="@+id/tvForgotPassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Forgot Password?"
+                        android:textColor="#81C784"
+                        android:textSize="13sp"
+                        android:padding="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/btnSignIn"
+                    android:layout_height="52dp"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/btn_google_modern"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginBottom="12dp">
+                    <TextView
+                        android:id="@+id/tvLoginText"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="#1A1A1A"
+                        android:text="Login"
+                        android:textStyle="bold"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/btnGuest"
+                    android:layout_height="48dp"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/btn_guest_modern"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="#A5D6A7"
+                        android:text="Continue as Guest (Offline)"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/btnViewer"
+                    android:layout_height="48dp"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/btn_viewer_modern"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginBottom="4dp">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="#7DD3FC"
+                        android:textStyle="bold"
+                        android:text="👁 Continue as Viewer Mode"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+
+
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <View android:layout_height="0dp" android:layout_width="match_parent" android:layout_weight="1" />
+        <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginBottom="20dp" android:textSize="10sp" android:textColor="#1E3A22" android:text="CricketScorez Pro • v1.0" />
+
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_viewer_card"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TOURNAMENT STANDINGS"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#16A34A"
+        android:letterSpacing="0.05"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="4dp" />
+
+    <!-- Table Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#F1F5F9"
+        android:paddingHorizontal="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="TEAM"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#475569" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="P"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#475569" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="W"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#475569" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="L"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#475569" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:gravity="center"
+            android:text="PTS"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#16A34A" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:gravity="end"
+            android:text="NRR"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#475569" />
+    </LinearLayout>
+
+    <!-- Dynamic Points Container -->
+    <LinearLayout
+        android:id="@+id/containerPointsRows"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+</LinearLayout>

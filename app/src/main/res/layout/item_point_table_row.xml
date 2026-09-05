@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_point_table_row.xml
+    Read-only display row — Point Table screen এ প্রতিটি team এর stats দেখানোর জন্য
+    Updated: premium design with weight-based columns matching renderGroupTable
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:weightSum="10"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="10dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="0dp">
+
+    <!-- Team Name — weight 2.8 -->
+    <TextView
+        android:id="@+id/tvTeamName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.8"
+        android:text="Team Name"
+        android:textColor="#1E293B"
+        android:textStyle="bold"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- M — weight 0.7 -->
+    <TextView
+        android:id="@+id/etPlayed"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="0.7"
+        android:layout_marginStart="3dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#64748B"
+        android:background="@drawable/bg_pt_cell_neutral" />
+
+    <!-- W — weight 0.7, green -->
+    <TextView
+        android:id="@+id/etWon"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="0.7"
+        android:layout_marginStart="3dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#15803D"
+        android:textStyle="bold"
+        android:background="@drawable/bg_pt_cell_green" />
+
+    <!-- L — weight 0.7, red -->
+    <TextView
+        android:id="@+id/etLost"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="0.7"
+        android:layout_marginStart="3dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#DC2626"
+        android:background="@drawable/bg_pt_cell_red" />
+
+    <!-- T — weight 0.7, amber -->
+    <TextView
+        android:id="@+id/etTied"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="0.7"
+        android:layout_marginStart="3dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#D97706"
+        android:background="@drawable/bg_pt_cell_amber" />
+
+    <!-- N/R — weight 0.8 -->
+    <TextView
+        android:id="@+id/etNR"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="0.8"
+        android:layout_marginStart="3dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#6B7280"
+        android:background="@drawable/bg_pt_cell_neutral" />
+
+    <!-- PTS — weight 0.9, premium green gradient -->
+    <TextView
+        android:id="@+id/etPoints"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="0.9"
+        android:layout_marginStart="3dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="0"
+        android:textSize="13sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:background="@drawable/bg_pt_cell_pts" />
+
+    <!-- NRR — weight 1.4 -->
+    <TextView
+        android:id="@+id/etNRR"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1.4"
+        android:layout_marginStart="3dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="+0.000"
+        android:textSize="11sp"
+        android:textColor="#1565C0"
+        android:background="@drawable/bg_pt_cell_blue" />
+
+</LinearLayout>

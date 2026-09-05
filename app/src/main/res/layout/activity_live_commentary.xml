@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#F8FAFC">
+
+    <!-- Hero Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_hero_header"
+        android:elevation="6dp"
+        android:paddingHorizontal="14dp">
+
+        <ImageView
+            android:id="@+id/btnBackCommentary"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_header_action_circle"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_revert"
+            app:tint="#FFFFFF"
+            android:layout_centerVertical="true"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ball by Ball Commentary"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <!-- Match Info Banner Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_card_modern"
+        android:elevation="3dp"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="6dp"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvMatchHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Match Summary"
+            android:gravity="center"
+            android:textColor="#1E293B"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTossInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Toss info..."
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+            android:textColor="#64748B"
+            android:textSize="13sp"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:id="@+id/containerCommentary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp"
+            android:paddingBottom="24dp" />
+    </ScrollView>
+
+</LinearLayout>
+

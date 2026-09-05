@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_team_input.xml
+    Used by FixturesActivity → addTeamRow()
+    IDs: etTeamName, btnEditTeam (ImageView), btnRemoveTeam (Button)
+    Premium: edit=green, remove=red/danger, clearly distinct
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="2dp"
+    android:paddingVertical="4dp">
+
+    <!-- Team name input -->
+    <EditText
+        android:id="@+id/etTeamName"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_input_modern"
+        android:hint="Enter Team Name"
+        android:textSize="14sp"
+        android:textColor="@color/textPrimary"
+        android:textColorHint="@color/textHint"
+        android:paddingHorizontal="14dp"
+        android:singleLine="true" />
+
+    <!-- Edit — green outline circle -->
+    <ImageView
+        android:id="@+id/btnEditTeam"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:src="@drawable/ic_edit"
+        android:padding="10dp"
+        android:background="@drawable/bg_action_edit"
+        android:layout_marginStart="8dp" />
+
+    <!-- Remove — red/danger circle, clearly different from edit -->
+    <LinearLayout
+        android:id="@+id/btnRemoveTeam"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:gravity="center"
+        android:background="@drawable/bg_action_delete"
+        android:layout_marginStart="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✕"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#DC2626" />
+
+    </LinearLayout>
+
+</LinearLayout>

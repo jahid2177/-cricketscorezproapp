@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8FAFC">
+
+    <!-- Container for dynamic screen content -->
+    <FrameLayout
+        android:id="@+id/viewerContentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Divider above Bottom Bar -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E2E8F0" />
+
+    <!-- Bottom Navigation Bar (Matching Screenshot) -->
+    <LinearLayout
+        android:id="@+id/bottomNavBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:elevation="8dp">
+
+        <!-- Tab 1: Live -->
+        <LinearLayout
+            android:id="@+id/navTabLive"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/indicatorLive"
+                    android:layout_width="44dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_btn_view_scoreboard" />
+                <ImageView
+                    android:id="@+id/ivNavLive"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_nav_live"
+                    app:tint="#16A34A" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvNavLive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Live"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="#16A34A"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Tab 2: Tournaments -->
+        <LinearLayout
+            android:id="@+id/navTabTournaments"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/indicatorTournaments"
+                    android:layout_width="44dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:background="@drawable/bg_btn_view_scoreboard" />
+                <ImageView
+                    android:id="@+id/ivNavTournaments"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_nav_tournament"
+                    app:tint="#64748B" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvNavTournaments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tournaments"
+                android:textSize="11sp"
+                android:textColor="#64748B"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Tab 3: Teams -->
+        <LinearLayout
+            android:id="@+id/navTabTeams"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/indicatorTeams"
+                    android:layout_width="44dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:background="@drawable/bg_btn_view_scoreboard" />
+                <ImageView
+                    android:id="@+id/ivNavTeams"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_nav_teams"
+                    app:tint="#64748B" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvNavTeams"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Teams"
+                android:textSize="11sp"
+                android:textColor="#64748B"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Tab 4: History -->
+        <LinearLayout
+            android:id="@+id/navTabHistory"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/indicatorHistory"
+                    android:layout_width="44dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:background="@drawable/bg_btn_view_scoreboard" />
+                <ImageView
+                    android:id="@+id/ivNavHistory"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_nav_history"
+                    app:tint="#64748B" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvNavHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+                android:textSize="11sp"
+                android:textColor="#64748B"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card_modern"
+    android:padding="14dp"
+    android:layout_marginBottom="10dp"
+    android:elevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:weightSum="2">
+
+        <Spinner
+            android:id="@+id/spinnerTeam1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_modern"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VS"
+            android:textStyle="bold"
+            android:paddingHorizontal="10dp"
+            android:textColor="#FFA000"
+            android:textSize="13sp"/>
+
+        <Spinner
+            android:id="@+id/spinnerTeam2"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_modern"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etMatchTimeDate"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Time &amp; Date (e.g. 10 AM, 12 Oct)"
+        android:textSize="13sp"
+        android:inputType="text"
+        android:background="@drawable/bg_input_modern"
+        android:paddingHorizontal="14dp"
+        android:layout_marginTop="10dp"/>
+
+</LinearLayout>

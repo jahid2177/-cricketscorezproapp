@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8FAFC">
+
+    <!-- Top App Bar without 3-line menu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <!-- Cricket Ball Logo & Title (Clean, no 3-line menu) -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_cricket_ball_globe"
+            app:tint="#16A34A" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Live Score"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#0F172A"
+            android:layout_marginStart="10dp" />
+
+        <!-- Live Sync Status Badge -->
+        <LinearLayout
+            android:id="@+id/btnLiveRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_role_chip"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <View
+                android:id="@+id/dotLivePulse"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/bg_circle_green"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tvLiveSyncStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LIVE SYNC"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="#16A34A" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Container for No Live Match (EMPTY STATE with zero fake data) -->
+            <LinearLayout
+                android:id="@+id/cardNoLiveMatch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_viewer_card"
+                android:padding="24dp"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_cricket_ball_globe"
+                    app:tint="#16A34A"
+                    android:alpha="0.8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Live Match in Progress"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#0F172A"
+                    android:layout_marginTop="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Real-time scores will stream here automatically as soon as a scorer starts a live match."
+                    android:textSize="13sp"
+                    android:textColor="#64748B"
+                    android:gravity="center"
+                    android:layout_marginTop="6dp"
+                    android:lineSpacingMultiplier="1.2" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <Button
+                        android:id="@+id/btnEmptyCheckHistory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:text="Match History"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#16A34A"
+                        android:background="@drawable/bg_btn_view_scoreboard"
+                        android:paddingHorizontal="14dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <Button
+                        android:id="@+id/btnEmptyCheckTournaments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:text="Tournaments"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/btn_primary"
+                        android:paddingHorizontal="14dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Container for Active Live Match Content -->
+            <LinearLayout
+                android:id="@+id/cardLiveMatchActiveContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- Multiple Live Matches Switcher Bar (if > 1 live match exists) -->
+                <LinearLayout
+                    android:id="@+id/layoutMultiMatchBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CURRENT LIVE MATCHES"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="#64748B"
+                        android:layout_marginBottom="4dp" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/containerMultiMatchChips"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+                </LinearLayout>
+
+                <!-- Hero Score Card (Clickable to open Bottom Sheet Modal!) -->
+                <FrameLayout
+                    android:id="@+id/cardHeroLiveScore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_viewer_hero_blue"
+                    android:padding="16dp"
+                    android:elevation="4dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <!-- Top Row: Team 1 - Status Pill - Team 2 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <!-- Team 1 -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical|start">
+
+                                <ImageView
+                                    android:layout_width="26dp"
+                                    android:layout_height="26dp"
+                                    android:src="@drawable/ic_cricket_ball_globe"
+                                    app:tint="#FFFFFF"
+                                    android:alpha="0.9" />
+
+                                <TextView
+                                    android:id="@+id/tvHeroTeam1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Team 1"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_marginStart="8dp" />
+                            </LinearLayout>
+
+                            <!-- Innings / Match Status Pill -->
+                            <TextView
+                                android:id="@+id/tvHeroInningsPill"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="● LIVE"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:textColor="#FFFFFF"
+                                android:background="@drawable/bg_role_chip"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="3dp" />
+
+                            <!-- Team 2 -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical|end">
+
+                                <TextView
+                                    android:id="@+id/tvHeroTeam2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Team 2"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_marginEnd="8dp" />
+
+                                <ImageView
+                                    android:layout_width="26dp"
+                                    android:layout_height="26dp"
+                                    android:src="@drawable/ic_cricket_ball_globe"
+                                    app:tint="#FFFFFF"
+                                    android:alpha="0.9" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- Big Score & Overs -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginTop="12dp">
+
+                            <TextView
+                                android:id="@+id/tvHeroBigScore"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0/0"
+                                android:textColor="#FFFFFF"
+                                android:textSize="36sp"
+                                android:fontFamily="sans-serif-black"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvHeroOvers"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="(0.0 Ov)"
+                                android:textColor="#BAE6FD"
+                                android:textSize="13sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <!-- Bottom Hero Stats: CRR and Target/Projected -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="14dp">
+
+                            <TextView
+                                android:id="@+id/tvHeroCRR"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="CRR: 0.00"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvHeroProjected"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tap for full details →"
+                                android:textColor="#93C5FD"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <!-- Subtabs Selector (LIVE | SCOREBOARD | OVER BY OVER | FOW) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:background="#FFFFFF"
+                    android:elevation="1dp">
+
+                    <!-- Subtab 1: LIVE -->
+                    <LinearLayout
+                        android:id="@+id/subtabLive"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/tvSubtabLive"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="LIVE"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#16A34A" />
+
+                        <View
+                            android:id="@+id/lineSubtabLive"
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:background="#16A34A" />
+                    </LinearLayout>
+
+                    <!-- Subtab 2: SCOREBOARD -->
+                    <LinearLayout
+                        android:id="@+id/subtabScoreboard"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.3"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/tvSubtabScoreboard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="SCOREBOARD"
+                            android:textSize="12sp"
+                            android:textColor="#64748B" />
+
+                        <View
+                            android:id="@+id/lineSubtabScoreboard"
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:visibility="invisible"
+                            android:background="#16A34A" />
+                    </LinearLayout>
+
+                    <!-- Subtab 3: OVER BY OVER -->
+                    <LinearLayout
+                        android:id="@+id/subtabOverByOver"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.4"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/tvSubtabOverByOver"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="OVER BY OVER"
+                            android:textSize="12sp"
+                            android:textColor="#64748B" />
+
+                        <View
+                            android:id="@+id/lineSubtabOverByOver"
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:visibility="invisible"
+                            android:background="#16A34A" />
+                    </LinearLayout>
+
+                    <!-- Subtab 4: FOW -->
+                    <LinearLayout
+                        android:id="@+id/subtabFOW"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/tvSubtabFOW"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="FOW"
+                            android:textSize="12sp"
+                            android:textColor="#64748B" />
+
+                        <View
+                            android:id="@+id/lineSubtabFOW"
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:visibility="invisible"
+                            android:background="#16A34A" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- CONTAINER FOR SUBTAB CONTENT -->
+                <FrameLayout
+                    android:id="@+id/subtabContentContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

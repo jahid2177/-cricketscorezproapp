@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_height="wrap_content"
+     android:layout_width="match_parent"
+     android:layout_marginEnd="14dp"
+     android:elevation="2dp"
+     android:orientation="horizontal"
+     android:paddingStart="14dp"
+     android:layout_marginStart="14dp"
+     android:descendantFocusability="blocksDescendants"
+     android:layout_marginBottom="8dp"
+     android:paddingEnd="10dp"
+     android:gravity="center_vertical"
+     android:background="@drawable/bg_card_modern"
+     android:paddingBottom="12dp"
+     android:paddingTop="12dp">
+
+    <TextView
+         android:layout_height="44dp"
+         android:layout_width="44dp"
+         android:layout_marginEnd="12dp"
+         android:gravity="center"
+         android:background="@drawable/bg_stat_pill"
+         android:textSize="20sp"
+         android:text="🏏" />
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="0dp"
+         android:orientation="vertical"
+         android:layout_weight="1">
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:textSize="15sp"
+             android:textColor="@color/textPrimary"
+             android:id="@+id/tvItemName"
+             android:text="Player Name"
+             android:textStyle="bold" />
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:visibility="gone"
+             android:textSize="12sp"
+             android:textColor="@color/textSecondary"
+             android:layout_marginTop="2dp"
+             android:id="@+id/tvItemRole"
+             android:text="Role" />
+
+    </LinearLayout>
+
+    <ImageView
+         android:layout_height="36dp"
+         android:layout_width="36dp"
+         android:src="@drawable/ic_edit"
+         android:layout_marginEnd="6dp"
+         android:background="@drawable/bg_circle_green"
+         android:padding="8dp"
+         android:focusableInTouchMode="false"
+         android:focusable="false"
+         android:id="@+id/btnRowEdit" />
+
+    <ImageView
+         android:layout_height="36dp"
+         android:layout_width="36dp"
+         android:src="@drawable/ic_delete"
+         android:background="@drawable/bg_stat_pill"
+         android:padding="8dp"
+         android:focusableInTouchMode="false"
+         android:focusable="false"
+         android:id="@+id/btnRowDelete" />
+
+</LinearLayout>

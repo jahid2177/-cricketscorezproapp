@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_height="wrap_content"
+     android:layout_width="match_parent"
+     android:layout_marginBottom="12dp"
+     android:background="@drawable/bg_card_modern"
+     android:elevation="3dp"
+     android:padding="14dp"
+     android:orientation="vertical">
+
+    <RelativeLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:layout_marginBottom="12dp">
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:layout_centerVertical="true"
+             android:textSize="11sp"
+             android:textColor="#9E9E9E"
+             android:letterSpacing="0.04"
+             android:id="@+id/tvMatchInfo"
+             android:text="Date &amp; Time"
+             android:textStyle="bold" />
+
+        <ImageView
+             android:layout_height="26dp"
+             android:layout_width="26dp"
+             android:src="@android:drawable/ic_menu_agenda"
+             android:layout_centerVertical="true"
+             android:padding="2dp"
+             android:tint="#2196F3"
+             android:layout_alignParentRight="true"
+             android:id="@+id/btnViewScoreboard" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:layout_marginBottom="8dp"
+         android:gravity="center_vertical"
+         android:orientation="horizontal">
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:textSize="15sp"
+             android:textColor="#1B1B1B"
+             android:layout_weight="1"
+             android:id="@+id/tvTeam1Name"
+             android:text="Team A"
+             android:textStyle="bold" />
+
+        <EditText
+             android:layout_height="42dp"
+             android:layout_width="120dp"
+             android:gravity="end|center_vertical"
+             android:background="@drawable/bg_input_modern"
+             android:textSize="13sp"
+             android:paddingHorizontal="10dp"
+             android:id="@+id/etScore1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:layout_marginBottom="12dp"
+         android:gravity="center_vertical"
+         android:orientation="horizontal">
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:textSize="15sp"
+             android:textColor="#1B1B1B"
+             android:layout_weight="1"
+             android:id="@+id/tvTeam2Name"
+             android:text="Team B"
+             android:textStyle="bold" />
+
+        <EditText
+             android:layout_height="42dp"
+             android:layout_width="120dp"
+             android:gravity="end|center_vertical"
+             android:background="@drawable/bg_input_modern"
+             android:textSize="13sp"
+             android:paddingHorizontal="10dp"
+             android:id="@+id/etScore2" />
+
+    </LinearLayout>
+
+    <TextView
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_marginBottom="6dp"
+         android:textSize="11sp"
+         android:textColor="#2E7D32"
+         android:letterSpacing="0.06"
+         android:text="Result Summary:"
+         android:textStyle="bold" />
+
+    <EditText
+         android:layout_height="48dp"
+         android:layout_width="match_parent"
+         android:background="@drawable/bg_input_modern"
+         android:textSize="13sp"
+         android:textColor="#1B1B1B"
+         android:paddingHorizontal="14dp"
+         android:id="@+id/etResultSummary"
+         android:textStyle="bold" />
+
+</LinearLayout>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cardFavRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_pill_menu_button"
+    android:padding="16dp"
+    android:layout_marginBottom="12dp"
+    android:elevation="2dp">
+
+    <!-- Top Row: Date / Status Badge & Remove Star -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvFavDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅 Date"
+            android:textSize="12sp"
+            android:textColor="#64748B"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/tvFavStatusBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LIVE"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="#EF4444"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            android:layout_toEndOf="@id/tvFavDate"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/btnRemoveFav"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="⭐"
+            android:textSize="18sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Remove Favorite" />
+    </RelativeLayout>
+
+    <!-- Teams & Scores -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:id="@+id/tvFavTeam1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Team 1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B" />
+
+        <TextView
+            android:id="@+id/tvFavScore1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="145/4 (20.0)"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#2563EB" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutFavInn2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:id="@+id/tvFavTeam2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Team 2"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B" />
+
+        <TextView
+            android:id="@+id/tvFavScore2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="146/3 (18.2)"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#10B981" />
+    </LinearLayout>
+
+    <!-- Match Result note -->
+    <TextView
+        android:id="@+id/tvFavResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Team 2 won by 7 wickets"
+        android:textSize="12sp"
+        android:textColor="#059669"
+        android:textStyle="italic"
+        android:layout_marginTop="2dp" />
+
+</LinearLayout>
