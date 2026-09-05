@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "875966858776",
+    "firebase_url": "https://cricket-scorez-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "cricket-scorez",
+    "storage_bucket": "cricket-scorez.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875966858776:android:35e5991e0dc2457ef6256d",
+        "android_client_info": {
+          "package_name": "com.cricketscorez.pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFgCsaIOQ7J7KVxxnkRM6OlaXnLk1nk9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875966858776:android:19b84a5f15342e62f6256d",
+        "android_client_info": {
+          "package_name": "com.cricketscorez.proapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFgCsaIOQ7J7KVxxnkRM6OlaXnLk1nk9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

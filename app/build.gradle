@@ -1,0 +1,83 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace "com.cricketscorez.proapp"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.cricketscorez.proapp"
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("${rootDir}/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packaging {
+        resources {
+            excludes += 'META-INF/DEPENDENCIES'
+            excludes += 'META-INF/LICENSE'
+            excludes += 'META-INF/NOTICE'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // AndroidX Core
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    // Firebase (Auth & Realtime Database for Live Scores)
+    implementation platform('com.google.firebase:firebase-bom:32.3.1')
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // ✅ FIX #5: EncryptedSharedPreferences — পাসওয়ার্ড secure storage এর জন্য
+    // AES-256-GCM encryption ব্যবহার করে Android Keystore এ key রাখে
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // Google AdMob
+    implementation 'com.google.android.gms:play-services-ads:22.6.0'
+
+    // Google Play Billing
+    implementation 'com.android.billingclient:billing:6.1.0'
+
+    // SwipeRefreshLayout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    // Room Database
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+}
+
+apply plugin: 'com.google.gms.google-services'
+
