@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Brand Colors -->
+    <color name="colorPrimary">#1B5E20</color>
+    <color name="colorPrimaryDark">#0A3D10</color>
+    <color name="colorPrimaryLight">#2E7D32</color>
+    <color name="colorAccent">#FFD600</color>
+
+    <!-- Background Colors -->
+    <color name="bgColor">#F0F4F0</color>
+    <color name="bgDark">#0D1F0E</color>
+    <color name="bgCard">#FFFFFF</color>
+    <color name="bgSurface">#F7FBF7</color>
+
+    <!-- Gradient Colors -->
+    <color name="gradientStart">#1B5E20</color>
+    <color name="gradientEnd">#0A3D10</color>
+    <color name="gradientGold1">#FFD600</color>
+    <color name="gradientGold2">#FFA000</color>
+
+    <!-- Text Colors -->
+    <color name="textPrimary">#0D1F0E</color>
+    <color name="textSecondary">#4A6741</color>
+    <color name="textHint">#8FAF8C</color>
+    <color name="textOnPrimary">#FFFFFF</color>
+    <color name="textGold">#FFD600</color>
+
+    <!-- UI Element Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="divider">#D8E8D8</color>
+    <color name="ripple">#1A1B5E20</color>
+    <color name="shadow">#1A000000</color>
+
+    <!-- Status Colors -->
+    <color name="green">#2E7D32</color>
+    <color name="darkGreen">#1B5E20</color>
+    <color name="red">#C62828</color>
+    <color name="orange">#EF6C00</color>
+    <color name="blue">#1565C0</color>
+    <color name="yellow">#FFD600</color>
+    <color name="teal">#00695C</color>
+    <color name="purple">#6A1B9A</color>
+
+    <!-- Score/Stats Colors -->
+    <color name="scoreRed">#C62828</color>
+    <color name="scorePill">#E8F5E9</color>
+    <color name="headerBg">#1B5E20</color>
+    <color name="toolbar_bg">#1B5E20</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="gray">#616161</color>
+    <color name="light_gray">#EEEEEE</color>
+    <color name="text_primary">#0D1F0E</color>
+    <color name="text_secondary">#4A6741</color>
+</resources>

@@ -1,0 +1,127 @@
+<resources>
+    <string name="app_name">Cricket Scorez Pro</string>
+    <string name="hello_world">Cricket Scorez Pro</string>
+
+    <!-- App labels -->
+    <string name="action_settings">Settings</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="add">Add</string>
+    <string name="close">Close</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+    <string name="loading">Loading…</string>
+
+    <!-- Match -->
+    <string name="live_match">Live Match</string>
+    <string name="match_settings">Match Settings</string>
+    <string name="match_history">Match History</string>
+    <string name="new_match">New Match</string>
+    <string name="start_match">Start Match</string>
+    <string name="end_match">End Match</string>
+    <string name="innings">Innings</string>
+    <string name="overs">Overs</string>
+    <string name="wickets">Wickets</string>
+    <string name="runs">Runs</string>
+    <string name="extras">Extras</string>
+    <string name="wide">Wide</string>
+    <string name="no_ball">No Ball</string>
+    <string name="bye">Bye</string>
+    <string name="leg_bye">Leg Bye</string>
+    <string name="dot_ball">Dot</string>
+    <string name="six">6</string>
+    <string name="four">4</string>
+    <string name="wicket">Wicket</string>
+    <string name="out">Out</string>
+    <string name="not_out">Not Out</string>
+    <string name="scorecard">Scorecard</string>
+    <string name="full_scorecard">Full Scorecard</string>
+    <string name="commentary">Commentary</string>
+    <string name="analysis">Analysis</string>
+    <string name="compare">Compare</string>
+    <string name="run_rate">Run Rate</string>
+    <string name="required_rate">Required Rate</string>
+    <string name="target">Target</string>
+    <string name="partnership">Partnership</string>
+    <string name="fall_of_wicket">Fall of Wicket</string>
+    <string name="choose_bowler">Choose Bowler</string>
+    <string name="select_players">Select Players</string>
+    <string name="toss">Toss</string>
+    <string name="bat_first">Bat First</string>
+    <string name="bowl_first">Bowl First</string>
+
+    <!-- Teams -->
+    <string name="teams">Teams</string>
+    <string name="team_manager">Team Manager</string>
+    <string name="team_name">Team Name</string>
+    <string name="add_team">Add Team</string>
+    <string name="team_details">Team Details</string>
+    <string name="home_team">Home Team</string>
+    <string name="away_team">Away Team</string>
+
+    <!-- Players -->
+    <string name="players">Players</string>
+    <string name="player_name">Player Name</string>
+    <string name="add_player">Add Player</string>
+    <string name="player_profile">Player Profile</string>
+    <string name="batting">Batting</string>
+    <string name="bowling">Bowling</string>
+    <string name="fielding">Fielding</string>
+    <string name="striker">Striker</string>
+    <string name="non_striker">Non Striker</string>
+    <string name="bowler">Bowler</string>
+
+    <!-- Tournament -->
+    <string name="tournament">Tournament</string>
+    <string name="tournament_zone">Tournament Zone</string>
+    <string name="fixtures">Fixtures</string>
+    <string name="schedule">Schedule</string>
+    <string name="point_table">Point Table</string>
+    <string name="results">Results</string>
+    <string name="tournament_results">Tournament Results</string>
+    <string name="create_tournament">Create Tournament</string>
+    <string name="team_count">Number of Teams</string>
+    <string name="tournament_name">Tournament Name</string>
+
+    <!-- Wicket types -->
+    <string-array name="wicket_types">
+        <item>Caught</item>
+        <item>Bowled</item>
+        <item>LBW</item>
+        <item>Run out striker</item>
+        <item>Run out non-striker</item>
+        <item>Stumped</item>
+        <item>Hit wicket</item>
+        <item>Handled the ball</item>
+        <item>Obstructing the field</item>
+        <item>Timed out</item>
+    </string-array>
+
+    <!-- Stats -->
+    <string name="stats">Stats</string>
+    <string name="matches">Matches</string>
+    <string name="average">Average</string>
+    <string name="strike_rate">Strike Rate</string>
+    <string name="economy">Economy</string>
+    <string name="highest_score">Highest Score</string>
+    <string name="best_bowling">Best Bowling</string>
+    <string name="centuries">Centuries</string>
+    <string name="half_centuries">Half Centuries</string>
+    <string name="fours">Fours</string>
+    <string name="sixes">Sixes</string>
+    <string name="catches">Catches</string>
+    <string name="run_outs">Run Outs</string>
+    <string name="stumpings">Stumpings</string>
+    <string name="worm_graph">Worm Graph</string>
+    <string name="runs_per_over">Runs Per Over</string>
+    <string name="scoring_breakdown">Scoring Breakdown</string>
+    <string name="overs_detail">Overs Detail</string>
+</resources>

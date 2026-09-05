@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ══════════════════════════════════════
+         BASE APPLICATION THEME
+    ══════════════════════════════════════ -->
+    <style name="AppTheme" parent="android:Theme.Material.Light">
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/bgColor</item>
+        <item name="android:textColorPrimary">@color/textPrimary</item>
+        <item name="android:textColorSecondary">@color/textSecondary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         BUTTON STYLES
+    ══════════════════════════════════════ -->
+
+    <!-- Primary CTA Button - Bold Green -->
+    <style name="ButtonPrimary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:background">@drawable/btn_primary</item>
+        <item name="android:elevation">6dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Outlined Button - White with Green Border -->
+    <style name="ButtonOutline">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:background">@drawable/btn_outline</item>
+        <item name="android:elevation">2dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Ghost / Text Button -->
+    <style name="ButtonGhost">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:paddingHorizontal">16dp</item>
+    </style>
+
+    <!-- Gold Accent Button -->
+    <style name="ButtonGold">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:background">@drawable/btn_gold</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Small Action Button (e.g. 4, 6, W) -->
+    <style name="ButtonScore">
+        <item name="android:layout_width">52dp</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:background">@drawable/btn_score</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         TEXT STYLES
+    ══════════════════════════════════════ -->
+
+    <style name="TextHeadline">
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+    </style>
+
+    <style name="TextTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextSubtitle">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:letterSpacing">0.04</item>
+    </style>
+
+    <style name="TextScore">
+        <item name="android:textSize">36sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="TextLabel">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textHint</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         TOOLBAR
+    ══════════════════════════════════════ -->
+
+    <style name="ToolbarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         CARD STYLES
+    ══════════════════════════════════════ -->
+
+    <style name="CardStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">16dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:background">@drawable/bg_card_modern</item>
+        <item name="android:elevation">3dp</item>
+    </style>
+
+    <style name="CardStyleCompact">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_card_modern</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         INPUT FIELDS
+    ══════════════════════════════════════ -->
+
+    <style name="InputStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:background">@drawable/bg_input_modern</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textColorHint">@color/textHint</item>
+        <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════ -->
+
+    <style name="TabButtonStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         STAT BOX STYLES
+    ══════════════════════════════════════ -->
+
+    <style name="StatBoxBase">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">38dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/bg_stat_pill</item>
+    </style>
+
+    <style name="StatBoxGreen" parent="StatBoxBase">
+        <item name="android:background">@drawable/bg_pill_green</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="StatBoxBlue" parent="StatBoxBase">
+        <item name="android:background">@drawable/bg_pill_blue_modern</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="StatBoxOrange" parent="StatBoxBase">
+        <item name="android:background">@drawable/bg_pill_orange_modern</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="StatBoxGray" parent="StatBoxBase">
+        <item name="android:background">@drawable/bg_pill_neutral_modern</item>
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <!-- ══════════════════════════════════════
+         MISC
+    ══════════════════════════════════════ -->
+
+    <style name="CompareButtonStyle" parent="ButtonPrimary"/>
+
+    <style name="GraphTitleStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <style name="BreakdownRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="LabelText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="DialogStyle" parent="android:Theme.Holo.Light.Dialog">
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+    </style>
+
+</resources>
