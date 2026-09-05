@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Android 12 এবং নিচে — Logo upload এর জন্য -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
+    <!-- ✅ FIX #2: Android 13+ এ Gallery থেকে Logo upload এর জন্য -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:name=".CricketScorezApp"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme.NoActionBar"
+        android:resizeableActivity="true"
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <service
+            android:name=".DataSyncService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- Firebase Analytics deactivation -->
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
+
+        <activity android:name=".FavoriteMatchesActivity"
+            android:label="Favorite Matches"
+            android:exported="false" />
+
+        <activity android:name=".ViewerActivity"
+            android:exported="false"
+            android:label="Viewer Mode"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".HomeActivity"
+            android:exported="false" />
+
+        <activity android:name=".MainActivity" android:label="Live Match"
+            android:exported="false"/>
+
+        <activity android:name=".AnalysisActivity"
+            android:label="Analysis"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ✅ FIX #1: AppSettingsActivity register করা হয়েছে -->
+        <activity
+            android:name=".AppSettingsActivity"
+            android:exported="false"
+            android:label="App Settings" />
+
+        <activity android:name=".CompareActivity"
+            android:label="Compare"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".RunRateGraphActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:label="Run Rate Graph"/>
+
+        <activity android:name=".BarChartActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:label="Runs Per Over"/>
+
+        <activity android:name=".WormGraphActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:label="Worm Graph"/>
+
+        <activity android:name=".ScoringBreakdownActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:label="Scoring Breakdown"/>
+
+        <activity android:name=".ScorecardActivity"
+            android:exported="false"
+            android:label="Full Scorecard" />
+
+        <activity android:name=".OversDetailActivity"
+            android:exported="false"
+            android:label="Overs Detail" />
+
+        <activity android:name=".LiveCommentaryActivity"
+            android:exported="false"
+            android:label="Commentary" />
+
+        <activity android:name=".ChooseBowlerActivity"
+            android:exported="false"
+            android:label="Choose bowler" />
+
+        <activity android:name=".FallOfWicketActivity"
+            android:exported="false"
+            android:label="Fall of wicket" />
+
+        <activity android:name=".MatchSettingsActivity"
+            android:exported="false"
+            android:label="Settings"/>
+
+        <activity android:name=".PlayerSelectionActivity"
+            android:exported="false"
+            android:label="Select Players"/>
+
+        <activity android:name=".TeamManagerActivity"
+            android:exported="false"
+            android:label="Teams"/>
+
+        <activity android:name=".TeamDetailActivity"
+            android:exported="false"
+            android:label="Team Details"/>
+
+        <activity android:name=".PlayerProfileActivity"
+            android:exported="false"
+            android:label="Player Profile"/>
+
+        <activity android:name=".MatchHistoryActivity"
+            android:exported="false"
+            android:label="Match History"/>
+
+        <activity android:name=".TournamentMenuActivity"
+            android:exported="false"
+            android:label="Tournament Zone"/>
+
+        <activity android:name=".FixturesActivity"
+            android:exported="false"
+            android:label="Fixtures"
+            android:windowSoftInputMode="adjustPan"/>
+
+        <activity android:name=".ViewFixturesActivity"
+            android:exported="false"
+            android:label="Tournament Schedule"/>
+
+        <activity android:name=".PointTableActivity"
+            android:exported="false"
+            android:label="Point Table"/>
+
+        <activity android:name=".RankingActivity"
+            android:exported="false"
+            android:label="Player Rankings"/>
+
+        <activity android:name=".TournamentSettingsActivity"
+            android:exported="false"
+            android:label="Tournament Settings"/>
+
+        <activity android:name=".TournamentResultActivity"
+            android:exported="false"
+            android:label="Tournament Results"/>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
+
+    </application>
+</manifest>
