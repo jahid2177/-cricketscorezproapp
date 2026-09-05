@@ -1,0 +1,6 @@
+{
+  "name": "Cricket Scorez Pro",
+  "description": "A comprehensive cricket scoring, analysis, and tournament management app",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
