@@ -76,6 +76,23 @@
                     android:text="📊 Overs"
                     android:layout_marginEnd="6dp" />
 
+                <!-- 2. Partnerships Button -->
+                <TextView
+                    android:id="@+id/btnPartnershipDetail"
+                    android:layout_height="38dp"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:background="@drawable/bg_header_action_pill"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="10dp"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.02"
+                    android:text="🤝 Stands"
+                    android:layout_marginEnd="6dp" />
+
                 <!-- 3. Modern PDF Download Pill Button -->
                 <LinearLayout
                     android:id="@+id/btnPdfDownload"
@@ -758,6 +775,490 @@
             android:background="#FFFFFF"
             android:layout_marginHorizontal="12dp"
             android:orientation="vertical" />
+
+        <!-- INNINGS 3 SECTION (TEST MATCH) -->
+        <LinearLayout
+            android:id="@+id/layoutInn3Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="@drawable/bg_hero_header"
+                android:paddingVertical="10dp"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="14dp">
+
+                <TextView
+                    android:id="@+id/tvInn3Title"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:text="3rd Innings"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvInn3Score"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="end"
+                    android:textSize="14sp"
+                    android:textColor="#FDE047"
+                    android:text=""
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Batsman Table Header 3 -->
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#F1F5F9"
+                android:paddingVertical="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:paddingHorizontal="12dp">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:letterSpacing="0.06"
+                    android:layout_weight="4"
+                    android:text="BATSMAN"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="R"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="B"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="4s"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="6s"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1.5"
+                    android:text="SR"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutBatting3"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#FFFFFF"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/tvExtras3"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#F8FAFC"
+                android:gravity="end"
+                android:padding="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:textColor="#64748B"
+                android:textSize="11sp"
+                android:text="Extras: 0" />
+
+            <!-- Bowler Table Header 3 -->
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#F1F5F9"
+                android:paddingVertical="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="12dp">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:letterSpacing="0.06"
+                    android:layout_weight="4"
+                    android:text="BOWLER"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="O"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="M"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="R"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="W"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1.5"
+                    android:text="ER"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutBowling3"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#FFFFFF"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#15803D"
+                android:paddingVertical="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="14dp">
+
+                <TextView
+                    android:id="@+id/tvFOW3"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:text="⬇  Fall of Wickets"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutFOW3"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#FFFFFF"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+
+        <!-- INNINGS 4 SECTION (TEST MATCH) -->
+        <LinearLayout
+            android:id="@+id/layoutInn4Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="@drawable/bg_hero_header"
+                android:paddingVertical="10dp"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="14dp">
+
+                <TextView
+                    android:id="@+id/tvInn4Title"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:text="4th Innings"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvInn4Score"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="end"
+                    android:textSize="14sp"
+                    android:textColor="#FDE047"
+                    android:text=""
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Batsman Table Header 4 -->
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#F1F5F9"
+                android:paddingVertical="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:paddingHorizontal="12dp">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:letterSpacing="0.06"
+                    android:layout_weight="4"
+                    android:text="BATSMAN"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="R"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="B"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="4s"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="6s"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1.5"
+                    android:text="SR"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutBatting4"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#FFFFFF"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/tvExtras4"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#F8FAFC"
+                android:gravity="end"
+                android:padding="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:textColor="#64748B"
+                android:textSize="11sp"
+                android:text="Extras: 0" />
+
+            <!-- Bowler Table Header 4 -->
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#F1F5F9"
+                android:paddingVertical="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="12dp">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:letterSpacing="0.06"
+                    android:layout_weight="4"
+                    android:text="BOWLER"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="O"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="M"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="R"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1"
+                    android:text="W"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="#475569"
+                    android:layout_weight="1.5"
+                    android:text="ER"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutBowling4"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#FFFFFF"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#15803D"
+                android:paddingVertical="8dp"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="14dp">
+
+                <TextView
+                    android:id="@+id/tvFOW4"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:text="⬇  Fall of Wickets"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutFOW4"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="#FFFFFF"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="vertical" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

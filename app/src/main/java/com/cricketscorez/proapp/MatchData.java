@@ -13,6 +13,7 @@ public class MatchData implements Serializable {
     public boolean isTournamentMatch = false;
     public String tournamentMatchId = "";
     public String tournamentName = "";
+    public String tournamentId = "";
 
     // Toss & Team Info
     public String tossMessage = "Toss info not available";
@@ -32,6 +33,82 @@ public class MatchData implements Serializable {
     public int inn1Fours = 0;
     public int inn1Dots = 0;
     public int inn1ExtrasTotal = 0;
+
+    // ✅ NEW: Retired Hurt Player record for resuming innings
+    public static class RetiredHurtRecord implements Serializable {
+        private static final long serialVersionUID = 1L;
+        public String playerName = "";
+        public String batsmanName = "";
+        public int runs = 0;
+        public int balls = 0;
+        public int fours = 0;
+        public int sixes = 0;
+        public boolean wasStriker = true;
+
+        public RetiredHurtRecord() {}
+
+        public RetiredHurtRecord(String name, int r, int b, int f, int s, boolean wasStriker) {
+            this.playerName = (name != null) ? name : "";
+            this.batsmanName = this.playerName;
+            this.runs = r; this.balls = b; this.fours = f; this.sixes = s;
+            this.wasStriker = wasStriker;
+        }
+
+        public RetiredHurtRecord cloneRecord() {
+            return new RetiredHurtRecord(playerName, runs, balls, fours, sixes, wasStriker);
+        }
+    }
+
+    // ✅ NEW: Complete Partnership record across all wickets
+    public static class PartnershipRecord implements Serializable {
+        private static final long serialVersionUID = 1L;
+        public int wicketNumber; // 1 for 1st wicket, etc.
+        public String batsman1Name = "";
+        public int batsman1Runs = 0;
+        public int batsman1Balls = 0;
+        public String batsman2Name = "";
+        public int batsman2Runs = 0;
+        public int batsman2Balls = 0;
+        public int totalRuns = 0;
+        public int totalBalls = 0;
+        public boolean isUnbroken = false;
+
+        public PartnershipRecord() {}
+
+        public PartnershipRecord(int wkt, String b1, int r1, int bl1, String b2, int r2, int bl2, int totR, int totB, boolean unbroken) {
+            this.wicketNumber = wkt;
+            this.batsman1Name = (b1 != null) ? b1 : "";
+            this.batsman1Runs = r1; this.batsman1Balls = bl1;
+            this.batsman2Name = (b2 != null) ? b2 : "";
+            this.batsman2Runs = r2; this.batsman2Balls = bl2;
+            this.totalRuns = totR; this.totalBalls = totB;
+            this.isUnbroken = unbroken;
+        }
+
+        public PartnershipRecord cloneRecord() {
+            return new PartnershipRecord(wicketNumber, batsman1Name, batsman1Runs, batsman1Balls,
+                    batsman2Name, batsman2Runs, batsman2Balls, totalRuns, totalBalls, isUnbroken);
+        }
+    }
+
+    public ArrayList<RetiredHurtRecord> retiredHurtList = new ArrayList<>();
+    public ArrayList<PartnershipRecord> partnerships = new ArrayList<>();
+    public ArrayList<PartnershipRecord> partnershipsInn1 = new ArrayList<>();
+
+    // 🌧️ DLS (Duckworth-Lewis-Stern) parameters
+    public boolean isDlsApplied = false;
+    public int dlsTargetRuns = 0;
+    public String dlsTargetText = "";
+    public double dlsTeam1Resource = 100.0;
+    public double dlsTeam2Resource = 100.0;
+    public int dlsRevisedOvers = 0;
+
+    // ⚡ Super Over support
+    public boolean isSuperOver = false;
+    public String superOverParentMatchId = "";
+
+    // ⚠️ Consecutive over restriction check (ICC Law 17.5)
+    public String lastOverBowlerName = "";
 
     // Existing Variables
     public String matchId;
@@ -64,6 +141,51 @@ public class MatchData implements Serializable {
     public ArrayList<String[]> bowlerHistoryInn1 = new ArrayList<>();
     public ArrayList<String> fallOfWicketsInn1 = new ArrayList<>();
     public String extrasInn1 = "", scoreInn1 = "", oversInn1 = "";
+
+    // ═════════════════════════════════════════════════════════════════════
+    // 🏏 TEST MATCH MODE FIELDS
+    // ═════════════════════════════════════════════════════════════════════
+    public boolean isTestMatch = false;
+    public int testDays = 5;
+    public int oversPerDay = 90;
+    public int currentDay = 1;
+    public int currentSession = 1; // 1 = Morning, 2 = Afternoon, 3 = Evening
+    public int followOnMargin = 200;
+    public int testFollowOnMargin = 200;
+    public int secondInningsScore = 0;
+    public int ballsBowledToday = 0;
+    public boolean isFollowOnEnforced = false;
+    public int currentInnings = 1; // 1, 2, 3, or 4
+
+    // Declaration markers per innings
+    public boolean inn1Declared = false;
+    public boolean inn2Declared = false;
+    public boolean inn3Declared = false;
+    public boolean inn4Declared = false;
+
+    // Innings 2 archived data
+    public String teamInn2 = "";
+    public String scoreInn2 = "", oversInn2 = "", extrasInn2 = "";
+    public int inn2Runs = 0, inn2Wickets = 0;
+    public ArrayList<String[]> batsmanHistoryInn2 = new ArrayList<>();
+    public ArrayList<String[]> bowlerHistoryInn2 = new ArrayList<>();
+    public ArrayList<String> fallOfWicketsInn2 = new ArrayList<>();
+
+    // Innings 3 archived data
+    public String teamInn3 = "";
+    public String scoreInn3 = "", oversInn3 = "", extrasInn3 = "";
+    public int inn3Runs = 0, inn3Wickets = 0;
+    public ArrayList<String[]> batsmanHistoryInn3 = new ArrayList<>();
+    public ArrayList<String[]> bowlerHistoryInn3 = new ArrayList<>();
+    public ArrayList<String> fallOfWicketsInn3 = new ArrayList<>();
+
+    // Innings 4 archived data
+    public String teamInn4 = "";
+    public String scoreInn4 = "", oversInn4 = "", extrasInn4 = "";
+    public int inn4Runs = 0, inn4Wickets = 0;
+    public ArrayList<String[]> batsmanHistoryInn4 = new ArrayList<>();
+    public ArrayList<String[]> bowlerHistoryInn4 = new ArrayList<>();
+    public ArrayList<String> fallOfWicketsInn4 = new ArrayList<>();
 
     public MatchData(String t1, String t2, String overs) {
         this.team1Name = (t1 != null) ? t1 : "Team A";
@@ -128,6 +250,46 @@ public class MatchData implements Serializable {
         ArrayList<BallEvent> ballHistoryInn1;
         ArrayList<Integer> runRateInn1;
         ArrayList<Integer> wicketsInn1;
+
+        // Retired Hurt, Partnerships, DLS, and Super Over state
+        ArrayList<RetiredHurtRecord> retiredHurtList;
+        ArrayList<PartnershipRecord> partnerships;
+        ArrayList<PartnershipRecord> partnershipsInn1;
+        boolean isDlsApplied;
+        int dlsTargetRuns;
+        String dlsTargetText;
+        double dlsTeam1Resource;
+        double dlsTeam2Resource;
+        int dlsRevisedOvers;
+        boolean isSuperOver;
+        String superOverParentMatchId;
+        String lastOverBowlerName;
+
+        // Test Match Snapshot state
+        boolean isTestMatch;
+        int testDays;
+        int oversPerDay;
+        int currentDay;
+        int currentSession;
+        int followOnMargin;
+        boolean isFollowOnEnforced;
+        int currentInnings;
+        boolean inn1Declared, inn2Declared, inn3Declared, inn4Declared;
+        String teamInn2, scoreInn2, oversInn2, extrasInn2;
+        int inn2Runs, inn2Wickets;
+        ArrayList<String[]> batsmanHistoryInn2;
+        ArrayList<String[]> bowlerHistoryInn2;
+        ArrayList<String> fallOfWicketsInn2;
+        String teamInn3, scoreInn3, oversInn3, extrasInn3;
+        int inn3Runs, inn3Wickets;
+        ArrayList<String[]> batsmanHistoryInn3;
+        ArrayList<String[]> bowlerHistoryInn3;
+        ArrayList<String> fallOfWicketsInn3;
+        String teamInn4, scoreInn4, oversInn4, extrasInn4;
+        int inn4Runs, inn4Wickets;
+        ArrayList<String[]> batsmanHistoryInn4;
+        ArrayList<String[]> bowlerHistoryInn4;
+        ArrayList<String> fallOfWicketsInn4;
     }
 
     public ArrayList<Snapshot> undoStack = new ArrayList<>();
@@ -207,6 +369,71 @@ public class MatchData implements Serializable {
         s.runRateInn1 = new ArrayList<>(runRateInn1);
         s.wicketsInn1 = new ArrayList<>(wicketsInn1);
 
+        s.retiredHurtList = new ArrayList<>();
+        for (RetiredHurtRecord r : retiredHurtList) {
+            s.retiredHurtList.add(r.cloneRecord());
+        }
+
+        s.partnerships = new ArrayList<>();
+        for (PartnershipRecord p : partnerships) {
+            s.partnerships.add(p.cloneRecord());
+        }
+
+        s.partnershipsInn1 = new ArrayList<>();
+        for (PartnershipRecord p : partnershipsInn1) {
+            s.partnershipsInn1.add(p.cloneRecord());
+        }
+
+        s.isDlsApplied = isDlsApplied;
+        s.dlsTargetRuns = dlsTargetRuns;
+        s.dlsTargetText = dlsTargetText;
+        s.dlsTeam1Resource = dlsTeam1Resource;
+        s.dlsTeam2Resource = dlsTeam2Resource;
+        s.dlsRevisedOvers = dlsRevisedOvers;
+        s.isSuperOver = isSuperOver;
+        s.superOverParentMatchId = superOverParentMatchId;
+        s.lastOverBowlerName = lastOverBowlerName;
+
+        s.isTestMatch = isTestMatch;
+        s.testDays = testDays;
+        s.oversPerDay = oversPerDay;
+        s.currentDay = currentDay;
+        s.currentSession = currentSession;
+        s.followOnMargin = followOnMargin;
+        s.isFollowOnEnforced = isFollowOnEnforced;
+        s.currentInnings = currentInnings;
+        s.inn1Declared = inn1Declared;
+        s.inn2Declared = inn2Declared;
+        s.inn3Declared = inn3Declared;
+        s.inn4Declared = inn4Declared;
+
+        s.teamInn2 = teamInn2; s.scoreInn2 = scoreInn2; s.oversInn2 = oversInn2; s.extrasInn2 = extrasInn2;
+        s.inn2Runs = inn2Runs; s.inn2Wickets = inn2Wickets;
+        s.batsmanHistoryInn2 = new ArrayList<>();
+        if (batsmanHistoryInn2 != null) { for (String[] b : batsmanHistoryInn2) s.batsmanHistoryInn2.add(b.clone()); }
+        s.bowlerHistoryInn2 = new ArrayList<>();
+        if (bowlerHistoryInn2 != null) { for (String[] b : bowlerHistoryInn2) s.bowlerHistoryInn2.add(b.clone()); }
+        s.fallOfWicketsInn2 = new ArrayList<>();
+        if (fallOfWicketsInn2 != null) s.fallOfWicketsInn2.addAll(fallOfWicketsInn2);
+
+        s.teamInn3 = teamInn3; s.scoreInn3 = scoreInn3; s.oversInn3 = oversInn3; s.extrasInn3 = extrasInn3;
+        s.inn3Runs = inn3Runs; s.inn3Wickets = inn3Wickets;
+        s.batsmanHistoryInn3 = new ArrayList<>();
+        if (batsmanHistoryInn3 != null) { for (String[] b : batsmanHistoryInn3) s.batsmanHistoryInn3.add(b.clone()); }
+        s.bowlerHistoryInn3 = new ArrayList<>();
+        if (bowlerHistoryInn3 != null) { for (String[] b : bowlerHistoryInn3) s.bowlerHistoryInn3.add(b.clone()); }
+        s.fallOfWicketsInn3 = new ArrayList<>();
+        if (fallOfWicketsInn3 != null) s.fallOfWicketsInn3.addAll(fallOfWicketsInn3);
+
+        s.teamInn4 = teamInn4; s.scoreInn4 = scoreInn4; s.oversInn4 = oversInn4; s.extrasInn4 = extrasInn4;
+        s.inn4Runs = inn4Runs; s.inn4Wickets = inn4Wickets;
+        s.batsmanHistoryInn4 = new ArrayList<>();
+        if (batsmanHistoryInn4 != null) { for (String[] b : batsmanHistoryInn4) s.batsmanHistoryInn4.add(b.clone()); }
+        s.bowlerHistoryInn4 = new ArrayList<>();
+        if (bowlerHistoryInn4 != null) { for (String[] b : bowlerHistoryInn4) s.bowlerHistoryInn4.add(b.clone()); }
+        s.fallOfWicketsInn4 = new ArrayList<>();
+        if (fallOfWicketsInn4 != null) s.fallOfWicketsInn4.addAll(fallOfWicketsInn4);
+
         return s;
     }
 
@@ -275,6 +502,77 @@ public class MatchData implements Serializable {
         ballHistoryInn1.clear(); ballHistoryInn1.addAll(s.ballHistoryInn1);
         runRateInn1.clear(); runRateInn1.addAll(s.runRateInn1);
         wicketsInn1.clear(); wicketsInn1.addAll(s.wicketsInn1);
+
+        retiredHurtList.clear();
+        if (s.retiredHurtList != null) {
+            for (RetiredHurtRecord r : s.retiredHurtList) {
+                retiredHurtList.add(r.cloneRecord());
+            }
+        }
+
+        partnerships.clear();
+        if (s.partnerships != null) {
+            for (PartnershipRecord p : s.partnerships) {
+                partnerships.add(p.cloneRecord());
+            }
+        }
+
+        partnershipsInn1.clear();
+        if (s.partnershipsInn1 != null) {
+            for (PartnershipRecord p : s.partnershipsInn1) {
+                partnershipsInn1.add(p.cloneRecord());
+            }
+        }
+
+        isDlsApplied = s.isDlsApplied;
+        dlsTargetRuns = s.dlsTargetRuns;
+        dlsTargetText = s.dlsTargetText;
+        dlsTeam1Resource = s.dlsTeam1Resource;
+        dlsTeam2Resource = s.dlsTeam2Resource;
+        dlsRevisedOvers = s.dlsRevisedOvers;
+        isSuperOver = s.isSuperOver;
+        superOverParentMatchId = s.superOverParentMatchId;
+        lastOverBowlerName = s.lastOverBowlerName;
+
+        isTestMatch = s.isTestMatch;
+        testDays = s.testDays;
+        oversPerDay = s.oversPerDay;
+        currentDay = s.currentDay;
+        currentSession = s.currentSession;
+        followOnMargin = s.followOnMargin;
+        isFollowOnEnforced = s.isFollowOnEnforced;
+        currentInnings = s.currentInnings;
+        inn1Declared = s.inn1Declared;
+        inn2Declared = s.inn2Declared;
+        inn3Declared = s.inn3Declared;
+        inn4Declared = s.inn4Declared;
+
+        teamInn2 = s.teamInn2; scoreInn2 = s.scoreInn2; oversInn2 = s.oversInn2; extrasInn2 = s.extrasInn2;
+        inn2Runs = s.inn2Runs; inn2Wickets = s.inn2Wickets;
+        batsmanHistoryInn2.clear();
+        if (s.batsmanHistoryInn2 != null) { for (String[] b : s.batsmanHistoryInn2) batsmanHistoryInn2.add(b.clone()); }
+        bowlerHistoryInn2.clear();
+        if (s.bowlerHistoryInn2 != null) { for (String[] b : s.bowlerHistoryInn2) bowlerHistoryInn2.add(b.clone()); }
+        fallOfWicketsInn2.clear();
+        if (s.fallOfWicketsInn2 != null) fallOfWicketsInn2.addAll(s.fallOfWicketsInn2);
+
+        teamInn3 = s.teamInn3; scoreInn3 = s.scoreInn3; oversInn3 = s.oversInn3; extrasInn3 = s.extrasInn3;
+        inn3Runs = s.inn3Runs; inn3Wickets = s.inn3Wickets;
+        batsmanHistoryInn3.clear();
+        if (s.batsmanHistoryInn3 != null) { for (String[] b : s.batsmanHistoryInn3) batsmanHistoryInn3.add(b.clone()); }
+        bowlerHistoryInn3.clear();
+        if (s.bowlerHistoryInn3 != null) { for (String[] b : s.bowlerHistoryInn3) bowlerHistoryInn3.add(b.clone()); }
+        fallOfWicketsInn3.clear();
+        if (s.fallOfWicketsInn3 != null) fallOfWicketsInn3.addAll(s.fallOfWicketsInn3);
+
+        teamInn4 = s.teamInn4; scoreInn4 = s.scoreInn4; oversInn4 = s.oversInn4; extrasInn4 = s.extrasInn4;
+        inn4Runs = s.inn4Runs; inn4Wickets = s.inn4Wickets;
+        batsmanHistoryInn4.clear();
+        if (s.batsmanHistoryInn4 != null) { for (String[] b : s.batsmanHistoryInn4) batsmanHistoryInn4.add(b.clone()); }
+        bowlerHistoryInn4.clear();
+        if (s.bowlerHistoryInn4 != null) { for (String[] b : s.bowlerHistoryInn4) bowlerHistoryInn4.add(b.clone()); }
+        fallOfWicketsInn4.clear();
+        if (s.fallOfWicketsInn4 != null) fallOfWicketsInn4.addAll(s.fallOfWicketsInn4);
 
         recalculateCurrentOverBalls();
     }
@@ -413,8 +711,92 @@ public class MatchData implements Serializable {
         if (totalWickets < 0) totalWickets = 0;
     }
 
+    public int getMaxWickets() {
+        return isSuperOver ? 2 : 10;
+    }
+
+    public boolean isAllOut() {
+        return totalWickets >= getMaxWickets();
+    }
+
+    public void recordPartnership(String outBatsman, boolean wasStrikerOut) {
+        partnerships.add(new PartnershipRecord(
+                totalWickets + 1,
+                strikerName, strikerRuns, strikerBalls,
+                nonStrikerName, nonStrikerRuns, nonStrikerBalls,
+                partnershipRuns, partnershipBalls,
+                false
+        ));
+    }
+
+    public void recordUnbrokenPartnership() {
+        if (strikerName != null && nonStrikerName != null && (partnershipRuns > 0 || partnershipBalls > 0 || strikerBalls > 0 || nonStrikerBalls > 0)) {
+            partnerships.add(new PartnershipRecord(
+                    totalWickets + 1,
+                    strikerName, strikerRuns, strikerBalls,
+                    nonStrikerName, nonStrikerRuns, nonStrikerBalls,
+                    partnershipRuns, partnershipBalls,
+                    true
+            ));
+        }
+    }
+
+    public ArrayList<PartnershipRecord> getAllPartnerships(boolean forFirstInnings) {
+        ArrayList<PartnershipRecord> list = new ArrayList<>();
+        if (forFirstInnings) {
+            list.addAll(partnershipsInn1);
+        } else {
+            list.addAll(partnerships);
+            // If match or innings is ongoing, add current unbroken partnership dynamically
+            if (strikerName != null && nonStrikerName != null && (partnershipRuns > 0 || partnershipBalls > 0)) {
+                list.add(new PartnershipRecord(
+                        totalWickets + 1,
+                        strikerName, strikerRuns, strikerBalls,
+                        nonStrikerName, nonStrikerRuns, nonStrikerBalls,
+                        partnershipRuns, partnershipBalls,
+                        true
+                ));
+            }
+        }
+        return list;
+    }
+
+    public void resumeRetiredHurtBatsman(RetiredHurtRecord rec, boolean asStriker) {
+        ensureUndoStack();
+        undoStack.add(captureSnapshot());
+
+        // Remove from retiredHurtList
+        retiredHurtList.remove(rec);
+
+        // Remove previous (Ret Hurt) from batsmanHistory so it doesn't double count
+        for (int i = batsmanHistory.size() - 1; i >= 0; i--) {
+            String[] row = batsmanHistory.get(i);
+            if (row != null && row.length > 0 && row[0] != null && row[0].contains(rec.playerName) && row[0].contains("Ret Hurt")) {
+                batsmanHistory.remove(i);
+                break;
+            }
+        }
+
+        if (asStriker) {
+            strikerName = rec.playerName;
+            strikerRuns = rec.runs;
+            strikerBalls = rec.balls;
+            striker4s = rec.fours;
+            striker6s = rec.sixes;
+        } else {
+            nonStrikerName = rec.playerName;
+            nonStrikerRuns = rec.runs;
+            nonStrikerBalls = rec.balls;
+            nonStriker4s = rec.fours;
+            nonStriker6s = rec.sixes;
+        }
+    }
+
     public void switchBowler(String newName) {
-        if (currentBowlerName != null && !currentBowlerName.equals("Bowler")) { saveCurrentBowlerStatsToRegistry(); }
+        if (currentBowlerName != null && !currentBowlerName.equals("Bowler")) {
+            lastOverBowlerName = currentBowlerName;
+            saveCurrentBowlerStatsToRegistry();
+        }
         String key = newName.trim().toLowerCase(Locale.ROOT);
         this.currentBowlerName = newName; 
         if (bowlerRegistry.containsKey(key)) {
@@ -453,10 +835,13 @@ public class MatchData implements Serializable {
     public void retireStriker(boolean isHurt) {
         ensureUndoStack();
         undoStack.add(captureSnapshot());
+        recordPartnership(strikerName, true);
         String status = isHurt ? "(Ret Hurt)" : "(Ret Out)";
         String sr = getBatsmanSR(strikerRuns, strikerBalls);
         batsmanHistory.add(new String[]{strikerName + " " + status, String.valueOf(strikerRuns), String.valueOf(strikerBalls), String.valueOf(striker4s), String.valueOf(striker6s), sr});
-        if (!isHurt) {
+        if (isHurt) {
+            retiredHurtList.add(new RetiredHurtRecord(strikerName, strikerRuns, strikerBalls, striker4s, striker6s, true));
+        } else {
             fallOfWickets.add(getScoreString() + " (" + strikerName + ", " + getOversString() + ")");
             totalWickets++;
         }
@@ -469,10 +854,13 @@ public class MatchData implements Serializable {
     public void retireNonStriker(boolean isHurt) {
         ensureUndoStack();
         undoStack.add(captureSnapshot());
+        recordPartnership(nonStrikerName, false);
         String status = isHurt ? "(Ret Hurt)" : "(Ret Out)";
         String sr = getBatsmanSR(nonStrikerRuns, nonStrikerBalls);
         batsmanHistory.add(new String[]{nonStrikerName + " " + status, String.valueOf(nonStrikerRuns), String.valueOf(nonStrikerBalls), String.valueOf(nonStriker4s), String.valueOf(nonStriker6s), sr});
-        if (!isHurt) {
+        if (isHurt) {
+            retiredHurtList.add(new RetiredHurtRecord(nonStrikerName, nonStrikerRuns, nonStrikerBalls, nonStriker4s, nonStriker6s, false));
+        } else {
             fallOfWickets.add(getScoreString() + " (" + nonStrikerName + ", " + getOversString() + ")");
             totalWickets++;
         }
@@ -544,6 +932,12 @@ public class MatchData implements Serializable {
         saveBatsman(nonStrikerName + "*", nonStrikerRuns, nonStrikerBalls, nonStriker4s, nonStriker6s);
         saveBowler();
 
+        recordUnbrokenPartnership();
+        this.partnershipsInn1.addAll(this.partnerships);
+        this.partnerships.clear();
+        this.retiredHurtList.clear();
+        this.lastOverBowlerName = "";
+
         this.batsmanHistoryInn1.addAll(this.batsmanHistory);
         this.bowlerHistoryInn1.addAll(getAllBowlingStats());
         this.fallOfWicketsInn1.addAll(this.fallOfWickets);
@@ -584,7 +978,278 @@ public class MatchData implements Serializable {
         this.manualSwapMarkers.clear();
     }
 
-    public boolean isInningsFinished() { try { return ballsBowled >= Integer.parseInt(totalOvers) * 6; } catch (Exception e) { return false; } }
+    public boolean isInningsFinished() {
+        if (isTestMatch) {
+            return totalWickets >= 10;
+        }
+        try { return ballsBowled >= Integer.parseInt(totalOvers) * 6; } catch (Exception e) { return false; }
+    }
+
+    public void advanceTestInnings(String newStriker, String newNonStriker, String newBowler) {
+        archiveCurrentInnings(false);
+        currentInnings++;
+        if (currentInnings == 2) {
+            isSecondInnings = true;
+        } else if (currentInnings == 4) {
+            targetRuns = getTestFourthInningsTarget();
+        }
+
+        // Reset crease
+        this.strikerName = newStriker;
+        this.nonStrikerName = newNonStriker;
+        this.currentBowlerName = newBowler;
+        this.strikerRuns = 0; this.strikerBalls = 0; this.striker4s = 0; this.striker6s = 0;
+        this.nonStrikerRuns = 0; this.nonStrikerBalls = 0; this.nonStriker4s = 0; this.nonStriker6s = 0;
+        this.currentBowlerMaidens = 0; this.bowlerRuns = 0; this.bowlerWickets = 0; this.bowlerBallsBowled = 0;
+        this.partnershipRuns = 0; this.partnershipBalls = 0;
+
+        // Reset active innings totals
+        this.totalRuns = pendingBowlingTeamPenalty;
+        this.pendingBowlingTeamPenalty = 0;
+        this.totalWickets = 0;
+        this.ballsBowled = 0;
+        this.currentBalls = 0;
+        this.currentOvers = 0;
+        this.extraWide = 0;
+        this.extraNoBall = 0;
+        this.extraByes = 0;
+        this.extraLegByes = 0;
+        this.extraPenalty = 0;
+
+        this.bowlerRegistry.clear();
+        this.bowlerDisplayNames.clear();
+        this.currentOverBalls.clear();
+        this.batsmanHistory.clear();
+        this.bowlerHistory.clear();
+        this.fallOfWickets.clear();
+        this.commentaryList.clear();
+        this.ballHistory.clear();
+        this.partnerships.clear();
+        this.retiredHurtList.clear();
+
+        this.isOverFinished = false;
+        this.isMaidenOver = true;
+
+        ensureUndoStack();
+        this.undoStack.clear();
+        this.manualSwapMarkers.clear();
+
+        if (newBowler != null && !newBowler.isEmpty() && !newBowler.equalsIgnoreCase("Bowler")) {
+            switchBowler(newBowler);
+        }
+    }
+
+    public void archiveCurrentInnings(boolean declared) {
+        if (strikerName != null && !strikerName.isEmpty()) {
+            boolean found = false;
+            for (String[] b : batsmanHistory) {
+                if (b[0].replace("*", "").trim().equalsIgnoreCase(strikerName.trim())) { found = true; break; }
+            }
+            if (!found) {
+                batsmanHistory.add(new String[]{strikerName + "*", String.valueOf(strikerRuns), String.valueOf(strikerBalls), String.valueOf(striker4s), String.valueOf(striker6s), getStrikerSR()});
+            }
+        }
+        if (nonStrikerName != null && !nonStrikerName.isEmpty()) {
+            boolean found = false;
+            for (String[] b : batsmanHistory) {
+                if (b[0].replace("*", "").trim().equalsIgnoreCase(nonStrikerName.trim())) { found = true; break; }
+            }
+            if (!found) {
+                batsmanHistory.add(new String[]{nonStrikerName + "*", String.valueOf(nonStrikerRuns), String.valueOf(nonStrikerBalls), String.valueOf(nonStriker4s), String.valueOf(nonStriker6s), getNonStrikerSR()});
+            }
+        }
+        if (currentBowlerName != null && !currentBowlerName.equals("Bowler")) {
+            saveCurrentBowlerStatsToRegistry();
+        }
+
+        int inNum = currentInnings;
+        if (inNum == 1) {
+            inn1Declared = declared;
+            this.firstInningsScore = this.totalRuns;
+            this.scoreInn1 = getScoreString() + (declared ? " d" : "");
+            this.oversInn1 = currentOvers + "." + currentBalls + " ov";
+            this.extrasInn1 = getExtrasString();
+            this.batsmanHistoryInn1 = new ArrayList<>(this.batsmanHistory);
+            this.bowlerHistoryInn1 = getAllBowlingStats();
+            this.fallOfWicketsInn1 = new ArrayList<>(this.fallOfWickets);
+            this.commentaryListInn1 = new ArrayList<>(this.commentaryList);
+            this.ballHistoryInn1 = new ArrayList<>(this.ballHistory);
+            this.runRateInn1 = getCumulativeRunsPerOver();
+            this.wicketsInn1 = getCumulativeWicketsPerOver();
+            this.inn1Sixes = getSixesCount();
+            this.inn1Fours = getFoursCount();
+            this.inn1Dots = getDotsCount();
+            this.inn1ExtrasTotal = getTotalExtras();
+            this.partnershipsInn1 = new ArrayList<>(this.partnerships);
+        } else if (inNum == 2) {
+            inn2Declared = declared;
+            this.teamInn2 = teamBattingSecond;
+            this.inn2Runs = this.totalRuns;
+            this.inn2Wickets = this.totalWickets;
+            this.scoreInn2 = getScoreString() + (declared ? " d" : "");
+            this.oversInn2 = currentOvers + "." + currentBalls + " ov";
+            this.extrasInn2 = getExtrasString();
+            this.batsmanHistoryInn2 = new ArrayList<>(this.batsmanHistory);
+            this.bowlerHistoryInn2 = getAllBowlingStats();
+            this.fallOfWicketsInn2 = new ArrayList<>(this.fallOfWickets);
+        } else if (inNum == 3) {
+            inn3Declared = declared;
+            this.teamInn3 = getBattingTeamName();
+            this.inn3Runs = this.totalRuns;
+            this.inn3Wickets = this.totalWickets;
+            this.scoreInn3 = getScoreString() + (declared ? " d" : "");
+            this.oversInn3 = currentOvers + "." + currentBalls + " ov";
+            this.extrasInn3 = getExtrasString();
+            this.batsmanHistoryInn3 = new ArrayList<>(this.batsmanHistory);
+            this.bowlerHistoryInn3 = getAllBowlingStats();
+            this.fallOfWicketsInn3 = new ArrayList<>(this.fallOfWickets);
+        } else if (inNum == 4) {
+            inn4Declared = declared;
+            this.teamInn4 = getBattingTeamName();
+            this.inn4Runs = this.totalRuns;
+            this.inn4Wickets = this.totalWickets;
+            this.scoreInn4 = getScoreString() + (declared ? " d" : "");
+            this.oversInn4 = currentOvers + "." + currentBalls + " ov";
+            this.extrasInn4 = getExtrasString();
+            this.batsmanHistoryInn4 = new ArrayList<>(this.batsmanHistory);
+            this.bowlerHistoryInn4 = getAllBowlingStats();
+            this.fallOfWicketsInn4 = new ArrayList<>(this.fallOfWickets);
+        }
+    }
+
+    public String getTestMatchLeadTrailStatus() {
+        if (!isTestMatch) return "";
+        if (currentInnings == 1) {
+            return "1st Innings in progress";
+        } else if (currentInnings == 2) {
+            int diff = totalRuns - firstInningsScore;
+            if (diff < 0) {
+                return teamBattingSecond + " trail by " + Math.abs(diff) + " runs";
+            } else if (diff > 0) {
+                return teamBattingSecond + " lead by " + diff + " runs";
+            } else {
+                return "Scores Level (" + totalRuns + " runs)";
+            }
+        } else if (currentInnings == 3) {
+            if (isFollowOnEnforced) {
+                int diff = (inn2Runs + totalRuns) - firstInningsScore;
+                if (diff < 0) {
+                    return teamBattingSecond + " (f/o) trail by " + Math.abs(diff) + " runs";
+                } else if (diff > 0) {
+                    return teamBattingSecond + " lead by " + diff + " runs";
+                } else {
+                    return "Scores Level (Trail erased)";
+                }
+            } else {
+                int lead = (firstInningsScore + totalRuns) - inn2Runs;
+                return teamBattingFirst + " lead by " + lead + " runs";
+            }
+        } else if (currentInnings == 4) {
+            int runsNeeded = targetRuns - totalRuns;
+            if (runsNeeded <= 0) {
+                return "Target Reached!";
+            }
+            return "Target: " + targetRuns + " • Need " + runsNeeded + " runs to win";
+        }
+        return "";
+    }
+
+    public void advanceOverAndSessionIfNeeded() {
+        ballsBowledToday += 6;
+        int oversToday = ballsBowledToday / 6;
+        int sessionOvers = oversPerDay > 0 ? (oversPerDay / 3) : 30;
+        if (sessionOvers <= 0) sessionOvers = 30;
+
+        if (oversToday >= currentSession * sessionOvers) {
+            if (currentSession < 3) {
+                currentSession++;
+            } else if (oversToday >= oversPerDay) {
+                currentDay++;
+                currentSession = 1;
+                ballsBowledToday = 0;
+            }
+        }
+    }
+
+    public void startTestThirdInnings() {
+        archiveCurrentInnings(false);
+        currentInnings = 3;
+        inn2Runs = secondInningsScore > 0 ? secondInningsScore : inn2Runs;
+
+        this.totalRuns = pendingBowlingTeamPenalty;
+        this.extraPenalty = pendingBowlingTeamPenalty;
+        this.pendingBowlingTeamPenalty = 0;
+        this.totalWickets = 0; this.currentBalls = 0; this.currentOvers = 0; this.ballsBowled = 0;
+        this.extraWide = 0; this.extraNoBall = 0; this.extraByes = 0; this.extraLegByes = 0;
+        this.strikerRuns = 0; this.strikerBalls = 0; this.striker4s = 0; this.striker6s = 0;
+        this.nonStrikerRuns = 0; this.nonStrikerBalls = 0; this.nonStriker4s = 0; this.nonStriker6s = 0;
+        this.bowlerRegistry.clear(); this.bowlerDisplayNames.clear();
+        this.currentBowlerName = "Bowler"; this.bowlerRuns = 0; this.bowlerWickets = 0; this.currentBowlerMaidens = 0; this.bowlerBallsBowled = 0;
+        this.partnershipRuns = 0; this.partnershipBalls = 0;
+        this.currentOverBalls.clear(); 
+        this.ballHistory.clear();
+        this.commentaryList.clear();
+        this.batsmanHistory.clear(); 
+        this.bowlerHistory.clear(); 
+        this.fallOfWickets.clear();
+        this.partnerships.clear();
+        this.retiredHurtList.clear();
+        this.isOverFinished = false; 
+        this.isMaidenOver = true;
+
+        ensureUndoStack();
+        this.undoStack.clear();
+        this.manualSwapMarkers.clear();
+    }
+
+    public void startTestFourthInnings() {
+        archiveCurrentInnings(false);
+        currentInnings = 4;
+        targetRuns = getTestFourthInningsTarget();
+
+        this.totalRuns = pendingBowlingTeamPenalty;
+        this.extraPenalty = pendingBowlingTeamPenalty;
+        this.pendingBowlingTeamPenalty = 0;
+        this.totalWickets = 0; this.currentBalls = 0; this.currentOvers = 0; this.ballsBowled = 0;
+        this.extraWide = 0; this.extraNoBall = 0; this.extraByes = 0; this.extraLegByes = 0;
+        this.strikerRuns = 0; this.strikerBalls = 0; this.striker4s = 0; this.striker6s = 0;
+        this.nonStrikerRuns = 0; this.nonStrikerBalls = 0; this.nonStriker4s = 0; this.nonStriker6s = 0;
+        this.bowlerRegistry.clear(); this.bowlerDisplayNames.clear();
+        this.currentBowlerName = "Bowler"; this.bowlerRuns = 0; this.bowlerWickets = 0; this.currentBowlerMaidens = 0; this.bowlerBallsBowled = 0;
+        this.partnershipRuns = 0; this.partnershipBalls = 0;
+        this.currentOverBalls.clear(); 
+        this.ballHistory.clear();
+        this.commentaryList.clear();
+        this.batsmanHistory.clear(); 
+        this.bowlerHistory.clear(); 
+        this.fallOfWickets.clear();
+        this.partnerships.clear();
+        this.retiredHurtList.clear();
+        this.isOverFinished = false; 
+        this.isMaidenOver = true;
+
+        ensureUndoStack();
+        this.undoStack.clear();
+        this.manualSwapMarkers.clear();
+    }
+
+    public boolean canEnforceFollowOn() {
+        if (!isTestMatch || currentInnings != 2) return false;
+        int trail = firstInningsScore - totalRuns;
+        int margin = testFollowOnMargin > 0 ? testFollowOnMargin : followOnMargin;
+        return trail >= margin;
+    }
+
+    public int getTestFourthInningsTarget() {
+        if (!isTestMatch) return 0;
+        if (isFollowOnEnforced) {
+            int t = (inn2Runs + inn3Runs) - firstInningsScore + 1;
+            return Math.max(1, t);
+        } else {
+            int t = (firstInningsScore + inn3Runs) - inn2Runs + 1;
+            return Math.max(1, t);
+        }
+    }
 
     public ArrayList<String[]> getAllBattingStats() {
         ArrayList<String[]> fullList = new ArrayList<>(this.batsmanHistory);
@@ -737,7 +1402,12 @@ public class MatchData implements Serializable {
 
     public void resetStrikerStats() { strikerRuns = 0; strikerBalls = 0; striker4s = 0; striker6s = 0; partnershipRuns = 0; partnershipBalls = 0; }
     public String getExtrasString() { return String.format("Extras: %d (wd %d, nb %d, b %d, lb %d, p %d)", getTotalExtras(), extraWide, extraNoBall, extraByes, extraLegByes, extraPenalty); }
-    public String getOversString() { return currentOvers + "." + currentBalls + " / " + totalOvers; }
+    public String getOversString() {
+        if (isTestMatch) {
+            return currentOvers + "." + currentBalls + " ov";
+        }
+        return currentOvers + "." + currentBalls + " / " + totalOvers;
+    }
     public String getScoreString() { return totalRuns + "/" + totalWickets; }
     public String getBatsmanSR(int runs, int balls) { if (balls == 0) return "0.00"; return String.format("%.2f", (double) runs * 100 / balls); }
     public String getStrikerSR() { return getBatsmanSR(strikerRuns, strikerBalls); }
@@ -746,5 +1416,38 @@ public class MatchData implements Serializable {
     public String getBowlerER() { if (bowlerBallsBowled == 0) return "0.00"; return String.format("%.2f", (double) bowlerRuns / (bowlerBallsBowled / 6.0)); }
     public String getCRR() { return String.format("%.2f", getCurrentRunRate()); }
     public String getPartnershipString() { return "Partnership: " + partnershipRuns + " (" + partnershipBalls + ")"; }
-    public String getBattingTeamName() { return isSecondInnings ? teamBattingSecond : teamBattingFirst; }
+
+    public String getBattingTeamName() {
+        if (!isTestMatch) {
+            return isSecondInnings ? teamBattingSecond : teamBattingFirst;
+        }
+        switch (currentInnings) {
+            case 2:
+                return teamBattingSecond;
+            case 3:
+                return isFollowOnEnforced ? teamBattingSecond : teamBattingFirst;
+            case 4:
+                return isFollowOnEnforced ? teamBattingFirst : teamBattingSecond;
+            case 1:
+            default:
+                return teamBattingFirst;
+        }
+    }
+
+    public String getBowlingTeamName() {
+        if (!isTestMatch) {
+            return isSecondInnings ? teamBattingFirst : teamBattingSecond;
+        }
+        switch (currentInnings) {
+            case 2:
+                return teamBattingFirst;
+            case 3:
+                return isFollowOnEnforced ? teamBattingFirst : teamBattingSecond;
+            case 4:
+                return isFollowOnEnforced ? teamBattingSecond : teamBattingFirst;
+            case 1:
+            default:
+                return teamBattingSecond;
+        }
+    }
 }

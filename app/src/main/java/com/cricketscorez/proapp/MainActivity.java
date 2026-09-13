@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
     TextView tvBowlerOvers, tvBowlerMaidens, tvBowlerRuns, tvBowlerWickets, tvBowlerER;
 
     // Buttons
-    ImageView btnBack;
+    ImageView btnBack, btnMatchTools;
     Button btnUndo, btnSwap, btnPenalty, btnRetire, btnInjured;
 
     // UPDATED BUTTONS
@@ -72,6 +72,7 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CODE_BATSMAN_RETIRE = 4;
     private static final int REQUEST_CODE_BOWLER_INJURED = 5;
     private static final int REQUEST_CODE_SECOND_INNINGS = 10;
+    private static final int REQUEST_CODE_TEST_NEXT_INNINGS = 11;
 
     // Data
     private String strikerName;
@@ -86,6 +87,7 @@ public class MainActivity extends Activity {
 
         // --- 1. Initialize Views ---
         btnBack = findViewById(R.id.btnBack);
+        btnMatchTools = findViewById(R.id.btnMatchTools);
         btnUndo = findViewById(R.id.btnUndo);
         btnSwap = findViewById(R.id.btnSwap);
         btnPenalty = findViewById(R.id.btnPenalty);
@@ -191,6 +193,13 @@ public class MainActivity extends Activity {
                 // Intent-এ IS_TOURNAMENT নেই — নিজে fixture চেক করে popup দেখাবে
                 checkForTournamentFixture();
             }
+
+            if (intent.getBooleanExtra("IS_TEST_MATCH", false)) {
+                matchData.isTestMatch = true;
+                matchData.testDays = intent.getIntExtra("TEST_DAYS", 5);
+                matchData.oversPerDay = intent.getIntExtra("TEST_OVERS_PER_DAY", 90);
+                matchData.testFollowOnMargin = intent.getIntExtra("TEST_FOLLOW_ON_MARGIN", 200);
+            }
         }
         tvMatchTitle.setText(matchData.team1Name + " v/s " + matchData.team2Name);
         tvStrikerName.setText(matchData.strikerName + " *");
@@ -225,6 +234,15 @@ public class MainActivity extends Activity {
 					onBackPressed(); 
 				} 
 			});
+
+        if (btnMatchTools != null) {
+            btnMatchTools.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showMatchToolsMenu();
+                }
+            });
+        }
 
         btnLiveCommentary.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View v) {
@@ -296,6 +314,7 @@ public class MainActivity extends Activity {
 						intent.putExtra("T2_EXTRAS", matchData.getTotalExtras());
 					}
 
+					intent.putExtra("MATCH_DATA", matchData);
 					startActivity(intent);
 				}
 			});
@@ -999,6 +1018,36 @@ public class MainActivity extends Activity {
 				Toast.makeText(this, "2nd Innings Started!", Toast.LENGTH_SHORT).show();
 			}
 
+			// ---------- TEST MATCH NEXT INNINGS ----------
+			else if (requestCode == REQUEST_CODE_TEST_NEXT_INNINGS) {
+				String s = data.getStringExtra("STRIKER");
+				String ns = data.getStringExtra("NON_STRIKER");
+				String b = data.getStringExtra("BOWLER");
+				int innNum = data.getIntExtra("TEST_INNINGS_NUM", matchData.currentInnings + 1);
+
+				if (innNum == 2) {
+					matchData.startSecondInnings();
+				} else if (innNum == 3) {
+					matchData.startTestThirdInnings();
+				} else if (innNum == 4) {
+					matchData.startTestFourthInnings();
+				}
+				matchData.switchBowler(b);
+
+				strikerName = s;
+				nonStrikerName = ns;
+				matchData.strikerName = s;
+				matchData.nonStrikerName = ns;
+
+				tvStrikerName.setText(s + " *");
+				tvNonStrikerName.setText(ns);
+				tvBowlerName.setText(b);
+
+				updateScoreboardDisplay();
+				LiveScoreManager.getInstance().pushInningsBreak(matchData);
+				Toast.makeText(this, "Innings " + innNum + " Started!", Toast.LENGTH_SHORT).show();
+			}
+
 			// ---------- NEW BOWLER ----------
 			else if (requestCode == REQUEST_CODE_NEW_BOWLER || requestCode == REQUEST_CODE_BOWLER_INJURED) {
 				String newBowler = data.getStringExtra("NEW_BOWLER_NAME");
@@ -1114,34 +1163,7 @@ public class MainActivity extends Activity {
 				cbWicket.setChecked(false);
 				setScoringButtonsEnabled(true);
 
-				boolean isAllOut = matchData.totalWickets >= 10;
-				boolean isOversDone = matchData.isInningsFinished();
-
-				if (matchData.isSecondInnings) {
-					if (matchData.totalRuns >= matchData.targetRuns) {
-						int wicketsLeft = 10 - matchData.totalWickets;
-						String wicketWord = (wicketsLeft == 1) ? "wicket" : "wickets";
-						showMatchResultDialog(matchData.teamBattingSecond + " won by " + wicketsLeft + " " + wicketWord + "!");
-					} else if (isOversDone || isAllOut) {
-						if (matchData.totalRuns < matchData.targetRuns - 1) {
-							int runsMargin = (matchData.targetRuns - 1) - matchData.totalRuns;
-							String runWord = (runsMargin == 1) ? "run" : "runs";
-							showMatchResultDialog(matchData.teamBattingFirst + " won by " + runsMargin + " " + runWord + "!");
-						} else {
-							showMatchResultDialog("Match Tied!");
-						}
-					} else if (matchData.isOverFinished) {
-						setScoringButtonsEnabled(false);
-						launchNewBowlerActivity();
-					}
-				} else {
-					if (isAllOut || isOversDone) {
-						showInningsBreakDialog();
-					} else if (matchData.isOverFinished) {
-						setScoringButtonsEnabled(false);
-						launchNewBowlerActivity();
-					}
-				}
+				checkMatchStatusOrInningsEnd();
 			}
 
 			updateScoreboardDisplay();
@@ -1220,18 +1242,59 @@ public class MainActivity extends Activity {
         // 🔥 LIVE SCORE: প্রতিটি বলের পরে Firebase-এ push করুন
         LiveScoreManager.getInstance().pushLiveScore(matchData, strikerName, nonStrikerName);
 
+        checkMatchStatusOrInningsEnd();
+    }
+
+    private void checkMatchStatusOrInningsEnd() {
         boolean isAllOut = matchData.totalWickets >= 10;
         boolean isOversDone = matchData.isInningsFinished();
 
+        if (matchData.isTestMatch) {
+            int current = matchData.currentInnings;
+            if (current == 4) {
+                if (matchData.targetRuns > 0 && matchData.totalRuns >= matchData.targetRuns) {
+                    int wicketsLeft = 10 - matchData.totalWickets;
+                    String wicketWord = (wicketsLeft == 1) ? "wicket" : "wickets";
+                    showMatchResultDialog(matchData.getBattingTeamName() + " won by " + wicketsLeft + " " + wicketWord + "!");
+                    return;
+                }
+                if (isAllOut) {
+                    int margin = (matchData.targetRuns - 1) - matchData.totalRuns;
+                    if (margin > 0) {
+                        String runWord = (margin == 1) ? "run" : "runs";
+                        showMatchResultDialog(matchData.getBowlingTeamName() + " won by " + margin + " " + runWord + "!");
+                    } else if (matchData.totalRuns == matchData.targetRuns - 1) {
+                        showMatchResultDialog("Match Tied!");
+                    }
+                    return;
+                }
+            }
+
+            if (isAllOut) {
+                handleTestInningsFinished();
+                return;
+            }
+
+            if (matchData.isOverFinished) {
+                matchData.advanceOverAndSessionIfNeeded();
+                if (matchData.currentDay > matchData.testDays) {
+                    showMatchResultDialog("Match Drawn (Match Duration Expired)");
+                    return;
+                }
+                setScoringButtonsEnabled(false);
+                launchNewBowlerActivity();
+            }
+            return;
+        }
+
+        // Limited overs matches
         if (matchData.isSecondInnings) {
             if (matchData.totalRuns >= matchData.targetRuns) {
-                // 🔥 BUG FIX: wickets দিয়ে জয়ের margin
                 int wicketsLeft = 10 - matchData.totalWickets;
                 String wicketWord = (wicketsLeft == 1) ? "wicket" : "wickets";
                 showMatchResultDialog(matchData.teamBattingSecond + " won by " + wicketsLeft + " " + wicketWord + "!");
             } else if (isOversDone || isAllOut) {
                 if (matchData.totalRuns < matchData.targetRuns - 1) {
-                    // 🔥 BUG FIX: runs দিয়ে জয়ের margin
                     int runsMargin = (matchData.targetRuns - 1) - matchData.totalRuns;
                     String runWord = (runsMargin == 1) ? "run" : "runs";
                     showMatchResultDialog(matchData.teamBattingFirst + " won by " + runsMargin + " " + runWord + "!");
@@ -1250,6 +1313,272 @@ public class MainActivity extends Activity {
                 launchNewBowlerActivity();
             }
         }
+    }
+
+    private void handleTestInningsFinished() {
+        int current = matchData.currentInnings;
+        if (current == 1) {
+            showTestInningsBreakDialog(1);
+        } else if (current == 2) {
+            if (matchData.canEnforceFollowOn()) {
+                showFollowOnChoiceDialog();
+            } else {
+                showTestInningsBreakDialog(2);
+            }
+        } else if (current == 3) {
+            if (matchData.isFollowOnEnforced && matchData.getTestFourthInningsTarget() <= 0) {
+                int lead = matchData.firstInningsScore - (matchData.inn2Runs + matchData.totalRuns);
+                if (lead > 0) {
+                    showMatchResultDialog(matchData.teamBattingFirst + " won by an innings and " + lead + " runs!");
+                } else {
+                    showMatchResultDialog("Match Tied!");
+                }
+            } else {
+                showTestInningsBreakDialog(3);
+            }
+        } else if (current == 4) {
+            if (matchData.totalRuns >= matchData.targetRuns) {
+                int wicketsLeft = 10 - matchData.totalWickets;
+                String wicketWord = (wicketsLeft == 1) ? "wicket" : "wickets";
+                showMatchResultDialog(matchData.getBattingTeamName() + " won by " + wicketsLeft + " " + wicketWord + "!");
+            } else {
+                int margin = (matchData.targetRuns - 1) - matchData.totalRuns;
+                if (margin > 0) {
+                    String runWord = (margin == 1) ? "run" : "runs";
+                    showMatchResultDialog(matchData.getBowlingTeamName() + " won by " + margin + " " + runWord + "!");
+                } else {
+                    showMatchResultDialog("Match Tied!");
+                }
+            }
+        }
+    }
+
+    private void showTestInningsBreakDialog(final int completedInn) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(20), dp(20), dp(20), dp(20));
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.WHITE);
+        bg.setCornerRadius(dp(16));
+        root.setBackground(bg);
+
+        String nextBatting;
+        String nextBowling;
+        int nextInn = completedInn + 1;
+
+        if (completedInn == 1) {
+            nextBatting = matchData.teamBattingSecond;
+            nextBowling = matchData.teamBattingFirst;
+        } else if (completedInn == 2) {
+            nextBatting = matchData.teamBattingFirst;
+            nextBowling = matchData.teamBattingSecond;
+        } else {
+            nextBatting = matchData.isFollowOnEnforced ? matchData.teamBattingFirst : matchData.teamBattingSecond;
+            nextBowling = matchData.isFollowOnEnforced ? matchData.teamBattingSecond : matchData.teamBattingFirst;
+        }
+
+        TextView title = new TextView(this);
+        title.setText("End of " + completedInn + (completedInn == 1 ? "st" : completedInn == 2 ? "nd" : "rd") + " Innings");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#0F172A"));
+        root.addView(title);
+
+        TextView desc = new TextView(this);
+        desc.setText(matchData.getBattingTeamName() + " scored " + matchData.getScoreString() + " in " + matchData.getOversString() + " overs.\n\n" + matchData.getTestMatchLeadTrailStatus());
+        desc.setTextSize(13);
+        desc.setTextColor(Color.parseColor("#334155"));
+        desc.setPadding(0, dp(8), 0, dp(16));
+        root.addView(desc);
+
+        Button btnNext = new Button(this);
+        btnNext.setText("Start " + nextInn + (nextInn == 2 ? "nd" : nextInn == 3 ? "rd" : "th") + " Innings (" + nextBatting + ")");
+        btnNext.setBackgroundColor(Color.parseColor("#16A34A"));
+        btnNext.setTextColor(Color.WHITE);
+        btnNext.setAllCaps(false);
+        btnNext.setOnClickListener(v -> {
+            dialog.dismiss();
+            launchTestNextInningsPlayerSelection(nextInn, nextBatting, nextBowling);
+        });
+        root.addView(btnNext);
+
+        dialog.setContentView(root);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
+
+    private void showFollowOnChoiceDialog() {
+        int lead = matchData.firstInningsScore - matchData.secondInningsScore;
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(20), dp(20), dp(20), dp(20));
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.WHITE);
+        bg.setCornerRadius(dp(16));
+        root.setBackground(bg);
+
+        TextView title = new TextView(this);
+        title.setText("🏏 Follow-On Available!");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#15803D"));
+        root.addView(title);
+
+        TextView desc = new TextView(this);
+        desc.setText(matchData.teamBattingFirst + " has a 1st innings lead of " + lead + " runs (Minimum required: " + matchData.testFollowOnMargin + ").\n\nDo you want to ENFORCE the follow-on, making " + matchData.teamBattingSecond + " bat again immediately?");
+        desc.setTextSize(13);
+        desc.setTextColor(Color.parseColor("#334155"));
+        desc.setPadding(0, dp(8), 0, dp(16));
+        root.addView(desc);
+
+        Button btnEnforce = new Button(this);
+        btnEnforce.setText("Yes, Enforce Follow-On (" + matchData.teamBattingSecond + " bats)");
+        btnEnforce.setBackgroundColor(Color.parseColor("#16A34A"));
+        btnEnforce.setTextColor(Color.WHITE);
+        btnEnforce.setAllCaps(false);
+        btnEnforce.setOnClickListener(v -> {
+            dialog.dismiss();
+            matchData.isFollowOnEnforced = true;
+            launchTestNextInningsPlayerSelection(3, matchData.teamBattingSecond, matchData.teamBattingFirst);
+        });
+        root.addView(btnEnforce);
+
+        Button btnBatAgain = new Button(this);
+        btnBatAgain.setText("No, Bat Again (" + matchData.teamBattingFirst + " bats)");
+        btnBatAgain.setBackgroundColor(Color.parseColor("#2563EB"));
+        btnBatAgain.setTextColor(Color.WHITE);
+        btnBatAgain.setAllCaps(false);
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        p.topMargin = dp(8);
+        btnBatAgain.setLayoutParams(p);
+        btnBatAgain.setOnClickListener(v -> {
+            dialog.dismiss();
+            matchData.isFollowOnEnforced = false;
+            launchTestNextInningsPlayerSelection(3, matchData.teamBattingFirst, matchData.teamBattingSecond);
+        });
+        root.addView(btnBatAgain);
+
+        dialog.setContentView(root);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
+
+    private void launchTestNextInningsPlayerSelection(int inn, String battingTeam, String bowlingTeam) {
+        Intent intent = new Intent(MainActivity.this, PlayerSelectionActivity.class);
+        intent.putExtra("IS_SECOND_INNINGS", true);
+        intent.putExtra("IS_TEST_MATCH", true);
+        intent.putExtra("TEST_INNINGS_NUM", inn);
+        intent.putExtra("TEAM_1", battingTeam);
+        intent.putExtra("TEAM_2", bowlingTeam);
+        startActivityForResult(intent, REQUEST_CODE_TEST_NEXT_INNINGS);
+    }
+
+    private void showTestSessionControlsDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(20), dp(20), dp(20), dp(20));
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.WHITE);
+        bg.setCornerRadius(dp(16));
+        root.setBackground(bg);
+
+        TextView title = new TextView(this);
+        title.setText("⏳ Test Match Day & Session");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#0F172A"));
+        root.addView(title);
+
+        TextView info = new TextView(this);
+        info.setText("Current: Day " + matchData.currentDay + " of " + matchData.testDays + " • Session " + matchData.currentSession + "\n" +
+                "Overs Today: " + (matchData.ballsBowledToday / 6) + "." + (matchData.ballsBowledToday % 6) + " / " + matchData.oversPerDay + " ov\n" +
+                matchData.getTestMatchLeadTrailStatus());
+        info.setTextSize(13);
+        info.setTextColor(Color.parseColor("#334155"));
+        info.setPadding(0, dp(8), 0, dp(16));
+        root.addView(info);
+
+        Button btnNextSession = new Button(this);
+        btnNextSession.setText("⏭️ Next Session (" + (matchData.currentSession < 3 ? "Session " + (matchData.currentSession + 1) : "Day " + (matchData.currentDay + 1) + " Session 1") + ")");
+        btnNextSession.setBackgroundColor(Color.parseColor("#2563EB"));
+        btnNextSession.setTextColor(Color.WHITE);
+        btnNextSession.setAllCaps(false);
+        btnNextSession.setOnClickListener(v -> {
+            dialog.dismiss();
+            matchData.currentSession++;
+            if (matchData.currentSession > 3) {
+                matchData.currentSession = 1;
+                matchData.currentDay++;
+                matchData.ballsBowledToday = 0;
+            }
+            updateScoreboardDisplay();
+            Toast.makeText(this, "Advanced to Day " + matchData.currentDay + ", Session " + matchData.currentSession, Toast.LENGTH_SHORT).show();
+        });
+        root.addView(btnNextSession);
+
+        Button btnStumps = new Button(this);
+        btnStumps.setText("Day Stumps (End of Day " + matchData.currentDay + ")");
+        btnStumps.setBackgroundColor(Color.parseColor("#475569"));
+        btnStumps.setTextColor(Color.WHITE);
+        btnStumps.setAllCaps(false);
+        LinearLayout.LayoutParams pStumps = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        pStumps.topMargin = dp(8);
+        btnStumps.setLayoutParams(pStumps);
+        btnStumps.setOnClickListener(v -> {
+            dialog.dismiss();
+            matchData.currentSession = 1;
+            matchData.currentDay++;
+            matchData.ballsBowledToday = 0;
+            updateScoreboardDisplay();
+            Toast.makeText(this, "Stumps called. Advanced to Day " + matchData.currentDay, Toast.LENGTH_SHORT).show();
+        });
+        root.addView(btnStumps);
+
+        Button btnDeclareDraw = new Button(this);
+        btnDeclareDraw.setText("🤝 Agree on Draw");
+        btnDeclareDraw.setBackgroundColor(Color.parseColor("#DC2626"));
+        btnDeclareDraw.setTextColor(Color.WHITE);
+        btnDeclareDraw.setAllCaps(false);
+        LinearLayout.LayoutParams pDraw = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        pDraw.topMargin = dp(8);
+        btnDeclareDraw.setLayoutParams(pDraw);
+        btnDeclareDraw.setOnClickListener(v -> {
+            dialog.dismiss();
+            showMatchResultDialog("Match Drawn");
+        });
+        root.addView(btnDeclareDraw);
+
+        Button btnClose = new Button(this);
+        btnClose.setText("Close");
+        btnClose.setTextColor(Color.parseColor("#64748B"));
+        btnClose.setBackgroundColor(Color.TRANSPARENT);
+        btnClose.setAllCaps(false);
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+        root.addView(btnClose);
+
+        dialog.setContentView(root);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
     }
 
     private void launchNewBowlerActivity() {
@@ -1280,6 +1609,7 @@ public class MainActivity extends Activity {
             event.creditBowlerForWicket = false;
         }
 
+        matchData.recordPartnership(outBat, isStrikerOut);
         matchData.addEvent(event);
     }
 
@@ -1496,7 +1826,14 @@ public class MainActivity extends Activity {
                 getSharedPreferences("TournamentData", MODE_PRIVATE);
         String supabaseTournamentId = tourPrefs.getString("SUPABASE_TOURNAMENT_ID", "");
         if (!supabaseTournamentId.isEmpty()) {
+            matchData.tournamentId = supabaseTournamentId;
             matchData.tournamentName = tourPrefs.getString("TOURNAMENT_NAME", "");
+        } else {
+            String tName = tourPrefs.getString("TOURNAMENT_NAME", "");
+            if (!tName.isEmpty()) {
+                matchData.tournamentName = tName;
+                matchData.tournamentId = FirebaseSync.slug(tName);
+            }
         }
         FirebaseSync.saveMatchHistory(matchData, message);
 
@@ -1809,6 +2146,25 @@ public class MainActivity extends Activity {
     title.setTypeface(null, Typeface.BOLD);
     title.setPadding(0, 0, 0, 20);
     container.addView(title);
+
+    if (matchData.retiredHurtList != null && !matchData.retiredHurtList.isEmpty()) {
+        Button btnResumeHurt = new Button(this);
+        btnResumeHurt.setText("🩹 Resume Retired Hurt Player (" + matchData.retiredHurtList.size() + ")");
+        btnResumeHurt.setBackgroundColor(Color.parseColor("#10B981"));
+        btnResumeHurt.setTextColor(Color.WHITE);
+        btnResumeHurt.setAllCaps(false);
+        btnResumeHurt.setTextSize(13);
+        btnResumeHurt.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, 110);
+        lp.setMargins(0, 0, 0, 20);
+        btnResumeHurt.setLayoutParams(lp);
+        btnResumeHurt.setOnClickListener(v -> {
+            dialog.dismiss();
+            showResumeRetiredHurtDialog();
+        });
+        container.addView(btnResumeHurt);
+    }
 
     // ✅ FIX: কে retire হবে তা user select করতে পারবে
     TextView tvWho = new TextView(this);
@@ -2127,7 +2483,13 @@ public class MainActivity extends Activity {
     }
 
     private void updateScoreboardDisplay() {
-        if (matchData.isSecondInnings) {
+        if (matchData.isTestMatch) {
+            String suffix = matchData.currentInnings == 1 ? "1st" : matchData.currentInnings == 2 ? "2nd" : matchData.currentInnings == 3 ? "3rd" : "4th";
+            tvBattingTeam.setText("Day " + matchData.currentDay + " • Sess " + matchData.currentSession + " (" + suffix + " Inn)");
+            tvRRR.setVisibility(View.GONE);
+            tvMatchEquation.setText(matchData.getTestMatchLeadTrailStatus());
+            tvMatchEquation.setVisibility(View.VISIBLE);
+        } else if (matchData.isSecondInnings) {
             tvBattingTeam.setText("2nd Innings");
             int runsNeeded = matchData.targetRuns - matchData.totalRuns;
             int totalBalls = Integer.parseInt(matchData.totalOvers) * 6;
@@ -2255,4 +2617,888 @@ public class MainActivity extends Activity {
                 }
             });
     }
+
+    // =================================================================================
+    // ⚡ MATCH TOOLS & ADVANCED CONTROLS (Features 2, 3, 4, 6, 7, 8 & DLS Method)
+    // =================================================================================
+
+    private void showMatchToolsMenu() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dpToPx(20), dpToPx(24), dpToPx(20), dpToPx(20));
+
+        GradientDrawable bgShape = new GradientDrawable();
+        bgShape.setColor(Color.WHITE);
+        bgShape.setCornerRadius(dpToPx(20));
+        container.setBackground(bgShape);
+
+        TextView title = new TextView(this);
+        title.setText("⚡ Match Tools & Controls");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#0F172A"));
+        title.setPadding(0, 0, 0, dpToPx(16));
+        title.setGravity(Gravity.CENTER);
+        container.addView(title);
+
+        // 1. Edit Names Mid-Match (Feature 2)
+        container.addView(createToolMenuItem("✏️ Edit Match & Player Names", "Modify team names or active batsman/bowler names", v -> {
+            dialog.dismiss();
+            showEditNamesDialog();
+        }));
+
+        if (matchData.isTestMatch) {
+            container.addView(createToolMenuItem("⏳ Test Match Day & Session Controls", "Day " + matchData.currentDay + " of " + matchData.testDays + " • Session " + matchData.currentSession + " • Stumps & Draw options", v -> {
+                dialog.dismiss();
+                showTestSessionControlsDialog();
+            }));
+
+            if (matchData.currentInnings == 2 && matchData.canEnforceFollowOn()) {
+                container.addView(createToolMenuItem("🏏 Follow-On Decision", "Enforce or decline follow-on (Lead: " + (matchData.firstInningsScore - matchData.secondInningsScore) + " runs)", v -> {
+                    dialog.dismiss();
+                    showFollowOnChoiceDialog();
+                }));
+            }
+        }
+
+        // 2. D/L Method (Duckworth-Lewis-Stern)
+        if (!matchData.isTestMatch) {
+            container.addView(createToolMenuItem("🌧️ D/L Method (DLS Calculator)", "Rain interruption, par score & revised target setup", v -> {
+                dialog.dismiss();
+                showDlsCalculatorDialog();
+            }));
+        }
+
+        // 3. Declare / End Current Innings (Feature 7)
+        container.addView(createToolMenuItem("🚪 Declare / End Innings", "Voluntarily close current batting innings", v -> {
+            dialog.dismiss();
+            showDeclareInningsDialog();
+        }));
+
+        // 4. Super Over Mode (Feature 8)
+        container.addView(createToolMenuItem("⚡ Super Over Mode", "1-over tie-breaker shoot-out (2 wickets max)", v -> {
+            dialog.dismiss();
+            showSuperOverDialog();
+        }));
+
+        // 5. Resume Retired Hurt Player (Feature 3)
+        int hurtCount = (matchData.retiredHurtList != null) ? matchData.retiredHurtList.size() : 0;
+        container.addView(createToolMenuItem("🩹 Resume Retired Hurt Batsman (" + hurtCount + ")", "Bring retired hurt player back to the crease", v -> {
+            dialog.dismiss();
+            showResumeRetiredHurtDialog();
+        }));
+
+        // 6. Partnership Graph (Feature 6)
+        container.addView(createToolMenuItem("🤝 Partnership Analysis Graph", "View all batting stands and contribution charts", v -> {
+            dialog.dismiss();
+            Intent intent = new Intent(MainActivity.this, PartnershipGraphActivity.class);
+            intent.putExtra("TEAM_1", matchData.teamBattingFirst);
+            intent.putExtra("TEAM_2", matchData.teamBattingSecond);
+            intent.putExtra("MATCH_DATA", matchData);
+            startActivity(intent);
+        }));
+
+        // Close button
+        Button btnClose = new Button(this);
+        btnClose.setText("Close");
+        btnClose.setTextColor(Color.parseColor("#64748B"));
+        btnClose.setBackgroundColor(Color.TRANSPARENT);
+        btnClose.setAllCaps(false);
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+        container.addView(btnClose);
+
+        dialog.setContentView(container);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
+
+    private View createToolMenuItem(String title, String subtitle, View.OnClickListener onClickListener) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.VERTICAL);
+        row.setPadding(dpToPx(14), dpToPx(10), dpToPx(14), dpToPx(10));
+        row.setClickable(true);
+        row.setFocusable(true);
+
+        GradientDrawable rowBg = new GradientDrawable();
+        rowBg.setColor(Color.parseColor("#F8FAFC"));
+        rowBg.setStroke(dpToPx(1), Color.parseColor("#E2E8F0"));
+        rowBg.setCornerRadius(dpToPx(12));
+        row.setBackground(rowBg);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 0, dpToPx(8));
+        row.setLayoutParams(lp);
+
+        TextView tvTitle = new TextView(this);
+        tvTitle.setText(title);
+        tvTitle.setTextSize(14);
+        tvTitle.setTypeface(null, Typeface.BOLD);
+        tvTitle.setTextColor(Color.parseColor("#1E293B"));
+        row.addView(tvTitle);
+
+        TextView tvSub = new TextView(this);
+        tvSub.setText(subtitle);
+        tvSub.setTextSize(11);
+        tvSub.setTextColor(Color.parseColor("#64748B"));
+        row.addView(tvSub);
+
+        row.setOnClickListener(onClickListener);
+        return row;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // FEATURE 2: EDIT NAMES MID-MATCH (Team & Player Names)
+    // ─────────────────────────────────────────────────────────────────────────
+    private void showEditNamesDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dpToPx(20), dpToPx(24), dpToPx(20), dpToPx(20));
+
+        GradientDrawable bgShape = new GradientDrawable();
+        bgShape.setColor(Color.WHITE);
+        bgShape.setCornerRadius(dpToPx(20));
+        container.setBackground(bgShape);
+
+        TextView title = new TextView(this);
+        title.setText("✏️ Edit Match & Player Names");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#1E293B"));
+        title.setPadding(0, 0, 0, dpToPx(14));
+        container.addView(title);
+
+        // Team 1
+        TextView tvT1 = new TextView(this);
+        tvT1.setText("Team 1 Name:");
+        tvT1.setTextSize(12);
+        tvT1.setTextColor(Color.GRAY);
+        container.addView(tvT1);
+
+        final EditText etTeam1 = new EditText(this);
+        etTeam1.setText(matchData.team1Name != null ? matchData.team1Name : "");
+        applyInputStyle(etTeam1);
+        container.addView(etTeam1);
+
+        // Team 2
+        TextView tvT2 = new TextView(this);
+        tvT2.setText("Team 2 Name:");
+        tvT2.setTextSize(12);
+        tvT2.setTextColor(Color.GRAY);
+        container.addView(tvT2);
+
+        final EditText etTeam2 = new EditText(this);
+        etTeam2.setText(matchData.team2Name != null ? matchData.team2Name : "");
+        applyInputStyle(etTeam2);
+        container.addView(etTeam2);
+
+        // Striker
+        TextView tvS = new TextView(this);
+        tvS.setText("Striker Batsman:");
+        tvS.setTextSize(12);
+        tvS.setTextColor(Color.GRAY);
+        container.addView(tvS);
+
+        final EditText etStriker = new EditText(this);
+        etStriker.setText(strikerName != null ? strikerName : "");
+        applyInputStyle(etStriker);
+        container.addView(etStriker);
+
+        // Non-Striker
+        TextView tvNS = new TextView(this);
+        tvNS.setText("Non-Striker Batsman:");
+        tvNS.setTextSize(12);
+        tvNS.setTextColor(Color.GRAY);
+        container.addView(tvNS);
+
+        final EditText etNonStriker = new EditText(this);
+        etNonStriker.setText(nonStrikerName != null ? nonStrikerName : "");
+        applyInputStyle(etNonStriker);
+        container.addView(etNonStriker);
+
+        // Bowler
+        TextView tvB = new TextView(this);
+        tvB.setText("Current Bowler:");
+        tvB.setTextSize(12);
+        tvB.setTextColor(Color.GRAY);
+        container.addView(tvB);
+
+        final EditText etBowler = new EditText(this);
+        etBowler.setText(matchData.currentBowlerName != null ? matchData.currentBowlerName : "");
+        applyInputStyle(etBowler);
+        container.addView(etBowler);
+
+        // Buttons
+        LinearLayout btnRow = new LinearLayout(this);
+        btnRow.setOrientation(LinearLayout.HORIZONTAL);
+        btnRow.setPadding(0, dpToPx(16), 0, 0);
+
+        Button btnSave = new Button(this);
+        btnSave.setText("Save Names");
+        btnSave.setTextColor(Color.WHITE);
+        btnSave.setBackgroundColor(Color.parseColor("#16A34A"));
+        btnSave.setAllCaps(false);
+        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(0, dpToPx(44), 1f);
+        p1.setMargins(0, 0, dpToPx(8), 0);
+        btnSave.setLayoutParams(p1);
+        btnSave.setOnClickListener(v -> {
+            String newT1 = etTeam1.getText().toString().trim();
+            String newT2 = etTeam2.getText().toString().trim();
+            String newS  = etStriker.getText().toString().trim();
+            String newNS = etNonStriker.getText().toString().trim();
+            String newB  = etBowler.getText().toString().trim();
+
+            if (newT1.isEmpty() || newT2.isEmpty()) {
+                Toast.makeText(this, "Team names cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (newS.isEmpty() || newNS.isEmpty()) {
+                Toast.makeText(this, "Batsmen names cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            matchData.recordManualSwap(); // Save snapshot for undo integrity
+
+            matchData.team1Name = newT1;
+            matchData.team2Name = newT2;
+            if (!matchData.isSecondInnings) {
+                matchData.teamBattingFirst = newT1;
+                matchData.teamBattingSecond = newT2;
+            } else {
+                matchData.teamBattingFirst = newT2;
+                matchData.teamBattingSecond = newT1;
+            }
+
+            strikerName = newS;
+            matchData.strikerName = newS;
+            nonStrikerName = newNS;
+            matchData.nonStrikerName = newNS;
+
+            if (!newB.isEmpty()) {
+                matchData.currentBowlerName = newB;
+                tvBowlerName.setText(newB);
+            }
+
+            tvMatchTitle.setText(newT1 + " vs " + newT2);
+            tvStrikerName.setText(newS + " *");
+            tvNonStrikerName.setText(newNS);
+            updateScoreboardDisplay();
+
+            dialog.dismiss();
+            Toast.makeText(this, "Match and player names updated!", Toast.LENGTH_SHORT).show();
+        });
+        btnRow.addView(btnSave);
+
+        Button btnCancel = new Button(this);
+        btnCancel.setText("Cancel");
+        btnCancel.setTextColor(Color.parseColor("#64748B"));
+        btnCancel.setBackgroundColor(Color.LTGRAY);
+        btnCancel.setAllCaps(false);
+        btnCancel.setLayoutParams(new LinearLayout.LayoutParams(0, dpToPx(44), 1f));
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnRow.addView(btnCancel);
+
+        container.addView(btnRow);
+
+        dialog.setContentView(container);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
+
+    private void applyInputStyle(EditText et) {
+        et.setPadding(dpToPx(12), dpToPx(8), dpToPx(12), dpToPx(8));
+        et.setTextSize(13);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.parseColor("#F8FAFC"));
+        bg.setStroke(dpToPx(1), Color.parseColor("#CBD5E1"));
+        bg.setCornerRadius(dpToPx(8));
+        et.setBackground(bg);
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(40));
+        p.setMargins(0, dpToPx(4), 0, dpToPx(10));
+        et.setLayoutParams(p);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // FEATURE 3: RESUME RETIRED HURT BATSMAN
+    // ─────────────────────────────────────────────────────────────────────────
+    private void showResumeRetiredHurtDialog() {
+        if (matchData.retiredHurtList == null || matchData.retiredHurtList.isEmpty()) {
+            Toast.makeText(this, "No batsman is currently Retired Hurt.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dpToPx(20), dpToPx(24), dpToPx(20), dpToPx(20));
+
+        GradientDrawable bgShape = new GradientDrawable();
+        bgShape.setColor(Color.WHITE);
+        bgShape.setCornerRadius(dpToPx(20));
+        container.setBackground(bgShape);
+
+        TextView title = new TextView(this);
+        title.setText("🩹 Resume Retired Hurt Batsman");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#1E293B"));
+        title.setPadding(0, 0, 0, dpToPx(12));
+        container.addView(title);
+
+        TextView prompt = new TextView(this);
+        prompt.setText("Select a player to return to the crease:");
+        prompt.setTextSize(13);
+        prompt.setTextColor(Color.parseColor("#64748B"));
+        prompt.setPadding(0, 0, 0, dpToPx(12));
+        container.addView(prompt);
+
+        for (final MatchData.RetiredHurtRecord record : matchData.retiredHurtList) {
+            LinearLayout row = new LinearLayout(this);
+            row.setOrientation(LinearLayout.VERTICAL);
+            row.setPadding(dpToPx(12), dpToPx(10), dpToPx(12), dpToPx(10));
+
+            GradientDrawable rowBg = new GradientDrawable();
+            rowBg.setColor(Color.parseColor("#F0FDF4"));
+            rowBg.setStroke(dpToPx(1), Color.parseColor("#BBF7D0"));
+            rowBg.setCornerRadius(dpToPx(10));
+            row.setBackground(rowBg);
+
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0, 0, 0, dpToPx(8));
+            row.setLayoutParams(lp);
+
+            TextView tvName = new TextView(this);
+            tvName.setText(record.batsmanName);
+            tvName.setTextSize(15);
+            tvName.setTypeface(null, Typeface.BOLD);
+            tvName.setTextColor(Color.parseColor("#166534"));
+            row.addView(tvName);
+
+            TextView tvStats = new TextView(this);
+            tvStats.setText(record.runs + " runs (" + record.balls + "b, " + record.fours + "x4, " + record.sixes + "x6)");
+            tvStats.setTextSize(12);
+            tvStats.setTextColor(Color.parseColor("#15803D"));
+            row.addView(tvStats);
+
+            row.setOnClickListener(v -> {
+                dialog.dismiss();
+                promptWhichBatsmanToReplace(record);
+            });
+            container.addView(row);
+        }
+
+        Button btnCancel = new Button(this);
+        btnCancel.setText("Cancel");
+        btnCancel.setTextColor(Color.parseColor("#64748B"));
+        btnCancel.setBackgroundColor(Color.TRANSPARENT);
+        btnCancel.setAllCaps(false);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        container.addView(btnCancel);
+
+        dialog.setContentView(container);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
+
+    private void promptWhichBatsmanToReplace(final MatchData.RetiredHurtRecord record) {
+        final Dialog d = new Dialog(this);
+        d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dpToPx(20), dpToPx(24), dpToPx(20), dpToPx(20));
+
+        GradientDrawable bgShape = new GradientDrawable();
+        bgShape.setColor(Color.WHITE);
+        bgShape.setCornerRadius(dpToPx(20));
+        container.setBackground(bgShape);
+
+        TextView title = new TextView(this);
+        title.setText("Resume " + record.batsmanName);
+        title.setTextSize(17);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#1E293B"));
+        title.setPadding(0, 0, 0, dpToPx(10));
+        container.addView(title);
+
+        TextView msg = new TextView(this);
+        msg.setText("Which position should " + record.batsmanName + " resume at?");
+        msg.setTextSize(13);
+        msg.setTextColor(Color.parseColor("#64748B"));
+        msg.setPadding(0, 0, 0, dpToPx(16));
+        container.addView(msg);
+
+        // Replace Striker
+        Button btnReplaceStriker = new Button(this);
+        btnReplaceStriker.setText("As Striker (Replace " + strikerName + ")");
+        btnReplaceStriker.setTextColor(Color.WHITE);
+        btnReplaceStriker.setBackgroundColor(Color.parseColor("#16A34A"));
+        btnReplaceStriker.setAllCaps(false);
+        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(44));
+        p1.setMargins(0, 0, 0, dpToPx(8));
+        btnReplaceStriker.setLayoutParams(p1);
+        btnReplaceStriker.setOnClickListener(v -> {
+            d.dismiss();
+            matchData.resumeRetiredHurtBatsman(record, true);
+            strikerName = matchData.strikerName;
+            tvStrikerName.setText(strikerName + " *");
+            updateScoreboardDisplay();
+            Toast.makeText(this, record.batsmanName + " resumed at striker!", Toast.LENGTH_SHORT).show();
+        });
+        container.addView(btnReplaceStriker);
+
+        // Replace Non-Striker
+        Button btnReplaceNonStriker = new Button(this);
+        btnReplaceNonStriker.setText("As Non-Striker (Replace " + nonStrikerName + ")");
+        btnReplaceNonStriker.setTextColor(Color.WHITE);
+        btnReplaceNonStriker.setBackgroundColor(Color.parseColor("#0284C7"));
+        btnReplaceNonStriker.setAllCaps(false);
+        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(44));
+        p2.setMargins(0, 0, 0, dpToPx(8));
+        btnReplaceNonStriker.setLayoutParams(p2);
+        btnReplaceNonStriker.setOnClickListener(v -> {
+            d.dismiss();
+            matchData.resumeRetiredHurtBatsman(record, false);
+            nonStrikerName = matchData.nonStrikerName;
+            tvNonStrikerName.setText(nonStrikerName);
+            updateScoreboardDisplay();
+            Toast.makeText(this, record.batsmanName + " resumed at non-striker!", Toast.LENGTH_SHORT).show();
+        });
+        container.addView(btnReplaceNonStriker);
+
+        Button btnCancel = new Button(this);
+        btnCancel.setText("Cancel");
+        btnCancel.setTextColor(Color.parseColor("#64748B"));
+        btnCancel.setBackgroundColor(Color.TRANSPARENT);
+        btnCancel.setAllCaps(false);
+        btnCancel.setOnClickListener(v -> d.dismiss());
+        container.addView(btnCancel);
+
+        d.setContentView(container);
+        if (d.getWindow() != null) {
+            d.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            d.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.88), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        d.show();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // DLS METHOD (Duckworth–Lewis–Stern)
+    // ─────────────────────────────────────────────────────────────────────────
+    private void showDlsCalculatorDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dpToPx(20), dpToPx(24), dpToPx(20), dpToPx(20));
+
+        GradientDrawable bgShape = new GradientDrawable();
+        bgShape.setColor(Color.WHITE);
+        bgShape.setCornerRadius(dpToPx(20));
+        container.setBackground(bgShape);
+
+        TextView title = new TextView(this);
+        title.setText("🌧️ D/L Method (DLS Calculator)");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#1E293B"));
+        title.setPadding(0, 0, 0, dpToPx(10));
+        container.addView(title);
+
+        TextView sub = new TextView(this);
+        sub.setText("ICC Standard Duckworth-Lewis-Stern Revised Target Engine");
+        sub.setTextSize(12);
+        sub.setTextColor(Color.parseColor("#64748B"));
+        sub.setPadding(0, 0, 0, dpToPx(12));
+        container.addView(sub);
+
+        // Default values
+        int defaultSchedOvers = 20;
+        try { defaultSchedOvers = Integer.parseInt(matchData.totalOvers); } catch (Exception ignored) {}
+        int defaultT1Runs = matchData.isSecondInnings ? (matchData.targetRuns - 1) : matchData.totalRuns;
+        int defaultT1Wkts = matchData.isSecondInnings ? 10 : matchData.totalWickets;
+        int defaultT2Overs = defaultSchedOvers > 5 ? (defaultSchedOvers - 5) : defaultSchedOvers;
+
+        // Scheduled Overs
+        TextView tvSO = new TextView(this);
+        tvSO.setText("Original Scheduled Overs (e.g. 20, 50):");
+        tvSO.setTextSize(12);
+        tvSO.setTextColor(Color.GRAY);
+        container.addView(tvSO);
+        final EditText etSchedOvers = new EditText(this);
+        etSchedOvers.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etSchedOvers.setText(String.valueOf(defaultSchedOvers));
+        applyInputStyle(etSchedOvers);
+        container.addView(etSchedOvers);
+
+        // Team 1 Runs
+        TextView tvT1R = new TextView(this);
+        tvT1R.setText("Team 1 Total Runs Scored:");
+        tvT1R.setTextSize(12);
+        tvT1R.setTextColor(Color.GRAY);
+        container.addView(tvT1R);
+        final EditText etT1Runs = new EditText(this);
+        etT1Runs.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etT1Runs.setText(String.valueOf(defaultT1Runs));
+        applyInputStyle(etT1Runs);
+        container.addView(etT1Runs);
+
+        // Team 2 Revised Overs
+        TextView tvT2O = new TextView(this);
+        tvT2O.setText("Team 2 Revised Overs Available (after rain interruption):");
+        tvT2O.setTextSize(12);
+        tvT2O.setTextColor(Color.GRAY);
+        container.addView(tvT2O);
+        final EditText etT2Overs = new EditText(this);
+        etT2Overs.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etT2Overs.setText(String.valueOf(defaultT2Overs));
+        applyInputStyle(etT2Overs);
+        container.addView(etT2Overs);
+
+        // Calculation Output Card
+        final LinearLayout resultCard = new LinearLayout(this);
+        resultCard.setOrientation(LinearLayout.VERTICAL);
+        resultCard.setPadding(dpToPx(14), dpToPx(12), dpToPx(14), dpToPx(12));
+        GradientDrawable resBg = new GradientDrawable();
+        resBg.setColor(Color.parseColor("#EFF6FF"));
+        resBg.setStroke(dpToPx(1), Color.parseColor("#BFDBFE"));
+        resBg.setCornerRadius(dpToPx(12));
+        resultCard.setBackground(resBg);
+        LinearLayout.LayoutParams lpRes = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lpRes.setMargins(0, 0, 0, dpToPx(14));
+        resultCard.setLayoutParams(lpRes);
+
+        final TextView tvResultText = new TextView(this);
+        tvResultText.setText("Tap 'Calculate Revised Target' to compute.");
+        tvResultText.setTextSize(13);
+        tvResultText.setTextColor(Color.parseColor("#1D4ED8"));
+        resultCard.addView(tvResultText);
+        container.addView(resultCard);
+
+        final int[] computedTarget = {0};
+        final int[] computedOvers = {0};
+
+        // Calculate Button
+        Button btnCalc = new Button(this);
+        btnCalc.setText("Calculate Revised Target");
+        btnCalc.setTextColor(Color.WHITE);
+        btnCalc.setBackgroundColor(Color.parseColor("#2563EB"));
+        btnCalc.setAllCaps(false);
+        btnCalc.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams pCalc = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(44));
+        pCalc.setMargins(0, 0, 0, dpToPx(8));
+        btnCalc.setLayoutParams(pCalc);
+        btnCalc.setOnClickListener(v -> {
+            try {
+                int sO = Integer.parseInt(etSchedOvers.getText().toString().trim());
+                int t1R = Integer.parseInt(etT1Runs.getText().toString().trim());
+                int t2O = Integer.parseInt(etT2Overs.getText().toString().trim());
+
+                if (t2O > sO) {
+                    Toast.makeText(this, "Team 2 overs cannot exceed scheduled overs", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int target = DlsCalculator.calculateRevisedTarget(sO, t1R, defaultT1Wkts, t2O);
+                double r1 = DlsCalculator.calculateResource(sO, 0);
+                double r2 = DlsCalculator.calculateResource(t2O, 0);
+                double rrr = t2O > 0 ? (double) target / t2O : 0.0;
+
+                computedTarget[0] = target;
+                computedOvers[0] = t2O;
+
+                String out = "🎯 Revised Target: " + target + " runs in " + t2O + " overs\n" +
+                             "📊 Required Run Rate: " + String.format(java.util.Locale.US, "%.2f", rrr) + "\n" +
+                             "📈 Team 1 Resource: " + String.format(java.util.Locale.US, "%.1f", r1) + "% | Team 2 Resource: " + String.format(java.util.Locale.US, "%.1f", r2) + "%";
+                tvResultText.setText(out);
+            } catch (Exception e) {
+                Toast.makeText(this, "Please enter valid numeric inputs", Toast.LENGTH_SHORT).show();
+            }
+        });
+        container.addView(btnCalc);
+
+        // Apply Target Button
+        Button btnApply = new Button(this);
+        btnApply.setText("Apply DLS Target to Match");
+        btnApply.setTextColor(Color.WHITE);
+        btnApply.setBackgroundColor(Color.parseColor("#16A34A"));
+        btnApply.setAllCaps(false);
+        btnApply.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams pApply = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(44));
+        pApply.setMargins(0, 0, 0, dpToPx(8));
+        btnApply.setLayoutParams(pApply);
+        btnApply.setOnClickListener(v -> {
+            if (computedTarget[0] <= 0) {
+                Toast.makeText(this, "Please calculate the target first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            matchData.recordManualSwap(); // undo snapshot
+            matchData.isDlsApplied = true;
+            matchData.dlsTargetRuns = computedTarget[0];
+            matchData.dlsRevisedOvers = computedOvers[0];
+            matchData.targetRuns = computedTarget[0];
+            matchData.totalOvers = String.valueOf(computedOvers[0]);
+
+            updateScoreboardDisplay();
+            dialog.dismiss();
+            Toast.makeText(this, "DLS target applied: " + computedTarget[0] + " runs in " + computedOvers[0] + " overs", Toast.LENGTH_LONG).show();
+        });
+        container.addView(btnApply);
+
+        Button btnCancel = new Button(this);
+        btnCancel.setText("Cancel");
+        btnCancel.setTextColor(Color.parseColor("#64748B"));
+        btnCancel.setBackgroundColor(Color.TRANSPARENT);
+        btnCancel.setAllCaps(false);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        container.addView(btnCancel);
+
+        dialog.setContentView(container);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // FEATURE 7: DECLARE / END INNINGS
+    // ─────────────────────────────────────────────────────────────────────────
+    private void showDeclareInningsDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dpToPx(20), dpToPx(24), dpToPx(20), dpToPx(20));
+
+        GradientDrawable bgShape = new GradientDrawable();
+        bgShape.setColor(Color.WHITE);
+        bgShape.setCornerRadius(dpToPx(20));
+        container.setBackground(bgShape);
+
+        TextView title = new TextView(this);
+        title.setText("🚪 Declare / End Innings");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#1E293B"));
+        title.setPadding(0, 0, 0, dpToPx(10));
+        container.addView(title);
+
+        String curTeam = matchData.getBattingTeamName();
+        TextView msg = new TextView(this);
+        msg.setText("Current Innings: " + curTeam + " (" + (matchData.isTestMatch ? "Innings " + matchData.currentInnings : (matchData.isSecondInnings ? "2nd Inn" : "1st Inn")) + ")\nScore: " + matchData.totalRuns + "/" + matchData.totalWickets + " in " + matchData.getOversString() + " ov.\n\nAre you sure you want to declare and close this innings now?");
+        msg.setTextSize(13);
+        msg.setTextColor(Color.parseColor("#475569"));
+        msg.setPadding(0, 0, 0, dpToPx(16));
+        container.addView(msg);
+
+        Button btnDeclare = new Button(this);
+        btnDeclare.setText(matchData.isTestMatch ? "Declare Innings " + matchData.currentInnings : (matchData.isSecondInnings ? "Declare & End Match" : "Declare & Switch Innings"));
+        btnDeclare.setTextColor(Color.WHITE);
+        btnDeclare.setBackgroundColor(Color.parseColor("#DC2626"));
+        btnDeclare.setAllCaps(false);
+        btnDeclare.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(44));
+        p1.setMargins(0, 0, 0, dpToPx(8));
+        btnDeclare.setLayoutParams(p1);
+        btnDeclare.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (matchData.isTestMatch) {
+                matchData.recordManualSwap();
+                Toast.makeText(this, "Innings " + matchData.currentInnings + " declared closed!", Toast.LENGTH_SHORT).show();
+                handleTestInningsFinished();
+            } else if (!matchData.isSecondInnings) {
+                // End 1st innings
+                matchData.recordManualSwap();
+                showInningsBreakDialog();
+                Toast.makeText(this, "1st Innings declared closed!", Toast.LENGTH_SHORT).show();
+            } else {
+                // End 2nd innings / match
+                matchData.recordManualSwap();
+                if (matchData.totalRuns >= matchData.targetRuns) {
+                    int wicketsLeft = 10 - matchData.totalWickets;
+                    showMatchResultDialog(matchData.teamBattingSecond + " won by " + wicketsLeft + " wickets!");
+                } else if (matchData.totalRuns < matchData.targetRuns - 1) {
+                    int runsMargin = (matchData.targetRuns - 1) - matchData.totalRuns;
+                    showMatchResultDialog(matchData.teamBattingFirst + " won by " + runsMargin + " runs (by declaration)!");
+                } else {
+                    showMatchResultDialog("Match Tied!");
+                }
+                Toast.makeText(this, "Match completed by declaration!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        container.addView(btnDeclare);
+
+        Button btnCancel = new Button(this);
+        btnCancel.setText("Cancel");
+        btnCancel.setTextColor(Color.parseColor("#64748B"));
+        btnCancel.setBackgroundColor(Color.TRANSPARENT);
+        btnCancel.setAllCaps(false);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        container.addView(btnCancel);
+
+        dialog.setContentView(container);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // FEATURE 8: SUPER OVER MODE
+    // ─────────────────────────────────────────────────────────────────────────
+    private void showSuperOverDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dpToPx(20), dpToPx(24), dpToPx(20), dpToPx(20));
+
+        GradientDrawable bgShape = new GradientDrawable();
+        bgShape.setColor(Color.WHITE);
+        bgShape.setCornerRadius(dpToPx(20));
+        container.setBackground(bgShape);
+
+        TextView title = new TextView(this);
+        title.setText("⚡ Super Over Mode");
+        title.setTextSize(18);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextColor(Color.parseColor("#1E293B"));
+        title.setPadding(0, 0, 0, dpToPx(10));
+        container.addView(title);
+
+        TextView desc = new TextView(this);
+        desc.setText("ICC Standard Super Over Rules:\n• Exactly 1 Over (6 legal deliveries)\n• Maximum 2 wickets (innings ends at 2 wickets)\n• All-out at 2 wickets");
+        desc.setTextSize(12);
+        desc.setTextColor(Color.parseColor("#64748B"));
+        desc.setPadding(0, 0, 0, dpToPx(14));
+        container.addView(desc);
+
+        // Striker
+        TextView tvS = new TextView(this);
+        tvS.setText("Super Over Striker:");
+        tvS.setTextSize(12);
+        tvS.setTextColor(Color.GRAY);
+        container.addView(tvS);
+        final EditText etS = new EditText(this);
+        etS.setHint("Batsman 1");
+        etS.setText(strikerName != null ? strikerName : "");
+        applyInputStyle(etS);
+        container.addView(etS);
+
+        // Non-Striker
+        TextView tvNS = new TextView(this);
+        tvNS.setText("Super Over Non-Striker:");
+        tvNS.setTextSize(12);
+        tvNS.setTextColor(Color.GRAY);
+        container.addView(tvNS);
+        final EditText etNS = new EditText(this);
+        etNS.setHint("Batsman 2");
+        etNS.setText(nonStrikerName != null ? nonStrikerName : "");
+        applyInputStyle(etNS);
+        container.addView(etNS);
+
+        // Bowler
+        TextView tvB = new TextView(this);
+        tvB.setText("Super Over Bowler:");
+        tvB.setTextSize(12);
+        tvB.setTextColor(Color.GRAY);
+        container.addView(tvB);
+        final EditText etB = new EditText(this);
+        etB.setHint("Bowler Name");
+        etB.setText(matchData.currentBowlerName != null ? matchData.currentBowlerName : "");
+        applyInputStyle(etB);
+        container.addView(etB);
+
+        Button btnStartSO = new Button(this);
+        btnStartSO.setText("Start Super Over");
+        btnStartSO.setTextColor(Color.WHITE);
+        btnStartSO.setBackgroundColor(Color.parseColor("#D97706"));
+        btnStartSO.setAllCaps(false);
+        btnStartSO.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(44));
+        p1.setMargins(0, 0, 0, dpToPx(8));
+        btnStartSO.setLayoutParams(p1);
+        btnStartSO.setOnClickListener(v -> {
+            String s = etS.getText().toString().trim();
+            String ns = etNS.getText().toString().trim();
+            String b = etB.getText().toString().trim();
+
+            if (s.isEmpty() || ns.isEmpty() || b.isEmpty()) {
+                Toast.makeText(this, "Please enter all players for Super Over", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            matchData.recordManualSwap();
+            matchData.isSuperOver = true;
+            matchData.totalOvers = "1";
+            matchData.totalRuns = 0;
+            matchData.totalWickets = 0;
+            matchData.currentBalls = 0;
+            matchData.currentOvers = 0;
+            matchData.ballsBowled = 0;
+            matchData.currentOverBalls.clear();
+            matchData.ballHistory.clear();
+
+            strikerName = s;
+            matchData.strikerName = s;
+            matchData.resetStrikerStats();
+
+            nonStrikerName = ns;
+            matchData.nonStrikerName = ns;
+            matchData.resetNonStrikerStats();
+
+            matchData.currentBowlerName = b;
+            matchData.bowlerBallsBowled = 0;
+            matchData.bowlerRuns = 0;
+            matchData.bowlerWickets = 0;
+            matchData.currentBowlerMaidens = 0;
+
+            tvStrikerName.setText(s + " *");
+            tvNonStrikerName.setText(ns);
+            tvBowlerName.setText(b);
+
+            updateScoreboardDisplay();
+            dialog.dismiss();
+            Toast.makeText(this, "⚡ Super Over Started! 1 over, max 2 wickets.", Toast.LENGTH_LONG).show();
+        });
+        container.addView(btnStartSO);
+
+        Button btnCancel = new Button(this);
+        btnCancel.setText("Cancel");
+        btnCancel.setTextColor(Color.parseColor("#64748B"));
+        btnCancel.setBackgroundColor(Color.TRANSPARENT);
+        btnCancel.setAllCaps(false);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        container.addView(btnCancel);
+
+        dialog.setContentView(container);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout((int)(getResources().getDisplayMetrics().widthPixels * 0.90), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        dialog.show();
+    }
 }
+

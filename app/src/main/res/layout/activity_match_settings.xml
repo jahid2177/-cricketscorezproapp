@@ -335,27 +335,329 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textSize="13sp"
-                android:textColor="#334155"
-                android:text="Total Overs"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/etOvers"
+            <!-- Format Toggle Buttons -->
+            <LinearLayout
                 android:layout_height="48dp"
                 android:layout_width="match_parent"
-                android:background="@drawable/bg_input_modern"
-                android:hint="e.g. 20"
-                android:textColorHint="#94A3B8"
-                android:textSize="14sp"
-                android:textColor="#0F172A"
-                android:paddingHorizontal="14dp"
-                android:maxLines="1"
-                android:inputType="number" />
+                android:orientation="horizontal"
+                android:background="#F1F5F9"
+                android:padding="4dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/btnFormatLimited"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="⚡ Limited Overs"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_pill_format_active"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/btnFormatTest"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="🏏 Test Match"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#475569"
+                    android:background="@drawable/bg_pill_format_inactive"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- LIMITED OVERS CONFIG CONTAINER -->
+            <LinearLayout
+                android:id="@+id/layoutLimitedOversConfig"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="13sp"
+                    android:textColor="#334155"
+                    android:text="Total Overs per Innings"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etOvers"
+                    android:layout_height="48dp"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/bg_input_modern"
+                    android:hint="e.g. 20"
+                    android:textColorHint="#94A3B8"
+                    android:textSize="14sp"
+                    android:textColor="#0F172A"
+                    android:paddingHorizontal="14dp"
+                    android:maxLines="1"
+                    android:inputType="number" />
+
+                <!-- Quick Presets -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:id="@+id/chip5Overs"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="5 Ov"
+                        android:textSize="12sp"
+                        android:textColor="#059669"
+                        android:background="@drawable/bg_input_modern"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginEnd="4dp" />
+
+                    <TextView
+                        android:id="@+id/chip10Overs"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="10 Ov"
+                        android:textSize="12sp"
+                        android:textColor="#059669"
+                        android:background="@drawable/bg_input_modern"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginEnd="4dp" />
+
+                    <TextView
+                        android:id="@+id/chip20Overs"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="20 Ov"
+                        android:textSize="12sp"
+                        android:textColor="#059669"
+                        android:background="@drawable/bg_input_modern"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginEnd="4dp" />
+
+                    <TextView
+                        android:id="@+id/chip50Overs"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="50 Ov"
+                        android:textSize="12sp"
+                        android:textColor="#059669"
+                        android:background="@drawable/bg_input_modern"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- TEST MATCH CONFIG CONTAINER -->
+            <LinearLayout
+                android:id="@+id/layoutTestMatchConfig"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="#FEF2F2"
+                    android:padding="10dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TEST"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_test_match_badge"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="2dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4 Innings • Declaration • Follow-on Rule"
+                        android:textColor="#991B1B"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Number of Days -->
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="13sp"
+                    android:textColor="#334155"
+                    android:text="Match Duration (Days)"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rgTestDays"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_input_modern"
+                    android:paddingVertical="4dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp">
+
+                    <RadioButton
+                        android:id="@+id/rbTest5Days"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:checked="true"
+                        android:layout_weight="1"
+                        android:text="5 Days" />
+
+                    <RadioButton
+                        android:id="@+id/rbTest4Days"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:layout_weight="1"
+                        android:text="4 Days" />
+
+                    <RadioButton
+                        android:id="@+id/rbTest3Days"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:layout_weight="1"
+                        android:text="3 Days" />
+
+                </RadioGroup>
+
+                <!-- Overs Per Day -->
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="13sp"
+                    android:textColor="#334155"
+                    android:text="Overs Per Day"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rgTestOversPerDay"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_input_modern"
+                    android:paddingVertical="4dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp">
+
+                    <RadioButton
+                        android:id="@+id/rbTest90Overs"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:checked="true"
+                        android:layout_weight="1"
+                        android:text="90 Ov" />
+
+                    <RadioButton
+                        android:id="@+id/rbTest80Overs"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:layout_weight="1"
+                        android:text="80 Ov" />
+
+                    <RadioButton
+                        android:id="@+id/rbTestUnlimitedOvers"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:layout_weight="1"
+                        android:text="Unlimited" />
+
+                </RadioGroup>
+
+                <!-- Follow-on Margin -->
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="13sp"
+                    android:textColor="#334155"
+                    android:text="Follow-On Minimum Lead"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rgFollowOnMargin"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/bg_input_modern"
+                    android:paddingVertical="4dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp">
+
+                    <RadioButton
+                        android:id="@+id/rbFollowOn200"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:checked="true"
+                        android:layout_weight="1"
+                        android:text="200 Runs" />
+
+                    <RadioButton
+                        android:id="@+id/rbFollowOn150"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:layout_weight="1"
+                        android:text="150 Runs" />
+
+                    <RadioButton
+                        android:id="@+id/rbFollowOn100"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:textSize="12sp"
+                        android:textColor="#0F172A"
+                        android:layout_weight="1"
+                        android:text="100 Runs" />
+
+                </RadioGroup>
+
+            </LinearLayout>
 
         </LinearLayout>
 

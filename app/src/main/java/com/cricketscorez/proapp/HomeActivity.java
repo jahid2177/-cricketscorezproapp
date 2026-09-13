@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.cricketscorez.proapp.fcm.FcmScoreNotifier;
+import com.cricketscorez.proapp.room.LiveMatchProgressRepository;
 import java.util.ArrayList;
 
 public class HomeActivity extends Activity {
@@ -31,17 +32,32 @@ public class HomeActivity extends Activity {
     private SwipeRefreshLayout swipeRefreshHome;
     private ScrollView rootScrollView;
     private TextView tvAppTitle, tvGreeting, tvThemeIcon;
-    private View btnTheme, btnAbout, btnShare;
+    private View btnTheme, btnFavorites, btnHeaderSettings, btnAbout, btnShare;
 
-    // Main Menu Pill Buttons
-    private View btnStartNewMatch, btnTournament, btnTeams, btnHistory, btnMatchSetting;
-    private TextView tvTitleStartNewMatch, tvTitleTournament, tvTitleTeams, tvTitleHistory, tvTitleMatchSetting;
+    // Live Match in-progress card
+    private View cardLiveMatch;
+    private TextView tvLiveBadge, tvLiveTeams, tvLiveScore, tvLiveEquation, btnResumeLiveMatch;
+    private MatchData activeLiveMatchData = null;
 
-    // Recent Match card (Minimal / Discrete)
+    // Hero Action Card
+    private View btnStartNewMatch;
+    private TextView tvHeroTag, tvTitleStartNewMatch, tvSubStartNewMatch;
+
+    // Quick Action Chips
+    private View chipTournament, chipRankings, chipFixtures, chipFavorites, chipSettings;
+
+    // Bento Grid (2x2)
+    private View btnTournament, btnTeams, btnHistory, btnMatchSetting;
+    private TextView tvTitleTournament, tvTitleTeams, tvTitleHistory, tvTitleMatchSetting;
+    private TextView tvSubTournament, tvSubTeams, tvSubHistory, tvSubMatchSetting;
+
+    // Recent Match card
     private View cardRecentMatch, btnRecentShare;
-    private TextView tvRecentTeams, tvRecentScore, tvRecentResult;
-
+    private TextView tvRecentBadge, tvRecentTeams, tvRecentScore, tvRecentResult;
     private MatchData latestMatchData = null;
+
+    // Overview Stats
+    private TextView tvStatMatches, tvStatTeams, tvStatTournaments;
 
     // ─────────────────────────────────────────────────────────────────────────
     @Override
@@ -71,29 +87,61 @@ public class HomeActivity extends Activity {
         tvGreeting             = findViewById(R.id.tvGreeting);
         btnTheme               = findViewById(R.id.btnTheme);
         tvThemeIcon            = findViewById(R.id.tvThemeIcon);
+        btnFavorites           = findViewById(R.id.btnFavorites);
+        btnHeaderSettings      = findViewById(R.id.btnHeaderSettings);
         btnAbout               = findViewById(R.id.btnAbout);
         btnShare               = findViewById(R.id.btnShare);
 
-        btnStartNewMatch       = findViewById(R.id.btnStartNewMatch);
-        tvTitleStartNewMatch   = findViewById(R.id.tvTitleStartNewMatch);
+        // Live Match In-Progress
+        cardLiveMatch          = findViewById(R.id.cardLiveMatch);
+        tvLiveBadge            = findViewById(R.id.tvLiveBadge);
+        tvLiveTeams            = findViewById(R.id.tvLiveTeams);
+        tvLiveScore            = findViewById(R.id.tvLiveScore);
+        tvLiveEquation         = findViewById(R.id.tvLiveEquation);
+        btnResumeLiveMatch     = findViewById(R.id.btnResumeLiveMatch);
 
+        // Hero Card
+        btnStartNewMatch       = findViewById(R.id.btnStartNewMatch);
+        tvHeroTag              = findViewById(R.id.tvHeroTag);
+        tvTitleStartNewMatch   = findViewById(R.id.tvTitleStartNewMatch);
+        tvSubStartNewMatch     = findViewById(R.id.tvSubStartNewMatch);
+
+        // Quick Action Chips
+        chipTournament         = findViewById(R.id.chipTournament);
+        chipRankings           = findViewById(R.id.chipRankings);
+        chipFixtures           = findViewById(R.id.chipFixtures);
+        chipFavorites          = findViewById(R.id.chipFavorites);
+        chipSettings           = findViewById(R.id.chipSettings);
+
+        // Bento Grid
         btnTournament          = findViewById(R.id.btnTournament);
         tvTitleTournament      = findViewById(R.id.tvTitleTournament);
+        tvSubTournament        = findViewById(R.id.tvSubTournament);
 
         btnTeams               = findViewById(R.id.btnTeams);
         tvTitleTeams           = findViewById(R.id.tvTitleTeams);
+        tvSubTeams             = findViewById(R.id.tvSubTeams);
 
         btnHistory             = findViewById(R.id.btnHistory);
         tvTitleHistory         = findViewById(R.id.tvTitleHistory);
+        tvSubHistory           = findViewById(R.id.tvSubHistory);
 
         btnMatchSetting        = findViewById(R.id.btnMatchSetting);
         tvTitleMatchSetting    = findViewById(R.id.tvTitleMatchSetting);
+        tvSubMatchSetting      = findViewById(R.id.tvSubMatchSetting);
 
+        // Recent Match
         cardRecentMatch        = findViewById(R.id.cardRecentMatch);
+        tvRecentBadge          = findViewById(R.id.tvRecentBadge);
         btnRecentShare         = findViewById(R.id.btnRecentShare);
         tvRecentTeams          = findViewById(R.id.tvRecentTeams);
         tvRecentScore          = findViewById(R.id.tvRecentScore);
         tvRecentResult         = findViewById(R.id.tvRecentResult);
+
+        // Overview Stats
+        tvStatMatches          = findViewById(R.id.tvStatMatches);
+        tvStatTeams            = findViewById(R.id.tvStatTeams);
+        tvStatTournaments      = findViewById(R.id.tvStatTournaments);
     }
 
     private void setupSwipeRefresh() {
@@ -104,15 +152,13 @@ public class HomeActivity extends Activity {
                 Color.parseColor("#F59E0B")
         );
         swipeRefreshHome.setOnRefreshListener(() -> {
-            // Refresh scores and recent match data
-            loadRecentMatch();
-
+            loadDashboardData();
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (swipeRefreshHome != null) {
                     swipeRefreshHome.setRefreshing(false);
                 }
-                Toast.makeText(this, "⚡ Match scores and live updates refreshed", Toast.LENGTH_SHORT).show();
-            }, 800);
+                Toast.makeText(this, "⚡ Live scores and dashboard refreshed", Toast.LENGTH_SHORT).show();
+            }, 700);
         });
     }
 
@@ -123,40 +169,76 @@ public class HomeActivity extends Activity {
                 startActivity(new Intent(this, MatchSettingsActivity.class)));
         }
 
-        // 2. Tournament
+        // Live match resume
+        if (cardLiveMatch != null) {
+            cardLiveMatch.setOnClickListener(v -> resumeActiveLiveMatch());
+        }
+        if (btnResumeLiveMatch != null) {
+            btnResumeLiveMatch.setOnClickListener(v -> resumeActiveLiveMatch());
+        }
+
+        // 2. Bento Grid
         if (btnTournament != null) {
             btnTournament.setOnClickListener(v ->
                 startActivity(new Intent(this, TournamentMenuActivity.class)));
         }
 
-        // 3. Teams
         if (btnTeams != null) {
             btnTeams.setOnClickListener(v ->
                 startActivity(new Intent(this, TeamManagerActivity.class)));
         }
 
-        // 4. Match History
         if (btnHistory != null) {
             btnHistory.setOnClickListener(v ->
                 startActivity(new Intent(this, MatchHistoryActivity.class)));
         }
 
-        // 5. Match Setting (Opens App & Match Settings)
         if (btnMatchSetting != null) {
             btnMatchSetting.setOnClickListener(v ->
                 startActivity(new Intent(this, AppSettingsActivity.class)));
         }
 
-        // Top Utility Buttons
+        // 3. Quick Action Chips
+        if (chipTournament != null) {
+            chipTournament.setOnClickListener(v ->
+                startActivity(new Intent(this, TournamentMenuActivity.class)));
+        }
+        if (chipRankings != null) {
+            chipRankings.setOnClickListener(v ->
+                startActivity(new Intent(this, RankingActivity.class)));
+        }
+        if (chipFixtures != null) {
+            chipFixtures.setOnClickListener(v ->
+                startActivity(new Intent(this, FixturesActivity.class)));
+        }
+        if (chipFavorites != null) {
+            chipFavorites.setOnClickListener(v ->
+                startActivity(new Intent(this, FavoriteMatchesActivity.class)));
+        }
+        if (chipSettings != null) {
+            chipSettings.setOnClickListener(v ->
+                startActivity(new Intent(this, AppSettingsActivity.class)));
+        }
+
+        // 4. Header Utility Buttons
+        if (btnFavorites != null) {
+            btnFavorites.setOnClickListener(v ->
+                startActivity(new Intent(this, FavoriteMatchesActivity.class)));
+        }
+
         if (btnTheme != null) {
             btnTheme.setOnClickListener(v -> showThemeDialog());
+        }
+
+        if (btnHeaderSettings != null) {
+            btnHeaderSettings.setOnClickListener(v ->
+                startActivity(new Intent(this, AppSettingsActivity.class)));
         }
 
         if (btnAbout != null) {
             btnAbout.setOnClickListener(v -> showAboutDialog());
         }
 
-        // Top Share Button
         if (btnShare != null) {
             btnShare.setOnClickListener(v -> handleShareAction());
         }
@@ -181,13 +263,24 @@ public class HomeActivity extends Activity {
         }
     }
 
+    private void resumeActiveLiveMatch() {
+        if (activeLiveMatchData != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("IS_CONTINUED", true);
+            intent.putExtra("MATCH_DATA", activeLiveMatchData);
+            startActivity(intent);
+        } else {
+            startActivity(new Intent(this, MatchSettingsActivity.class));
+        }
+    }
+
     private void handleShareAction() {
         if (latestMatchData != null) {
             MatchShareManager.showShareDialog(this, latestMatchData);
             return;
         }
 
-        // Try getting latest from match history or active live match
+        // Try getting latest from match history
         ArrayList<MatchData> matches = DataManager.getAllMatches(this);
         if (matches != null && !matches.isEmpty()) {
             latestMatchData = matches.get(0);
@@ -196,7 +289,7 @@ public class HomeActivity extends Activity {
         }
 
         // Check if there is an active auto-saved match in Room
-        com.cricketscorez.proapp.room.LiveMatchProgressRepository.getLatestActiveMatch(this, new com.cricketscorez.proapp.room.LiveMatchProgressRepository.OnMatchLoadedCallback() {
+        LiveMatchProgressRepository.getLatestActiveMatch(this, new LiveMatchProgressRepository.OnMatchLoadedCallback() {
             @Override
             public void onLoaded(MatchData matchData) {
                 latestMatchData = matchData;
@@ -237,33 +330,47 @@ public class HomeActivity extends Activity {
 
         // Theme Icon
         if (tvThemeIcon != null) {
-            tvThemeIcon.setText(isDark ? "🌙" : "☀️");
+            tvThemeIcon.setText("");
         }
 
         // Utility Buttons
-        if (btnTheme != null) btnTheme.setBackground(ThemeManager.getPillMenuBackground(this));
-        if (btnAbout != null) btnAbout.setBackground(ThemeManager.getPillMenuBackground(this));
-        if (btnShare != null) btnShare.setBackground(ThemeManager.getPillMenuBackground(this));
-        if (btnRecentShare != null) btnRecentShare.setBackground(ThemeManager.getPillMenuBackground(this));
+        if (btnFavorites != null) btnFavorites.setBackground(ThemeManager.getHeaderButtonBackground(this));
+        if (btnTheme != null) btnTheme.setBackground(ThemeManager.getHeaderButtonBackground(this));
+        if (btnHeaderSettings != null) btnHeaderSettings.setBackground(ThemeManager.getHeaderButtonBackground(this));
+        if (btnAbout != null) btnAbout.setBackground(ThemeManager.getHeaderButtonBackground(this));
+        if (btnShare != null) btnShare.setBackground(ThemeManager.getHeaderButtonBackground(this));
+        if (btnRecentShare != null) btnRecentShare.setBackground(ThemeManager.getHeaderButtonBackground(this));
 
-        // Menu Pill Buttons Background & Text
-        if (btnStartNewMatch != null)   btnStartNewMatch.setBackground(ThemeManager.getPillMenuBackground(this));
-        if (btnTournament != null)      btnTournament.setBackground(ThemeManager.getPillMenuBackground(this));
-        if (btnTeams != null)           btnTeams.setBackground(ThemeManager.getPillMenuBackground(this));
-        if (btnHistory != null)         btnHistory.setBackground(ThemeManager.getPillMenuBackground(this));
-        if (btnMatchSetting != null)    btnMatchSetting.setBackground(ThemeManager.getPillMenuBackground(this));
+        // Menu Pill Buttons (As in clean, professional layout)
+        if (btnStartNewMatch != null) btnStartNewMatch.setBackground(ThemeManager.getPillMenuBackground(this));
+        if (btnTournament != null)   btnTournament.setBackground(ThemeManager.getPillMenuBackground(this));
+        if (btnTeams != null)        btnTeams.setBackground(ThemeManager.getPillMenuBackground(this));
+        if (btnHistory != null)      btnHistory.setBackground(ThemeManager.getPillMenuBackground(this));
+        if (btnMatchSetting != null) btnMatchSetting.setBackground(ThemeManager.getPillMenuBackground(this));
 
-        if (tvTitleStartNewMatch != null)   tvTitleStartNewMatch.setTextColor(primaryText);
-        if (tvTitleTournament != null)      tvTitleTournament.setTextColor(primaryText);
-        if (tvTitleTeams != null)           tvTitleTeams.setTextColor(primaryText);
-        if (tvTitleHistory != null)         tvTitleHistory.setTextColor(primaryText);
-        if (tvTitleMatchSetting != null)    tvTitleMatchSetting.setTextColor(primaryText);
+        if (tvTitleStartNewMatch != null) tvTitleStartNewMatch.setTextColor(primaryText);
+        if (tvTitleTournament != null)   tvTitleTournament.setTextColor(primaryText);
+        if (tvTitleTeams != null)        tvTitleTeams.setTextColor(primaryText);
+        if (tvTitleHistory != null)      tvTitleHistory.setTextColor(primaryText);
+        if (tvTitleMatchSetting != null) tvTitleMatchSetting.setTextColor(primaryText);
 
         // Recent Match
-        if (cardRecentMatch != null)  cardRecentMatch.setBackground(ThemeManager.getPillMenuBackground(this));
+        if (cardRecentMatch != null)  cardRecentMatch.setBackground(ThemeManager.getCardBackground(this, true));
+        if (tvRecentBadge != null)    tvRecentBadge.setTextColor(accent);
         if (tvRecentTeams != null)    tvRecentTeams.setTextColor(primaryText);
         if (tvRecentScore != null)    tvRecentScore.setTextColor(secondaryText);
         if (tvRecentResult != null)   tvRecentResult.setTextColor(accent);
+
+        // Live Match
+        if (cardLiveMatch != null) {
+            cardLiveMatch.setBackground(ThemeManager.getCardBackground(this, true));
+        }
+        if (tvLiveTeams != null) tvLiveTeams.setTextColor(primaryText);
+
+        // Overview stats text
+        if (tvStatMatches != null) tvStatMatches.setTextColor(primaryText);
+        if (tvStatTeams != null) tvStatTeams.setTextColor(primaryText);
+        if (tvStatTournaments != null) tvStatTournaments.setTextColor(primaryText);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -271,10 +378,56 @@ public class HomeActivity extends Activity {
     protected void onResume() {
         super.onResume();
         applyThemeToUI();
-        loadRecentMatch();
+        loadDashboardData();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    private void loadDashboardData() {
+        loadLiveMatchStatus();
+        loadRecentMatch();
+        loadOverviewStats();
+    }
+
+    private void loadLiveMatchStatus() {
+        LiveMatchProgressRepository.getLatestActiveMatch(this, new LiveMatchProgressRepository.OnMatchLoadedCallback() {
+            @Override
+            public void onLoaded(MatchData matchData) {
+                if (matchData != null && (matchData.matchStatus == null || !matchData.matchStatus.contains("won") && !matchData.matchStatus.contains("Tied") && !matchData.matchStatus.contains("Completed") && !matchData.matchStatus.contains("Drawn"))) {
+                    activeLiveMatchData = matchData;
+                    if (cardLiveMatch != null) cardLiveMatch.setVisibility(View.VISIBLE);
+
+                    if (tvLiveTeams != null) {
+                        String t1 = matchData.team1Name != null ? matchData.team1Name : "Team 1";
+                        String t2 = matchData.team2Name != null ? matchData.team2Name : "Team 2";
+                        tvLiveTeams.setText(t1 + " vs " + t2);
+                    }
+                    if (tvLiveScore != null) {
+                        tvLiveScore.setText(matchData.getBattingTeamName() + ": " + matchData.getScoreString() + " (" + matchData.getOversString() + " ov)");
+                    }
+                    if (tvLiveEquation != null) {
+                        if (matchData.isTestMatch) {
+                            tvLiveEquation.setText("Day " + matchData.currentDay + " • Session " + matchData.currentSession);
+                        } else if (matchData.isSecondInnings) {
+                            int req = matchData.targetRuns - matchData.totalRuns;
+                            tvLiveEquation.setText("Needs " + Math.max(0, req) + " runs");
+                        } else {
+                            tvLiveEquation.setText("1st Innings");
+                        }
+                    }
+                } else {
+                    activeLiveMatchData = null;
+                    if (cardLiveMatch != null) cardLiveMatch.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNotFound() {
+                activeLiveMatchData = null;
+                if (cardLiveMatch != null) cardLiveMatch.setVisibility(View.GONE);
+            }
+        });
+    }
+
     private void loadRecentMatch() {
         if (cardRecentMatch == null) return;
         try {
@@ -302,13 +455,32 @@ public class HomeActivity extends Activity {
                     if (latestMatchData.matchStatus != null && !latestMatchData.matchStatus.isEmpty()) {
                         tvRecentResult.setText(latestMatchData.matchStatus);
                     } else {
-                        tvRecentResult.setText("View ›");
+                        tvRecentResult.setText("View Scorecard ›");
                     }
                 }
             } else {
                 latestMatchData = null;
                 cardRecentMatch.setVisibility(View.GONE);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadOverviewStats() {
+        try {
+            ArrayList<MatchData> matches = DataManager.getAllMatches(this);
+            int matchCount = matches != null ? matches.size() : 0;
+            if (tvStatMatches != null) tvStatMatches.setText(String.valueOf(matchCount));
+
+            ArrayList<String> teams = DataManager.getAllTeams(this);
+            int teamCount = teams != null ? teams.size() : 0;
+            if (tvStatTeams != null) tvStatTeams.setText(String.valueOf(teamCount));
+
+            SharedPreferences tourneyPrefs = getSharedPreferences("TournamentData", MODE_PRIVATE);
+            String tourneyName = tourneyPrefs.getString("TOURNAMENT_NAME", "");
+            int tourneyCount = (tourneyName != null && !tourneyName.trim().isEmpty()) ? 1 : 0;
+            if (tvStatTournaments != null) tvStatTournaments.setText(String.valueOf(tourneyCount));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -387,8 +559,8 @@ public class HomeActivity extends Activity {
         String currentKey = ThemeManager.getSavedTheme(this);
 
         String[][] themeList = {
-            {ThemeManager.THEME_LIGHT,   "☀️", "Clean Light (Default)", "Crisp white & pastel sky"},
-            {ThemeManager.THEME_DARK,    "🌙", "Executive Dark",        "Slate & matte charcoal"},
+            {ThemeManager.THEME_LIGHT,   "⚪", "Clean Light (Default)", "Crisp white & pastel sky"},
+            {ThemeManager.THEME_DARK,    "⚫", "Executive Dark",        "Slate & matte charcoal"},
             {ThemeManager.THEME_EMERALD, "🌲", "Midnight Emerald",      "Deep stadium forest green"},
             {ThemeManager.THEME_NAVY,    "🌊", "Royal Navy",            "Executive deep ocean blue"},
             {ThemeManager.THEME_SYSTEM,  "📱", "System Default",        "Clean Light / OS Mode"}
@@ -615,6 +787,33 @@ public class HomeActivity extends Activity {
         hero.addView(tvCreator);
 
         root.addView(hero);
+
+        // Backup & Restore button
+        LinearLayout btnBackupRestore = new LinearLayout(this);
+        btnBackupRestore.setGravity(Gravity.CENTER);
+        btnBackupRestore.setPadding(0, dp(13), 0, dp(13));
+        btnBackupRestore.setClickable(true);
+        btnBackupRestore.setFocusable(true);
+        GradientDrawable brBg = new GradientDrawable();
+        brBg.setColor(isDark ? Color.parseColor("#152338") : Color.parseColor("#EFF6FF"));
+        brBg.setStroke(dp(1), isDark ? Color.parseColor("#2563EB") : Color.parseColor("#93C5FD"));
+        brBg.setCornerRadius(dp(14));
+        btnBackupRestore.setBackground(brBg);
+        LinearLayout.LayoutParams brLp = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        brLp.setMargins(dp(20), dp(14), dp(20), 0);
+        btnBackupRestore.setLayoutParams(brLp);
+        TextView tvBr = new TextView(this);
+        tvBr.setText("💾  Data Backup & Restore (JSON)");
+        tvBr.setTextSize(13);
+        tvBr.setTextColor(isDark ? Color.parseColor("#60A5FA") : Color.parseColor("#1D4ED8"));
+        tvBr.setTypeface(null, Typeface.BOLD);
+        btnBackupRestore.addView(tvBr);
+        btnBackupRestore.setOnClickListener(v -> {
+            dialog.dismiss();
+            startActivity(new Intent(this, AppSettingsActivity.class));
+        });
+        root.addView(btnBackupRestore);
 
         // Close button
         LinearLayout btnClose = new LinearLayout(this);

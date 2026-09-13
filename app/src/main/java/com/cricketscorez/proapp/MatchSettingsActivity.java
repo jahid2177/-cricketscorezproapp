@@ -12,23 +12,28 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MatchSettingsActivity extends Activity {
 
-    // ✅ FIX: btnBack সরানো হয়েছে, ivBack (ImageView) যোগ করা হয়েছে
     ImageView ivBack;
     Button    btnStartMatch;
     EditText  etTeam1, etTeam2, etOvers;
     RadioGroup rgTossDecision, rgTossWinner;
     RadioButton rbTeam1, rbTeam2;
 
+    // Test Match Controls
+    TextView btnFormatLimited, btnFormatTest;
+    View layoutLimitedOversConfig, layoutTestMatchConfig;
+    RadioGroup rgTestDays, rgTestOversPerDay, rgFollowOnMargin;
+    boolean isTestMatchMode = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_settings);
 
-        // ✅ FIX: header-এর ivBack ImageView bind করা হয়েছে
         ivBack        = (ImageView)   findViewById(R.id.ivBack);
         btnStartMatch = (Button)      findViewById(R.id.btnStartMatch);
         etTeam1       = (EditText)    findViewById(R.id.etTeam1);
@@ -38,6 +43,47 @@ public class MatchSettingsActivity extends Activity {
         rgTossWinner   = (RadioGroup) findViewById(R.id.rgTossWinner);
         rbTeam1        = (RadioButton) findViewById(R.id.rbTeam1);
         rbTeam2        = (RadioButton) findViewById(R.id.rbTeam2);
+
+        // Format Toggles
+        btnFormatLimited = findViewById(R.id.btnFormatLimited);
+        btnFormatTest = findViewById(R.id.btnFormatTest);
+        layoutLimitedOversConfig = findViewById(R.id.layoutLimitedOversConfig);
+        layoutTestMatchConfig = findViewById(R.id.layoutTestMatchConfig);
+        rgTestDays = findViewById(R.id.rgTestDays);
+        rgTestOversPerDay = findViewById(R.id.rgTestOversPerDay);
+        rgFollowOnMargin = findViewById(R.id.rgFollowOnMargin);
+
+        if (btnFormatLimited != null && btnFormatTest != null) {
+            btnFormatLimited.setOnClickListener(v -> {
+                isTestMatchMode = false;
+                btnFormatLimited.setBackgroundResource(R.drawable.bg_pill_format_active);
+                btnFormatLimited.setTextColor(android.graphics.Color.WHITE);
+                btnFormatTest.setBackgroundResource(R.drawable.bg_pill_format_inactive);
+                btnFormatTest.setTextColor(android.graphics.Color.parseColor("#475569"));
+                layoutLimitedOversConfig.setVisibility(View.VISIBLE);
+                layoutTestMatchConfig.setVisibility(View.GONE);
+            });
+
+            btnFormatTest.setOnClickListener(v -> {
+                isTestMatchMode = true;
+                btnFormatTest.setBackgroundResource(R.drawable.bg_pill_format_active);
+                btnFormatTest.setTextColor(android.graphics.Color.WHITE);
+                btnFormatLimited.setBackgroundResource(R.drawable.bg_pill_format_inactive);
+                btnFormatLimited.setTextColor(android.graphics.Color.parseColor("#475569"));
+                layoutLimitedOversConfig.setVisibility(View.GONE);
+                layoutTestMatchConfig.setVisibility(View.VISIBLE);
+            });
+        }
+
+        // Quick Preset Chips for Limited Overs
+        View c5 = findViewById(R.id.chip5Overs);
+        View c10 = findViewById(R.id.chip10Overs);
+        View c20 = findViewById(R.id.chip20Overs);
+        View c50 = findViewById(R.id.chip50Overs);
+        if (c5 != null) c5.setOnClickListener(v -> etOvers.setText("5"));
+        if (c10 != null) c10.setOnClickListener(v -> etOvers.setText("10"));
+        if (c20 != null) c20.setOnClickListener(v -> etOvers.setText("20"));
+        if (c50 != null) c50.setOnClickListener(v -> etOvers.setText("50"));
 
         // AppSettingsActivity-তে সেভ করা Default Overs লোড
         SharedPreferences appPrefs = getSharedPreferences("AppSettings", MODE_PRIVATE);
@@ -95,9 +141,39 @@ public class MatchSettingsActivity extends Activity {
                 String t2    = etTeam2.getText().toString().trim();
                 String overs = etOvers.getText().toString().trim();
 
-                if (t1.isEmpty() || t2.isEmpty() || overs.isEmpty()) {
+                int testDays = 5;
+                int oversPerDay = 90;
+                int followOn = 200;
+
+                if (isTestMatchMode) {
+                    if (rgTestDays != null) {
+                        int checkedDayId = rgTestDays.getCheckedRadioButtonId();
+                        if (checkedDayId == R.id.rbTest4Days) testDays = 4;
+                        else if (checkedDayId == R.id.rbTest3Days) testDays = 3;
+                    }
+                    if (rgTestOversPerDay != null) {
+                        int checkedOpdId = rgTestOversPerDay.getCheckedRadioButtonId();
+                        if (checkedOpdId == R.id.rbTest80Overs) oversPerDay = 80;
+                        else if (checkedOpdId == R.id.rbTestUnlimitedOvers) oversPerDay = 999;
+                    }
+                    if (rgFollowOnMargin != null) {
+                        int checkedFoId = rgFollowOnMargin.getCheckedRadioButtonId();
+                        if (checkedFoId == R.id.rbFollowOn150) followOn = 150;
+                        else if (checkedFoId == R.id.rbFollowOn100) followOn = 100;
+                    }
+                    // For test matches, each innings has no hard overs cap (or test days * opd)
+                    overs = String.valueOf(testDays * oversPerDay);
+                } else {
+                    if (overs.isEmpty()) {
+                        Toast.makeText(MatchSettingsActivity.this,
+                                "Please enter Overs per innings", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                if (t1.isEmpty() || t2.isEmpty()) {
                     Toast.makeText(MatchSettingsActivity.this,
-                            "Please enter Teams and Overs", Toast.LENGTH_SHORT).show();
+                            "Please enter Team names", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -136,6 +212,12 @@ public class MatchSettingsActivity extends Activity {
                 intent.putExtra("TOSS_WINNER",   tossWinner);
                 intent.putExtra("TOSS_DECISION", tossDecision);
                 intent.putExtra("TOSS_INFO",     tossInfo);
+
+                intent.putExtra("IS_TEST_MATCH", isTestMatchMode);
+                intent.putExtra("TEST_DAYS", testDays);
+                intent.putExtra("TEST_OVERS_PER_DAY", oversPerDay);
+                intent.putExtra("TEST_FOLLOW_ON_MARGIN", followOn);
+
                 startActivity(intent);
             }
         });

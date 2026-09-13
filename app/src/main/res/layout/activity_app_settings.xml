@@ -1,264 +1,475 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- activity_app_settings.xml — Clean Modern Executive Settings matching user photo palette -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    android:fillViewport="true">
+    android:background="#FFFFFF"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="0dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="40dp">
 
-        <!-- ===== HEADER ===== -->
+        <!-- ╔══════════════════════════════════════════════════╗ -->
+        <!-- ║  1. TOP APP BAR (CLEAN WHITE + BACK + TITLE)     ║ -->
+        <!-- ╚══════════════════════════════════════════════════╝ -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#1B5E20"
+            android:layout_height="52dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="12dp"
-            android:paddingEnd="16dp">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:background="@android:color/transparent"
-                android:text="←"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
-                android:padding="0dp" />
+                android:text="‹"
+                android:textColor="#111827"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:padding="0dp"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Settings"
+                android:textColor="#111827"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- ╔══════════════════════════════════════════════════╗ -->
+        <!-- ║  2. ACTION REQUIRED NOTIFICATION BANNER CARD     ║ -->
+        <!-- ╚══════════════════════════════════════════════════╝ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_alert_card_red"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="16dp">
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/bg_dot_red"
+                android:layout_marginEnd="10dp" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="⚙️  App Settings"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <!-- Spacer to balance back button -->
-            <View
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
+                android:text="Action Recommended: Export and backup match history periodically to prevent data loss."
+                android:textColor="#DC2626"
+                android:textSize="12.5sp"
+                android:lineSpacingExtra="2dp" />
         </LinearLayout>
 
-        <!-- ===== MATCH DEFAULTS CARD ===== -->
-        <androidx.cardview.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        <!-- ╔══════════════════════════════════════════════════╗ -->
+        <!-- ║  4. SECTION: MATCH & DISPLAY PREFERENCES         ║ -->
+        <!-- ╚══════════════════════════════════════════════════╝ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MATCH &amp; DISPLAY PREFERENCES"
+            android:textColor="#6B7280"
+            android:textSize="11.5sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="10dp" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            card_view:cardCornerRadius="10dp"
-            card_view:cardElevation="3dp">
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_clean_row"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:layout_marginBottom="22dp">
 
+            <!-- Default Overs -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:gravity="center_vertical"
+                android:paddingVertical="10dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="🏏  Match Defaults"
-                    android:textColor="#1B5E20"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="12dp" />
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_squircle_blue">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_clean_cricket"
+                        android:contentDescription="Overs" />
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Default Overs Per Innings"
-                    android:textColor="#555555"
-                    android:textSize="13sp"
-                    android:paddingBottom="6dp" />
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default Overs Per Innings"
+                        android:textColor="#111827"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Standard overs count for quick start"
+                        android:textColor="#6B7280"
+                        android:textSize="11.5sp" />
+                </LinearLayout>
 
                 <EditText
                     android:id="@+id/etDefaultOvers"
-                    android:layout_width="120dp"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_input"
+                    android:layout_width="60dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/bg_input_modern"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLength="2"
-                    android:padding="8dp"
-                    android:textColor="#212121"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- ===== DISPLAY OPTIONS CARD ===== -->
-        <androidx.cardview.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="12dp"
-            card_view:cardCornerRadius="10dp"
-            card_view:cardElevation="3dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="📱  Display Options"
-                    android:textColor="#1B5E20"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="12dp" />
-
-                <!-- Sound Effects -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="🔊  Sound Effects"
-                        android:textColor="#333333"
-                        android:textSize="15sp" />
-
-                    <Switch
-                        android:id="@+id/swSoundEffects"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:thumbTint="@color/switch_thumb_color"
-                        android:trackTint="@color/switch_track_color" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="#EEEEEE" android:layout_marginVertical="2dp"/>
-
-                <!-- Keep Screen On -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="💡  Keep Screen On"
-                        android:textColor="#333333"
-                        android:textSize="15sp" />
-
-                    <Switch
-                        android:id="@+id/swKeepScreenOn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:thumbTint="@color/switch_thumb_color"
-                        android:trackTint="@color/switch_track_color" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="#EEEEEE" android:layout_marginVertical="2dp"/>
-
-                <!-- Show Run Rate -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="📊  Show Run Rate"
-                        android:textColor="#333333"
-                        android:textSize="15sp" />
-
-                    <Switch
-                        android:id="@+id/swShowRunRate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:thumbTint="@color/switch_thumb_color"
-                        android:trackTint="@color/switch_track_color" />
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- ===== DATA MANAGEMENT CARD ===== -->
-        <androidx.cardview.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="12dp"
-            card_view:cardCornerRadius="10dp"
-            card_view:cardElevation="3dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="🗑️  Data Management"
-                    android:textColor="#1B5E20"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="12dp" />
-
-                <Button
-                    android:id="@+id/btnClearHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:background="#FFEBEE"
-                    android:text="Clear Match History"
-                    android:textColor="#C62828"
-                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:textColor="#111827"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- ===== SAVE BUTTON ===== -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F1F5F9" />
+
+            <!-- Sound Effects -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_squircle_mint">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔊"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sound Effects"
+                        android:textColor="#111827"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Audio feedback on ball &amp; boundary"
+                        android:textColor="#6B7280"
+                        android:textSize="11.5sp" />
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/swSoundEffects"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumbTint="@color/switch_thumb_color"
+                    android:trackTint="@color/switch_track_color" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F1F5F9" />
+
+            <!-- Keep Screen On -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_squircle_amber">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💡"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Keep Screen On"
+                        android:textColor="#111827"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Prevent screen sleep during live match"
+                        android:textColor="#6B7280"
+                        android:textSize="11.5sp" />
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/swKeepScreenOn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumbTint="@color/switch_thumb_color"
+                    android:trackTint="@color/switch_track_color" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F1F5F9" />
+
+            <!-- Show Run Rate -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_squircle_teal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📊"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Show Run Rate (CRR &amp; RRR)"
+                        android:textColor="#111827"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Live run rate statistics on scoreboard"
+                        android:textColor="#6B7280"
+                        android:textSize="11.5sp" />
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/swShowRunRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumbTint="@color/switch_thumb_color"
+                    android:trackTint="@color/switch_track_color" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ╔══════════════════════════════════════════════════╗ -->
+        <!-- ║  5. SECTION: DATA BACKUP & CLOUD SYNC            ║ -->
+        <!-- ╚══════════════════════════════════════════════════╝ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DATA BACKUP &amp; CLOUD SYNC"
+            android:textColor="#6B7280"
+            android:textSize="11.5sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_clean_row"
+            android:padding="16dp"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Export or restore match records, teams, tournaments, and configurations as JSON backup files."
+                android:textColor="#6B7280"
+                android:textSize="12.5sp"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginBottom="14dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnExportJson"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_btn_primary_emerald"
+                    android:text="Export JSON"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/btnImportJson"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_btn_pill_outline"
+                    android:text="Import JSON"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnShareBackup"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_btn_pill_outline"
+                android:text="Share Backup File"
+                android:textColor="#059669"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnGoogleDriveBackup"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_btn_pill_outline"
+                android:text="Sync to Google Drive"
+                android:textColor="#2563EB"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <!-- ╔══════════════════════════════════════════════════╗ -->
+        <!-- ║  6. SECTION: STORAGE & RESET                     ║ -->
+        <!-- ╚══════════════════════════════════════════════════╝ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MANAGEMENT &amp; STORAGE"
+            android:textColor="#6B7280"
+            android:textSize="11.5sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_clean_row"
+            android:padding="16dp"
+            android:layout_marginBottom="22dp">
+
+            <Button
+                android:id="@+id/btnClearHistory"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_btn_red_soft"
+                android:text="Clear Match History"
+                android:textColor="#DC2626"
+                android:textSize="13.5sp"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <!-- ╔══════════════════════════════════════════════════╗ -->
+        <!-- ║  7. SAVE SETTINGS CTA BUTTON                     ║ -->
+        <!-- ╚══════════════════════════════════════════════════╝ -->
         <Button
             android:id="@+id/btnSaveSettings"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="8dp"
-            android:background="#2E7D32"
-            android:text="✅  Save Settings"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_primary_emerald"
+            android:text="Save Settings"
             android:textColor="#FFFFFF"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp" />
 
-        <!-- ===== VERSION TEXT ===== -->
+        <!-- ╔══════════════════════════════════════════════════╗ -->
+        <!-- ║  8. VERSION & BRAND FOOTER                       ║ -->
+        <!-- ╚══════════════════════════════════════════════════╝ -->
         <TextView
             android:id="@+id/tvVersion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingBottom="20dp"
-            android:paddingTop="4dp"
-            android:text="Version 1.0"
-            android:textColor="#AAAAAA"
-            android:textSize="12sp" />
+            android:text="CricketScorez Pro v1.2.0 • Build 2026.1"
+            android:textColor="#9CA3AF"
+            android:textSize="12sp"
+            android:layout_marginBottom="20dp" />
 
     </LinearLayout>
 </ScrollView>

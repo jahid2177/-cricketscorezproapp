@@ -113,6 +113,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.delete(TABLE_PLAYERS, COL_PLAYER_ID + "=?", new String[]{String.valueOf(id)}) != -1;
     }
 
+    // সব প্লেয়ারের তালিকা পাওয়া (Backup / Export এর জন্য)
+    public ArrayList<String[]> getAllPlayers() {
+        ArrayList<String[]> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + COL_PLAYER_ID + ", " + COL_PLAYER_NAME + ", " + COL_PLAYER_ROLE + ", " + COL_TEAM_REF + " FROM " + TABLE_PLAYERS, null);
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(new String[]{
+                    String.valueOf(cursor.getInt(0)),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3)
+                });
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public boolean hasTeam(String teamName) {
+        if (teamName == null) return false;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_TEAMS + " WHERE " + COL_TEAM_NAME + "=? LIMIT 1", new String[]{teamName});
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        return exists;
+    }
+
+    public void clearAllTeamsAndPlayers() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            db.execSQL("DELETE FROM " + TABLE_PLAYERS);
+            db.execSQL("DELETE FROM " + TABLE_TEAMS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // --- MATCH HISTORY METHODS ---
 
     // ম্যাচ হিস্ট্রি ক্লিয়ার করার মেথড (এই মেথডটি মিসিং ছিল)

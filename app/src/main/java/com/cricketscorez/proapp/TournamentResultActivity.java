@@ -123,6 +123,7 @@ public class TournamentResultActivity extends Activity {
             LinearLayout card = new LinearLayout(this);
             card.setOrientation(LinearLayout.VERTICAL);
             card.setTag(matchId); // Important for saving
+            card.setContentDescription(t1 + "|||" + t2); // Preserve team names for saving & sync
             LinearLayout.LayoutParams cardLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             cardLp.setMargins(dp(16), 0, dp(16), dp(16));
             card.setLayoutParams(cardLp);
@@ -224,8 +225,20 @@ public class TournamentResultActivity extends Activity {
             btnScoreboard.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(44)));
             
             btnScoreboard.setOnClickListener(v -> {
+                MatchData md = findMatchDataForTournament(matchId, t1, t2);
+                if (md == null && savedResults != null && savedResults.has(matchId)) {
+                    try {
+                        JSONObject res = savedResults.getJSONObject(matchId);
+                        md = buildFallbackMatchData(matchId, t1, t2, res);
+                    } catch (Exception ignored) {}
+                }
                 Intent intent = new Intent(TournamentResultActivity.this, ScorecardActivity.class);
                 intent.putExtra("MATCH_ID", matchId);
+                intent.putExtra("TEAM_1", t1);
+                intent.putExtra("TEAM_2", t2);
+                if (md != null) {
+                    intent.putExtra("MATCH_DATA", md);
+                }
                 startActivity(intent);
             });
             card.addView(btnScoreboard);
@@ -241,6 +254,77 @@ public class TournamentResultActivity extends Activity {
 
             resultsContainer.addView(card);
         }
+    }
+
+    private MatchData findMatchDataForTournament(String matchId, String t1, String t2) {
+        ArrayList<MatchData> all = DataManager.getAllMatches(this);
+        if (all == null || all.isEmpty()) return null;
+        // Priority 1: Match by tournamentMatchId
+        if (matchId != null && !matchId.isEmpty()) {
+            for (MatchData md : all) {
+                if (md != null && matchId.equals(md.tournamentMatchId)) {
+                    return md;
+                }
+            }
+        }
+        // Priority 2: Match by matchId
+        if (matchId != null && !matchId.isEmpty()) {
+            for (MatchData md : all) {
+                if (md != null && matchId.equals(md.matchId)) {
+                    return md;
+                }
+            }
+        }
+        // Priority 3: Match by team names (most recent completed match between these two teams)
+        if (t1 != null && t2 != null) {
+            for (int i = all.size() - 1; i >= 0; i--) {
+                MatchData md = all.get(i);
+                if (md != null) {
+                    boolean direct = t1.equalsIgnoreCase(md.team1Name) && t2.equalsIgnoreCase(md.team2Name);
+                    boolean reverse = t1.equalsIgnoreCase(md.team2Name) && t2.equalsIgnoreCase(md.team1Name);
+                    if (direct || reverse) {
+                        return md;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private MatchData buildFallbackMatchData(String matchId, String t1, String t2, JSONObject res) {
+        MatchData md = new MatchData(t1, t2, "20");
+        md.matchId = matchId;
+        md.tournamentMatchId = matchId;
+        md.team1Name = t1;
+        md.team2Name = t2;
+        md.teamBattingFirst = t1;
+        md.teamBattingSecond = t2;
+        md.tossMessage = t1 + " vs " + t2;
+
+        String s1 = res != null ? res.optString("s1", "") : "";
+        String s2 = res != null ? res.optString("s2", "") : "";
+        String txt = res != null ? res.optString("txt", "") : "";
+
+        md.scoreInn1 = s1;
+        md.oversInn1 = "";
+        md.matchStatus = !txt.isEmpty() ? txt : "Completed";
+        md.matchResult = md.matchStatus;
+        md.isSecondInnings = true;
+
+        if (!s2.isEmpty()) {
+            if (s2.contains("/")) {
+                String[] parts = s2.split("/");
+                try {
+                    md.totalRuns = Integer.parseInt(parts[0].trim());
+                    md.totalWickets = Integer.parseInt(parts[1].trim());
+                } catch (Exception ignored) {}
+            } else {
+                try {
+                    md.totalRuns = Integer.parseInt(s2.trim());
+                } catch (Exception ignored) {}
+            }
+        }
+        return md;
     }
 
     private EditText createModernInput(String hint) {
@@ -343,6 +427,9 @@ public class TournamentResultActivity extends Activity {
     private void saveResultsAndAutomateKnockouts() {
         try {
             JSONObject resultObj = new JSONObject();
+            String tournId = tournamentPrefs.getString("SUPABASE_TOURNAMENT_ID", "");
+            if (tournId.isEmpty()) tournId = FirebaseSync.slug(tournamentName);
+
             for (int i = 0; i < resultsContainer.getChildCount(); i++) {
                 View child = resultsContainer.getChildAt(i);
                 if (child.getTag() == null) continue;
@@ -354,18 +441,43 @@ public class TournamentResultActivity extends Activity {
                 EditText etRes = child.findViewWithTag("etRes");
                 
                 if (etS1 == null) continue;
+
+                String s1 = etS1.getText().toString().trim();
+                String s2 = etS2 != null ? etS2.getText().toString().trim() : "";
+                String txt = etRes != null ? etRes.getText().toString().trim() : "";
+
+                // Retrieve team names stored on the card
+                String t1 = "Team 1";
+                String t2 = "Team 2";
+                if (child.getContentDescription() != null) {
+                    String desc = child.getContentDescription().toString();
+                    if (desc.contains("|||")) {
+                        String[] parts = desc.split("\\|\\|\\|");
+                        if (parts.length > 0 && !parts[0].trim().isEmpty()) t1 = parts[0].trim();
+                        if (parts.length > 1 && !parts[1].trim().isEmpty()) t2 = parts[1].trim();
+                    }
+                }
                 
-                if (!etS1.getText().toString().isEmpty() || !etS2.getText().toString().isEmpty()) {
+                if (!s1.isEmpty() || !s2.isEmpty()) {
                     JSONObject d = new JSONObject();
-                    d.put("s1",  etS1.getText().toString());
-                    d.put("s2",  etS2.getText().toString());
-                    d.put("txt", etRes.getText().toString());
+                    d.put("s1",  s1);
+                    d.put("s2",  s2);
+                    d.put("txt", txt);
+                    d.put("team1", t1);
+                    d.put("team2", t2);
+                    d.put("team_a", t1);
+                    d.put("team_b", t2);
                     resultObj.put(matchId, d);
+
+                    // Sync to Firebase so Viewer Mode immediately displays the result with accurate team names
+                    if (!tournId.isEmpty()) {
+                        FirebaseSync.saveTournamentResult(tournId, matchId, t1, t2, s1, s2, txt);
+                    }
                 }
             }
             resultPrefs.edit().putString("RESULT_DATA", resultObj.toString()).apply();
             automateKnockouts(resultObj);
-            Toast.makeText(this, "✅ Results Saved & Fixtures Updated!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "✅ Results Saved & Synced to Firebase!", Toast.LENGTH_SHORT).show();
             loadAllMatchesForResults();
         } catch (Exception e) {
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();

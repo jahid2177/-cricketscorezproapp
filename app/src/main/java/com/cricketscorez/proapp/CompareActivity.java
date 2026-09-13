@@ -34,6 +34,7 @@ import java.util.ArrayList;
         LinearLayout btnBarChart = findViewById(R.id.btnBarChart);
         LinearLayout btnWormGraph = findViewById(R.id.btnWormGraph);
         LinearLayout btnBreakdown = findViewById(R.id.btnScoringBreakdown);
+        LinearLayout btnPartnership = findViewById(R.id.btnPartnershipGraph);
 
         Intent intent = getIntent();
 
@@ -108,6 +109,20 @@ import java.util.ArrayList;
 		openActivity(ScoringBreakdownActivity.class);
 		}
         });
+
+        // 🤝 ৫. Partnership Graph
+        if (btnPartnership != null) {
+            btnPartnership.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(CompareActivity.this, PartnershipGraphActivity.class);
+                    i.putExtra("TEAM_1", team1);
+                    i.putExtra("TEAM_2", team2);
+                    i.putExtra("MATCH_DATA", getIntent().getSerializableExtra("MATCH_DATA"));
+                    startActivity(i);
+                }
+            });
+        }
 		}
 
 		// 🔥 নতুন ফিচার: ডাটা ভ্যালিডেশন (ম্যাচ শুরু না হলে গ্রাফ ওপেন হবে না)
@@ -127,6 +142,7 @@ import java.util.ArrayList;
         i.putExtra("TEAM_1", team1);
         i.putExtra("TEAM_2", team2);
         i.putExtra("TOTAL_OVERS", totalOvers);
+        i.putExtra("MATCH_DATA", getIntent().getSerializableExtra("MATCH_DATA"));
 
         // রান এবং উইকেট ডাটা (একই Key ব্যবহার করা হয়েছে যা গ্রাফ ফাইলে রিসিভ করা হবে)
         i.putIntegerArrayListExtra("INN1_DATA", inn1Data);

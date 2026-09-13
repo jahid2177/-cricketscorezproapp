@@ -35,7 +35,7 @@ public class LoginActivity extends Activity {
     private ImageView  btnEyeToggle;
     private CheckBox   cbRememberMe;
     private TextView   tvForgotPassword;
-    private FrameLayout btnSignIn, btnGuest, btnViewer;
+    private FrameLayout btnSignIn, btnViewer;
 
     private FirebaseAuth     mAuth;
     private ProgressDialog   progressDialog;
@@ -78,7 +78,6 @@ public class LoginActivity extends Activity {
         cbRememberMe     = findViewById(R.id.cbRememberMe);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
         btnSignIn        = findViewById(R.id.btnSignIn);
-        btnGuest         = findViewById(R.id.btnGuest);
         btnViewer        = findViewById(R.id.btnViewer);
 
         if (tvForgotPassword != null) {
@@ -156,18 +155,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        // 3. Guest / Offline Mode
-        if (btnGuest != null) {
-            btnGuest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(LoginActivity.this, "Welcome! Entering Offline Mode", Toast.LENGTH_SHORT).show();
-                    goToHome();
-                }
-            });
-        }
-
-        // 4. Viewer Mode (Fans / Spectators)
+        // 3. Viewer Mode (Fans / Spectators)
         if (btnViewer != null) {
             btnViewer.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -71,6 +71,7 @@ public class ChooseBowlerActivity extends Activity {
 
         boolean isBatsman = getIntent().getBooleanExtra("IS_BATSMAN_OUT", false);
         final ArrayList<String> suggestions = getIntent().getStringArrayListExtra("SUGGESTIONS");
+        final String lastOverBowler = getIntent().getStringExtra("LAST_OVER_BOWLER");
 
         if (isBatsman) {
             tvTitle.setText("Select New Batsman");
@@ -87,20 +88,31 @@ public class ChooseBowlerActivity extends Activity {
                 tvSuggestionLabel.setVisibility(View.VISIBLE);
                 listSuggestions.setVisibility(View.VISIBLE);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, suggestions);
+                // Highlight/tag the bowler who bowled the last over
+                ArrayList<String> displayList = new ArrayList<>();
+                for (String b : suggestions) {
+                    String baseName = b.contains("(") ? b.substring(0, b.indexOf("(")).trim() : b.trim();
+                    if (lastOverBowler != null && baseName.equalsIgnoreCase(lastOverBowler.trim())) {
+                        displayList.add(b + "  ⚠️ (Bowled Last Over)");
+                    } else {
+                        displayList.add(b);
+                    }
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, displayList);
                 listSuggestions.setAdapter(adapter);
 
                 listSuggestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							String selected = suggestions.get(position);
-							if (selected.contains("(")) {
-								selected = selected.substring(0, selected.indexOf("(")).trim();
-							}
-							etName.setText(selected);
-							etName.setSelection(etName.getText().length());
-						}
-					});
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String selected = displayList.get(position);
+                        if (selected.contains("(")) {
+                            selected = selected.substring(0, selected.indexOf("(")).trim();
+                        }
+                        etName.setText(selected);
+                        etName.setSelection(etName.getText().length());
+                    }
+                });
             } else {
                 tvSuggestionLabel.setVisibility(View.GONE);
                 listSuggestions.setVisibility(View.GONE);
@@ -108,19 +120,42 @@ public class ChooseBowlerActivity extends Activity {
         }
 
         btnDone.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					String name = etName.getText().toString().trim();
-					if (!name.isEmpty()) {
-						Intent intent = new Intent();
-						intent.putExtra("NEW_BOWLER_NAME", name);
-						setResult(RESULT_OK, intent);
-						finish();
-					} else {
-						etName.setError("Please enter a name");
-					}
-				}
-			});
+            @Override
+            public void onClick(View v) {
+                final String name = etName.getText().toString().trim();
+                if (name.isEmpty()) {
+                    etName.setError("Please enter a name");
+                    return;
+                }
+
+                if (!isBatsman && lastOverBowler != null && !lastOverBowler.isEmpty()
+                        && !lastOverBowler.equalsIgnoreCase("Bowler")
+                        && name.equalsIgnoreCase(lastOverBowler.trim())) {
+                    // ⚠️ Consecutive over warning dialog
+                    new android.app.AlertDialog.Builder(ChooseBowlerActivity.this)
+                            .setTitle("⚠️ Consecutive Over Restriction")
+                            .setMessage("'" + name + "' bowled the previous over.\n\nAccording to ICC Law 17.5, a bowler cannot bowl two consecutive overs from either end.\n\nDo you want to override and allow this bowler anyway?")
+                            .setPositiveButton("Allow (Override)", (d, w) -> {
+                                confirmAndFinish(name);
+                            })
+                            .setNegativeButton("Choose Another", (d, w) -> {
+                                etName.requestFocus();
+                                etName.selectAll();
+                            })
+                            .show();
+                } else {
+                    confirmAndFinish(name);
+                }
+            }
+        });
+    }
+
+    private void confirmAndFinish(String name) {
+        Intent intent = new Intent();
+        intent.putExtra("NEW_BOWLER_NAME", name);
+        intent.putExtra("NEW_BATSMAN_NAME", name);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
 

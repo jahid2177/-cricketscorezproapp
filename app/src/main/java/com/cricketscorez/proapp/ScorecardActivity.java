@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.json.JSONObject;
 import com.cricketscorez.proapp.room.FavoriteMatchRepository;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,12 +40,19 @@ public class ScorecardActivity extends Activity {
     LinearLayout layoutBatting1, layoutBowling1, layoutBatting2, layoutBowling2,
                  layoutFOW1, layoutFOW2;
 
+    // Test Match Innings 3 & 4 Views
+    LinearLayout layoutInn3Container, layoutInn4Container;
+    TextView tvInn3Title, tvInn3Score, tvExtras3, tvFOW3;
+    TextView tvInn4Title, tvInn4Score, tvExtras4, tvFOW4;
+    LinearLayout layoutBatting3, layoutBowling3, layoutFOW3;
+    LinearLayout layoutBatting4, layoutBowling4, layoutFOW4;
+
     // Win Probability Views
     TextView tvTeam1WinProb, tvTeam2WinProb, tvWinProbDetails;
     ProgressBar progressBarWinProb;
 
     // Buttons
-    TextView  btnOversDetail;
+    TextView  btnOversDetail, btnPartnershipDetail;
     LinearLayout btnPdfDownload;
 
     // Data
@@ -77,7 +85,28 @@ public class ScorecardActivity extends Activity {
         layoutBatting2      = findViewById(R.id.layoutBatting2);
         layoutBowling2      = findViewById(R.id.layoutBowling2);
         layoutFOW2          = findViewById(R.id.layoutFOW2);
+
+        // Test Match views
+        layoutInn3Container = findViewById(R.id.layoutInn3Container);
+        tvInn3Title         = findViewById(R.id.tvInn3Title);
+        tvInn3Score         = findViewById(R.id.tvInn3Score);
+        tvExtras3           = findViewById(R.id.tvExtras3);
+        tvFOW3              = findViewById(R.id.tvFOW3);
+        layoutBatting3      = findViewById(R.id.layoutBatting3);
+        layoutBowling3      = findViewById(R.id.layoutBowling3);
+        layoutFOW3          = findViewById(R.id.layoutFOW3);
+
+        layoutInn4Container = findViewById(R.id.layoutInn4Container);
+        tvInn4Title         = findViewById(R.id.tvInn4Title);
+        tvInn4Score         = findViewById(R.id.tvInn4Score);
+        tvExtras4           = findViewById(R.id.tvExtras4);
+        tvFOW4              = findViewById(R.id.tvFOW4);
+        layoutBatting4      = findViewById(R.id.layoutBatting4);
+        layoutBowling4      = findViewById(R.id.layoutBowling4);
+        layoutFOW4          = findViewById(R.id.layoutFOW4);
+
         btnOversDetail      = findViewById(R.id.btnOversDetail);
+        btnPartnershipDetail = findViewById(R.id.btnPartnershipDetail);
         btnPdfDownload      = findViewById(R.id.btnPdfDownload);
 
         tvTeam1WinProb      = findViewById(R.id.tvTeam1WinProb);
@@ -96,10 +125,15 @@ public class ScorecardActivity extends Activity {
         matchData = (MatchData) getIntent().getSerializableExtra("MATCH_DATA");
         team1     = getIntent().getStringExtra("TEAM_1");
         team2     = getIntent().getStringExtra("TEAM_2");
+        String matchId = getIntent().getStringExtra("MATCH_ID");
+
+        if (matchData == null) {
+            matchData = loadMatchData(matchId, team1, team2);
+        }
 
         if (matchData != null) {
-            if (team1 == null) team1 = matchData.team1Name;
-            if (team2 == null) team2 = matchData.team2Name;
+            if (team1 == null || team1.trim().isEmpty()) team1 = matchData.team1Name;
+            if (team2 == null || team2.trim().isEmpty()) team2 = matchData.team2Name;
 
             tvMatchResult.setText(team1 + " vs " + team2);
             tvTossInfo.setText(matchData.tossMessage != null
@@ -114,7 +148,81 @@ public class ScorecardActivity extends Activity {
             if (ms != null && (ms.equals("Completed") || ms.contains("won") || ms.contains("Tied") || ms.contains("tied"))) {
                 showFinalResult();
             }
+        } else {
+            if (team1 != null && team2 != null) {
+                tvMatchResult.setText(team1 + " vs " + team2);
+            }
+            tvTossInfo.setText("Full Match Scorecard");
+            setupButtons();
+            Toast.makeText(this, "Scorecard data not found for this match.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private MatchData loadMatchData(String matchId, String t1, String t2) {
+        ArrayList<MatchData> all = DataManager.getAllMatches(this);
+        if (all != null && !all.isEmpty()) {
+            if (matchId != null && !matchId.isEmpty()) {
+                for (MatchData md : all) {
+                    if (md != null && (matchId.equals(md.tournamentMatchId) || matchId.equals(md.matchId))) {
+                        return md;
+                    }
+                }
+            }
+            if (t1 != null && t2 != null) {
+                for (int i = all.size() - 1; i >= 0; i--) {
+                    MatchData md = all.get(i);
+                    if (md != null) {
+                        boolean direct = t1.equalsIgnoreCase(md.team1Name) && t2.equalsIgnoreCase(md.team2Name);
+                        boolean reverse = t1.equalsIgnoreCase(md.team2Name) && t2.equalsIgnoreCase(md.team1Name);
+                        if (direct || reverse) {
+                            return md;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fallback: Check TournamentResult SharedPreferences
+        if (matchId != null && !matchId.isEmpty()) {
+            try {
+                SharedPreferences resPrefs = getSharedPreferences("TournamentResult", MODE_PRIVATE);
+                String resultJson = resPrefs.getString("RESULT_DATA", "{}");
+                JSONObject resObj = new JSONObject(resultJson);
+                if (resObj.has(matchId)) {
+                    JSONObject res = resObj.getJSONObject(matchId);
+                    String teamA = res.optString("team1", t1 != null ? t1 : "Team 1");
+                    String teamB = res.optString("team2", t2 != null ? t2 : "Team 2");
+                    MatchData md = new MatchData(teamA, teamB, "20");
+                    md.matchId = matchId;
+                    md.tournamentMatchId = matchId;
+                    md.team1Name = teamA;
+                    md.team2Name = teamB;
+                    md.teamBattingFirst = teamA;
+                    md.teamBattingSecond = teamB;
+                    md.scoreInn1 = res.optString("s1", "");
+                    md.oversInn1 = "";
+                    String s2 = res.optString("s2", "");
+                    md.matchStatus = res.optString("txt", "Completed");
+                    md.matchResult = md.matchStatus;
+                    md.isSecondInnings = true;
+                    if (!s2.isEmpty()) {
+                        if (s2.contains("/")) {
+                            String[] parts = s2.split("/");
+                            try {
+                                md.totalRuns = Integer.parseInt(parts[0].trim());
+                                md.totalWickets = Integer.parseInt(parts[1].trim());
+                            } catch (Exception ignored) {}
+                        } else {
+                            try {
+                                md.totalRuns = Integer.parseInt(s2.trim());
+                            } catch (Exception ignored) {}
+                        }
+                    }
+                    return md;
+                }
+            } catch (Exception ignored) {}
+        }
+        return null;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -228,13 +336,98 @@ public class ScorecardActivity extends Activity {
 
     // ─────────────────────────────────────────────────────────────────────────
     private void displayScorecardData() {
-        // ✅ FIX: কোন টিম এখনো ব্যাট করছে সেটা ইনিংস হেডারে 🏏 দিয়ে বোঝানো —
-        // ম্যাচ শেষ হয়ে গেলে (matchStatus-এ won/tied/completed থাকলে) কাউকে
-        // "ব্যাটিং করছে" দেখানো হবে না।
         String statusLower = matchData.matchStatus != null ? matchData.matchStatus.toLowerCase(java.util.Locale.ROOT) : "";
         boolean matchOngoing = !(statusLower.contains("won") || statusLower.contains("tied")
-                || statusLower.contains("completed") || statusLower.contains("abandon"));
+                || statusLower.contains("completed") || statusLower.contains("abandon") || statusLower.contains("drawn"));
         String battingBadge = "🏏 ";
+
+        if (matchData.isTestMatch) {
+            // Innings 1
+            if (matchData.currentInnings == 1) {
+                tvInn1Title.setText((matchOngoing ? battingBadge : "") + matchData.getBattingTeamName() + " (1st Innings)");
+                tvInn1Score.setText(matchData.getScoreString() + " (" + matchData.getOversString() + ")");
+                tvExtras1.setText(matchData.getExtrasString());
+                fillTable(layoutBatting1, matchData.getAllBattingStats(), true);
+                fillTable(layoutBowling1, matchData.getAllBowlingStats(), false);
+                fillFOW(layoutFOW1, matchData.fallOfWickets);
+
+                tvInn2Title.setText(matchData.getBowlingTeamName() + " (1st Innings)");
+                tvInn2Score.setText("Yet to bat");
+            } else {
+                tvInn1Title.setText(matchData.teamBattingFirst + " (1st Innings)" + (matchData.inn1Declared ? " d" : ""));
+                tvInn1Score.setText((matchData.scoreInn1 != null ? matchData.scoreInn1 : "0/0") + " (" + (matchData.oversInn1 != null ? matchData.oversInn1 : "0.0") + ")");
+                tvExtras1.setText(matchData.extrasInn1 != null ? matchData.extrasInn1 : "Extras: 0");
+                fillTable(layoutBatting1, matchData.batsmanHistoryInn1, true);
+                fillTable(layoutBowling1, matchData.bowlerHistoryInn1, false);
+                fillFOW(layoutFOW1, matchData.fallOfWicketsInn1);
+            }
+
+            // Innings 2
+            if (matchData.currentInnings == 2) {
+                tvInn2Title.setText((matchOngoing ? battingBadge : "") + matchData.getBattingTeamName() + " (1st Innings)");
+                tvInn2Score.setText(matchData.getScoreString() + " (" + matchData.getOversString() + ")");
+                tvExtras2.setText(matchData.getExtrasString());
+                fillTable(layoutBatting2, matchData.getAllBattingStats(), true);
+                fillTable(layoutBowling2, matchData.getAllBowlingStats(), false);
+                fillFOW(layoutFOW2, matchData.fallOfWickets);
+            } else if (matchData.currentInnings > 2) {
+                tvInn2Title.setText(matchData.teamBattingSecond + " (1st Innings)" + (matchData.inn2Declared ? " d" : ""));
+                tvInn2Score.setText((matchData.scoreInn2 != null ? matchData.scoreInn2 : "0/0") + " (" + (matchData.oversInn2 != null ? matchData.oversInn2 : "0.0") + ")");
+                tvExtras2.setText(matchData.extrasInn2 != null ? matchData.extrasInn2 : "Extras: 0");
+                fillTable(layoutBatting2, matchData.batsmanHistoryInn2, true);
+                fillTable(layoutBowling2, matchData.bowlerHistoryInn2, false);
+                fillFOW(layoutFOW2, matchData.fallOfWicketsInn2);
+            }
+
+            // Innings 3
+            if (matchData.currentInnings == 3) {
+                if (layoutInn3Container != null) layoutInn3Container.setVisibility(View.VISIBLE);
+                String inn3Team = matchData.isFollowOnEnforced ? matchData.teamBattingSecond : matchData.teamBattingFirst;
+                tvInn3Title.setText((matchOngoing ? battingBadge : "") + inn3Team + " (2nd Innings" + (matchData.isFollowOnEnforced ? " - f/o" : "") + ")");
+                tvInn3Score.setText(matchData.getScoreString() + " (" + matchData.getOversString() + ")");
+                tvExtras3.setText(matchData.getExtrasString());
+                fillTable(layoutBatting3, matchData.getAllBattingStats(), true);
+                fillTable(layoutBowling3, matchData.getAllBowlingStats(), false);
+                fillFOW(layoutFOW3, matchData.fallOfWickets);
+            } else if (matchData.currentInnings > 3 || (matchData.scoreInn3 != null && !matchData.scoreInn3.isEmpty())) {
+                if (layoutInn3Container != null) layoutInn3Container.setVisibility(View.VISIBLE);
+                String inn3Team = matchData.isFollowOnEnforced ? matchData.teamBattingSecond : matchData.teamBattingFirst;
+                tvInn3Title.setText(inn3Team + " (2nd Innings" + (matchData.isFollowOnEnforced ? " - f/o" : "") + ")" + (matchData.inn3Declared ? " d" : ""));
+                tvInn3Score.setText((matchData.scoreInn3 != null ? matchData.scoreInn3 : "0/0") + " (" + (matchData.oversInn3 != null ? matchData.oversInn3 : "0.0") + ")");
+                tvExtras3.setText(matchData.extrasInn3 != null ? matchData.extrasInn3 : "Extras: 0");
+                fillTable(layoutBatting3, matchData.batsmanHistoryInn3, true);
+                fillTable(layoutBowling3, matchData.bowlerHistoryInn3, false);
+                fillFOW(layoutFOW3, matchData.fallOfWicketsInn3);
+            }
+
+            // Innings 4
+            if (matchData.currentInnings == 4) {
+                if (layoutInn4Container != null) layoutInn4Container.setVisibility(View.VISIBLE);
+                String inn4Team = matchData.isFollowOnEnforced ? matchData.teamBattingFirst : matchData.teamBattingSecond;
+                tvInn4Title.setText((matchOngoing ? battingBadge : "") + inn4Team + " (2nd Innings)");
+                tvInn4Score.setText(matchData.getScoreString() + " (" + matchData.getOversString() + ")");
+                tvExtras4.setText(matchData.getExtrasString());
+                fillTable(layoutBatting4, matchData.getAllBattingStats(), true);
+                fillTable(layoutBowling4, matchData.getAllBowlingStats(), false);
+                fillFOW(layoutFOW4, matchData.fallOfWickets);
+            } else if (matchData.scoreInn4 != null && !matchData.scoreInn4.isEmpty()) {
+                if (layoutInn4Container != null) layoutInn4Container.setVisibility(View.VISIBLE);
+                String inn4Team = matchData.isFollowOnEnforced ? matchData.teamBattingFirst : matchData.teamBattingSecond;
+                tvInn4Title.setText(inn4Team + " (2nd Innings)" + (matchData.inn4Declared ? " d" : ""));
+                tvInn4Score.setText(matchData.scoreInn4 + " (" + (matchData.oversInn4 != null ? matchData.oversInn4 : "0.0") + ")");
+                tvExtras4.setText(matchData.extrasInn4 != null ? matchData.extrasInn4 : "Extras: 0");
+                fillTable(layoutBatting4, matchData.batsmanHistoryInn4, true);
+                fillTable(layoutBowling4, matchData.bowlerHistoryInn4, false);
+                fillFOW(layoutFOW4, matchData.fallOfWicketsInn4);
+            }
+
+            if (layoutMatchEquation != null) {
+                layoutMatchEquation.setVisibility(View.VISIBLE);
+                if (tvMatchEquation != null) tvMatchEquation.setText(matchData.getTestMatchLeadTrailStatus());
+                if (tvRequiredRate != null) tvRequiredRate.setText("Day " + matchData.currentDay + " • Session " + matchData.currentSession);
+            }
+            return;
+        }
 
         if (matchData.isSecondInnings) {
             tvInn1Title.setText(matchData.teamBattingFirst);
@@ -437,8 +630,28 @@ public class ScorecardActivity extends Activity {
         if (btnOversDetail != null) {
             btnOversDetail.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
+                    if (matchData == null) {
+                        Toast.makeText(ScorecardActivity.this, "Overs detail not available", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     Intent intent = new Intent(ScorecardActivity.this,
                             OversDetailActivity.class);
+                    intent.putExtra("MATCH_DATA", matchData);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        if (btnPartnershipDetail != null) {
+            btnPartnershipDetail.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    if (matchData == null) {
+                        Toast.makeText(ScorecardActivity.this, "Partnership data not available", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Intent intent = new Intent(ScorecardActivity.this, PartnershipGraphActivity.class);
+                    intent.putExtra("TEAM_1", team1);
+                    intent.putExtra("TEAM_2", team2);
                     intent.putExtra("MATCH_DATA", matchData);
                     startActivity(intent);
                 }
@@ -467,6 +680,10 @@ public class ScorecardActivity extends Activity {
     //  PDF Generation
     // ─────────────────────────────────────────────────────────────────────────
     private void generateProfessionalPdf() {
+        if (matchData == null) {
+            Toast.makeText(this, "Scorecard data not available for PDF export", Toast.LENGTH_SHORT).show();
+            return;
+        }
         SharedPreferences prefs = getSharedPreferences("TournamentSettings", MODE_PRIVATE);
         String tournamentName = prefs.getString("TOURNAMENT_NAME", "Cricket Tournament");
 

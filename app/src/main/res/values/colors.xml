@@ -1,55 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Brand Colors -->
-    <color name="colorPrimary">#1B5E20</color>
-    <color name="colorPrimaryDark">#0A3D10</color>
-    <color name="colorPrimaryLight">#2E7D32</color>
-    <color name="colorAccent">#FFD600</color>
+    <!-- Primary Brand Colors (From Image: Forest Emerald & Clean Charcoal) -->
+    <color name="colorPrimary">#059669</color>
+    <color name="colorPrimaryDark">#047857</color>
+    <color name="colorPrimaryLight">#10B981</color>
+    <color name="colorAccent">#059669</color>
 
-    <!-- Background Colors -->
-    <color name="bgColor">#F0F4F0</color>
-    <color name="bgDark">#0D1F0E</color>
+    <!-- Background Colors (Clean White Canvas) -->
+    <color name="bgColor">#FFFFFF</color>
+    <color name="bgDark">#F8FAFC</color>
     <color name="bgCard">#FFFFFF</color>
-    <color name="bgSurface">#F7FBF7</color>
+    <color name="bgSurface">#FFFFFF</color>
 
     <!-- Gradient Colors -->
-    <color name="gradientStart">#1B5E20</color>
-    <color name="gradientEnd">#0A3D10</color>
-    <color name="gradientGold1">#FFD600</color>
-    <color name="gradientGold2">#FFA000</color>
+    <color name="gradientStart">#059669</color>
+    <color name="gradientEnd">#047857</color>
+    <color name="gradientGold1">#F59E0B</color>
+    <color name="gradientGold2">#D97706</color>
 
-    <!-- Text Colors -->
-    <color name="textPrimary">#0D1F0E</color>
-    <color name="textSecondary">#4A6741</color>
-    <color name="textHint">#8FAF8C</color>
+    <!-- Text Colors (High Contrast Sharp Slate) -->
+    <color name="textPrimary">#111827</color>
+    <color name="textSecondary">#6B7280</color>
+    <color name="textHint">#9CA3AF</color>
     <color name="textOnPrimary">#FFFFFF</color>
-    <color name="textGold">#FFD600</color>
+    <color name="textGold">#D97706</color>
 
     <!-- UI Element Colors -->
     <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
-    <color name="divider">#D8E8D8</color>
-    <color name="ripple">#1A1B5E20</color>
-    <color name="shadow">#1A000000</color>
+    <color name="black">#111827</color>
+    <color name="divider">#E2E8F0</color>
+    <color name="ripple">#1A059669</color>
+    <color name="shadow">#0F000000</color>
 
-    <!-- Status Colors -->
-    <color name="green">#2E7D32</color>
-    <color name="darkGreen">#1B5E20</color>
-    <color name="red">#C62828</color>
-    <color name="orange">#EF6C00</color>
-    <color name="blue">#1565C0</color>
-    <color name="yellow">#FFD600</color>
-    <color name="teal">#00695C</color>
-    <color name="purple">#6A1B9A</color>
+    <!-- Status & Pastel Colors (Matching user image) -->
+    <color name="green">#059669</color>
+    <color name="darkGreen">#047857</color>
+    <color name="red">#DC2626</color>
+    <color name="orange">#EA580C</color>
+    <color name="blue">#2563EB</color>
+    <color name="yellow">#D97706</color>
+    <color name="teal">#0D9488</color>
+    <color name="purple">#7C3AED</color>
+
+    <!-- Soft Pastel Pill Badges (From user image) -->
+    <color name="badgeMintBg">#ECFDF5</color>
+    <color name="badgeMintText">#059669</color>
+    <color name="badgeBlueBg">#EFF6FF</color>
+    <color name="badgeBlueText">#2563EB</color>
+    <color name="badgeAmberBg">#FEF3C7</color>
+    <color name="badgeAmberText">#D97706</color>
+    <color name="badgeRedBg">#FEF2F2</color>
+    <color name="badgeRedBorder">#FECACA</color>
+    <color name="badgeRedText">#DC2626</color>
 
     <!-- Score/Stats Colors -->
-    <color name="scoreRed">#C62828</color>
-    <color name="scorePill">#E8F5E9</color>
-    <color name="headerBg">#1B5E20</color>
-    <color name="toolbar_bg">#1B5E20</color>
+    <color name="scoreRed">#DC2626</color>
+    <color name="scorePill">#ECFDF5</color>
+    <color name="headerBg">#FFFFFF</color>
+    <color name="toolbar_bg">#FFFFFF</color>
     <color name="card_bg">#FFFFFF</color>
-    <color name="gray">#616161</color>
-    <color name="light_gray">#EEEEEE</color>
-    <color name="text_primary">#0D1F0E</color>
-    <color name="text_secondary">#4A6741</color>
+    <color name="gray">#6B7280</color>
+    <color name="light_gray">#F1F5F9</color>
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
 </resources>

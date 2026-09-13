@@ -85,7 +85,7 @@ public class FcmScoreNotifier {
             NotificationCompat.Builder builder =
                     new NotificationCompat.Builder(context, CricketMessagingService.CHANNEL_ID_LIVE_SCORES)
                             .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("🏏 " + matchTitle)
+                            .setContentTitle(matchTitle)
                             .setContentText(scoreUpdate + " • " + status)
                             .setStyle(new NotificationCompat.BigTextStyle().bigText(scoreUpdate + "\n" + status))
                             .setAutoCancel(true)

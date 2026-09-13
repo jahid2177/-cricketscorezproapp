@@ -353,7 +353,7 @@ public class FixturesActivity extends Activity {
         CheckBox cbBalanced = makeStyledCheckbox("⚖️  Balanced group distribution", true);
         CheckBox cbAvoidRepeat = makeStyledCheckbox("🔄  Avoid back-to-back matches for same team", true);
         CheckBox cbWeekend = makeStyledCheckbox("📅  Prefer weekend matches", false);
-        CheckBox cbDayNight = makeStyledCheckbox("🌙  Day/Night match split", false);
+        CheckBox cbDayNight = makeStyledCheckbox("Day/Night match split", false);
         extrasBox.addView(cbBalanced);
         extrasBox.addView(cbAvoidRepeat);
         extrasBox.addView(cbWeekend);
@@ -1850,6 +1850,9 @@ public class FixturesActivity extends Activity {
 
         // Firebase-এ fixture যোগ করার জন্য বর্তমান tournamentId (upsertTournament() থেকে সেভ করা)
         String tournamentId = prefs.getString("SUPABASE_TOURNAMENT_ID", null);
+        if (tournamentId == null || tournamentId.isEmpty()) {
+            tournamentId = FirebaseSync.slug(tournamentName);
+        }
 
         // Group Matches সেভ করা
         if (groupMatches != null) {

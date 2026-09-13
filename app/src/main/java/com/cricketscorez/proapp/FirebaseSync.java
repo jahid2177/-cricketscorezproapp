@@ -73,11 +73,29 @@ public class FirebaseSync {
     //  ID তৈরির helper — নাম থেকে lowercase+underscore key বানায়
     //  (Firebase key-তে ".", "#", "$", "/", "[", "]" ব্যবহার করা যায় না)
     // ────────────────────────────────────────────────────────────
-    private static String slug(String s) {
+    public static String slug(String s) {
         if (s == null) return "";
         return s.trim().toLowerCase()
                 .replaceAll("[.#$\\[\\]/]", "")
                 .replaceAll("\\s+", "_");
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    //  LOCAL TEAMS SYNC — লোকাল ডাটাবেসের সব টিম Firebase-এ সিঙ্ক করা
+    // ═══════════════════════════════════════════════════════════════════
+    public static void syncAllLocalTeams(android.content.Context context) {
+        try {
+            if (context == null) return;
+            ArrayList<String> teams = DataManager.getAllTeams(context);
+            if (teams == null || teams.isEmpty()) return;
+            for (String teamName : teams) {
+                if (teamName == null || teamName.trim().isEmpty()) continue;
+                ArrayList<String> players = DataManager.getPlayers(context, teamName);
+                upsertTeam(teamName, players != null ? players : new ArrayList<>());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "syncAllLocalTeams() error: " + e.getMessage());
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -289,12 +307,39 @@ public class FirebaseSync {
                                              String teamAScore, String teamBScore,
                                              String resultText) {
         try {
+            if (tournamentId == null || tournamentId.trim().isEmpty()) return;
+            if (matchId == null || matchId.trim().isEmpty()) matchId = "Match_" + System.currentTimeMillis();
+
+            // Null and empty safety for team names
+            if (teamA == null || teamA.trim().isEmpty()) teamA = "Team 1";
+            if (teamB == null || teamB.trim().isEmpty()) teamB = "Team 2";
+            if (teamAScore == null) teamAScore = "-";
+            if (teamBScore == null) teamBScore = "-";
+            if (resultText == null) resultText = "";
+
             Map<String, Object> body = new HashMap<>();
-            body.put("team_a", teamA);
-            body.put("team_b", teamB);
+            // Save team names in multiple common key conventions so any reader resolves them accurately
+            body.put("team_a", teamA.trim());
+            body.put("team_b", teamB.trim());
+            body.put("team_1", teamA.trim());
+            body.put("team_2", teamB.trim());
+            body.put("teamA", teamA.trim());
+            body.put("teamB", teamB.trim());
+            body.put("team_name_1", teamA.trim());
+            body.put("team_name_2", teamB.trim());
+
+            // Scores
             body.put("team_a_score", teamAScore);
             body.put("team_b_score", teamBScore);
+            body.put("team_1_score", teamAScore);
+            body.put("team_2_score", teamBScore);
+            body.put("s1", teamAScore);
+            body.put("s2", teamBScore);
+
+            // Result
             body.put("result_text", resultText);
+            body.put("result", resultText);
+            body.put("txt", resultText);
             body.put("timestamp", ServerValue.TIMESTAMP);
 
             root().child(TOURNAMENTS_PATH).child(tournamentId)
@@ -319,10 +364,18 @@ public class FirebaseSync {
             Map<String, Object> body = new HashMap<>();
             body.put("match_id", matchData.matchId);
             body.put("tournament_name", matchData.tournamentName != null ? matchData.tournamentName : "");
-            body.put("team_a", matchData.teamBattingFirst != null
-                    ? matchData.teamBattingFirst : matchData.team1Name);
-            body.put("team_b", matchData.teamBattingSecond != null
-                    ? matchData.teamBattingSecond : matchData.team2Name);
+
+            String teamA = (matchData.teamBattingFirst != null && !matchData.teamBattingFirst.trim().isEmpty())
+                    ? matchData.teamBattingFirst : matchData.team1Name;
+            String teamB = (matchData.teamBattingSecond != null && !matchData.teamBattingSecond.trim().isEmpty())
+                    ? matchData.teamBattingSecond : matchData.team2Name;
+            if (teamA == null || teamA.trim().isEmpty()) teamA = "Team 1";
+            if (teamB == null || teamB.trim().isEmpty()) teamB = "Team 2";
+
+            body.put("team_a", teamA.trim());
+            body.put("team_b", teamB.trim());
+            body.put("team_1", teamA.trim());
+            body.put("team_2", teamB.trim());
 
             // 1st innings
             body.put("team_a_score", matchData.scoreInn1 != null ? matchData.scoreInn1 : matchData.getScoreString());
@@ -357,15 +410,31 @@ public class FirebaseSync {
                     });
 
             // যদি এই ম্যাচ কোনো tournament-এর অংশ হয়, tournament results-এও যোগ করো
-            if (matchData.isTournamentMatch && matchData.tournamentMatchId != null
-                    && !matchData.tournamentMatchId.isEmpty()) {
+            String tId = matchData.tournamentId;
+            if (tId == null || tId.trim().isEmpty()) {
+                if (matchData.tournamentName != null && !matchData.tournamentName.trim().isEmpty()) {
+                    tId = slug(matchData.tournamentName);
+                }
+            }
+            if ((tId == null || tId.trim().isEmpty()) && matchData.isTournamentMatch) {
+                if (matchData.tournamentMatchId != null && !matchData.tournamentMatchId.contains("Match_")) {
+                    tId = matchData.tournamentMatchId;
+                }
+            }
+
+            if (tId != null && !tId.trim().isEmpty()) {
+                String scoreA = matchData.scoreInn1 != null ? matchData.scoreInn1 : "";
+                String scoreB = matchData.getScoreString() != null ? matchData.getScoreString() : "";
+                String matchKey = (matchData.tournamentMatchId != null && !matchData.tournamentMatchId.isEmpty())
+                        ? matchData.tournamentMatchId : matchData.matchId;
+
                 saveTournamentResult(
-                        matchData.tournamentMatchId,
-                        matchData.matchId,
-                        matchData.teamBattingFirst,
-                        matchData.teamBattingSecond,
-                        matchData.scoreInn1,
-                        matchData.getScoreString(),
+                        tId,
+                        matchKey,
+                        teamA,
+                        teamB,
+                        scoreA,
+                        scoreB,
                         resultMessage
                 );
             }

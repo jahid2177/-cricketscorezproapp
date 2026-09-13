@@ -71,7 +71,7 @@ public class MatchShareManager {
 
         // Icon Header
         TextView tvIcon = new TextView(activity);
-        tvIcon.setText("📤");
+        tvIcon.setText(""); tvIcon.setVisibility(android.view.View.GONE);
         tvIcon.setTextSize(32);
         tvIcon.setGravity(Gravity.CENTER);
         root.addView(tvIcon);
@@ -101,7 +101,7 @@ public class MatchShareManager {
 
         // Option 1: Share as Image Card
         Button btnShareImage = new Button(activity);
-        btnShareImage.setText("🖼️  Share as Match Card (Image)");
+        btnShareImage.setText("Share as Match Card (Image)");
         btnShareImage.setTextColor(Color.WHITE);
         btnShareImage.setTextSize(15);
         btnShareImage.setTypeface(null, Typeface.BOLD);
@@ -124,7 +124,7 @@ public class MatchShareManager {
 
         // Option 2: Share as Text Snippet
         Button btnShareText = new Button(activity);
-        btnShareText.setText("📝  Share as Text Snippet");
+        btnShareText.setText("Share as Text Snippet");
         btnShareText.setTextColor(isDark ? Color.parseColor("#E2E8F0") : Color.parseColor("#1E293B"));
         btnShareText.setTextSize(15);
         btnShareText.setTypeface(null, Typeface.BOLD);
@@ -175,11 +175,11 @@ public class MatchShareManager {
         String t1 = matchData.teamBattingFirst != null ? matchData.teamBattingFirst : matchData.team1Name;
         String t2 = matchData.teamBattingSecond != null ? matchData.teamBattingSecond : matchData.team2Name;
 
-        sb.append("🏏 *CRICKET MATCH RESULT* 🏏\n");
+        sb.append("*CRICKET MATCH RESULT*\n");
         sb.append("━━━━━━━━━━━━━━━━━━━━\n");
-        sb.append("🏆 *").append(t1).append(" vs ").append(t2).append("*\n");
+        sb.append("*").append(t1).append(" vs ").append(t2).append("*\n");
         if (matchData.matchDate != null && !matchData.matchDate.isEmpty()) {
-            sb.append("📅 ").append(matchData.matchDate).append("\n");
+            sb.append("Date: ").append(matchData.matchDate).append("\n");
         }
         sb.append("━━━━━━━━━━━━━━━━━━━━\n\n");
 
@@ -201,22 +201,22 @@ public class MatchShareManager {
         // Result / Status
         String status = (matchData.matchStatus != null && !matchData.matchStatus.isEmpty())
                 ? matchData.matchStatus : "Match in Progress";
-        sb.append("🎉 *Result:* ").append(status).append("\n\n");
+        sb.append("*Result:* ").append(status).append("\n\n");
 
         // Top Performers
         TopPerformers top = findTopPerformers(matchData);
         if (top != null) {
-            sb.append("⭐ *Key Highlights:*\n");
+            sb.append("*Key Highlights:*\n");
             if (top.topBatsman != null && !top.topBatsman.isEmpty()) {
-                sb.append("🏏 Best Batter: ").append(top.topBatsman).append(" - ").append(top.topBatsmanScore).append("\n");
+                sb.append("Best Batter: ").append(top.topBatsman).append(" - ").append(top.topBatsmanScore).append("\n");
             }
             if (top.bestBowler != null && !top.bestBowler.isEmpty()) {
-                sb.append("🎯 Best Bowler: ").append(top.bestBowler).append(" - ").append(top.bestBowlerFigure).append("\n");
+                sb.append("Best Bowler: ").append(top.bestBowler).append(" - ").append(top.bestBowlerFigure).append("\n");
             }
             sb.append("\n");
         }
 
-        sb.append("⚡ _Scored with Cricket Scorez Pro_");
+        sb.append("_Scored with Cricket Scorez Pro_");
         return sb.toString();
     }
 
@@ -302,7 +302,7 @@ public class MatchShareManager {
         textPaint.setTextSize(34);
         textPaint.setColor(Color.parseColor("#60A5FA"));
         textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("⚡ CRICKET SCOREZ PRO", width / 2f, 90, textPaint);
+        canvas.drawText("CRICKET SCOREZ PRO", width / 2f, 90, textPaint);
 
         textPaint.setTextSize(24);
         textPaint.setColor(Color.parseColor("#94A3B8"));
@@ -386,7 +386,7 @@ public class MatchShareManager {
         textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         String status = (matchData.matchStatus != null && !matchData.matchStatus.isEmpty())
                 ? matchData.matchStatus : "Match in Progress";
-        canvas.drawText("🏆 " + status, width / 2f, 622, textPaint);
+        canvas.drawText(status, width / 2f, 622, textPaint);
 
         // 5. Highlights Section Cards
         TopPerformers top = findTopPerformers(matchData);
@@ -402,7 +402,7 @@ public class MatchShareManager {
         textPaint.setTextSize(26);
         textPaint.setColor(Color.parseColor("#F59E0B"));
         textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("🏏 TOP BATTER", 80, 775, textPaint);
+        canvas.drawText("TOP BATTER", 80, 775, textPaint);
 
         textPaint.setTextSize(34);
         textPaint.setColor(Color.WHITE);
@@ -423,7 +423,7 @@ public class MatchShareManager {
         textPaint.setTextSize(26);
         textPaint.setColor(Color.parseColor("#10B981"));
         textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("🎯 TOP BOWLER", width / 2f + 45, 775, textPaint);
+        canvas.drawText("TOP BOWLER", width / 2f + 45, 775, textPaint);
 
         textPaint.setTextSize(34);
         textPaint.setColor(Color.WHITE);

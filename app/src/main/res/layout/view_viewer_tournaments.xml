@@ -27,13 +27,25 @@
             android:focusable="true" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Tournaments"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#0F172A"
             android:layout_marginStart="12dp" />
+
+        <ImageView
+            android:id="@+id/btnTournamentsRefresh"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@android:drawable/ic_menu_rotate"
+            app:tint="#1E293B"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Refresh" />
     </LinearLayout>
 
     <!-- Subtabs Bar (Fixtures | Points | Result | Awards) -->

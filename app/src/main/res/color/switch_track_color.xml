@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- switch_track_color.xml — Track tint for App Settings toggles -->
+<!-- switch_track_color.xml — Track tint for toggles matching user image -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="#86EFAC" android:state_checked="true"/>
-    <item android:color="#CBD5E1" android:state_checked="false"/>
+    <item android:color="#059669" android:state_checked="true"/>
+    <item android:color="#E2E8F0" android:state_checked="false"/>
 </selector>

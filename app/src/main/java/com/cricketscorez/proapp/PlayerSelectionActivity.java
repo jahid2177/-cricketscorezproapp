@@ -32,6 +32,10 @@ public class PlayerSelectionActivity extends Activity {
 
     String team1, team2, overs, tossWinner, tossDecision;
     boolean isSecondInnings = false;
+    boolean isTestMatch = false;
+    int testDays = 5;
+    int testOversPerDay = 90;
+    int testFollowOnMargin = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,10 @@ public class PlayerSelectionActivity extends Activity {
 
         // সব extras সবসময় পড়া হচ্ছে
         isSecondInnings = intent.getBooleanExtra("IS_SECOND_INNINGS", false);
+        isTestMatch = intent.getBooleanExtra("IS_TEST_MATCH", false);
+        testDays = intent.getIntExtra("TEST_DAYS", 5);
+        testOversPerDay = intent.getIntExtra("TEST_OVERS_PER_DAY", 90);
+        testFollowOnMargin = intent.getIntExtra("TEST_FOLLOW_ON_MARGIN", 200);
         team1        = intent.getStringExtra("TEAM_1");
         team2        = intent.getStringExtra("TEAM_2");
         overs        = intent.getStringExtra("TOTAL_OVERS");
@@ -266,6 +274,10 @@ public class PlayerSelectionActivity extends Activity {
         i.putExtra("BOWLER",              b);
         i.putExtra("IS_TOURNAMENT",       isTour);
         i.putExtra("TOURNAMENT_MATCH_ID", tourId);
+        i.putExtra("IS_TEST_MATCH",       isTestMatch);
+        i.putExtra("TEST_DAYS",           testDays);
+        i.putExtra("TEST_OVERS_PER_DAY",   testOversPerDay);
+        i.putExtra("TEST_FOLLOW_ON_MARGIN", testFollowOnMargin);
         startActivity(i);
         finish();
     }

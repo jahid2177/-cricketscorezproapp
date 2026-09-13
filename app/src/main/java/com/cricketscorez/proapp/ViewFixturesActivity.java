@@ -102,16 +102,16 @@ public class ViewFixturesActivity extends Activity {
             addTournamentHeader();
 
             // Sections
-            addSectionHeader("⚽  Group Stage", "#1B5E20");
+            addSectionHeader("Group Stage", "#1B5E20");
             displayMatches(savedData.optJSONArray("MatchesGroup"));
 
-            addSectionHeader("⚡  Quarter Finals", "#1565C0");
+            addSectionHeader("Quarter Finals", "#1565C0");
             displayMatches(savedData.optJSONArray("MatchesQF"));
 
-            addSectionHeader("🔥  Semi Finals", "#E65100");
+            addSectionHeader("Semi Finals", "#E65100");
             displayMatches(savedData.optJSONArray("MatchesSF"));
 
-            addSectionHeader("🏆  Final Match", "#B71C1C");
+            addSectionHeader("Final Match", "#B71C1C");
             displayMatches(savedData.optJSONArray("MatchesFinal"));
 
         } catch (Exception e) {
@@ -130,7 +130,7 @@ public class ViewFixturesActivity extends Activity {
         box.setPadding(dp(32), dp(60), dp(32), dp(60));
 
         TextView icon = new TextView(this);
-        icon.setText("📋");
+        icon.setText(""); icon.setVisibility(android.view.View.GONE);
         icon.setTextSize(48);
         icon.setGravity(Gravity.CENTER);
         box.addView(icon);
@@ -177,7 +177,7 @@ public class ViewFixturesActivity extends Activity {
         header.setLayoutParams(lp);
 
         TextView tvIcon = new TextView(this);
-        tvIcon.setText("🏆");
+        tvIcon.setText(""); tvIcon.setVisibility(android.view.View.GONE);
         tvIcon.setTextSize(32);
         tvIcon.setGravity(Gravity.CENTER);
         header.addView(tvIcon);
@@ -364,7 +364,7 @@ public class ViewFixturesActivity extends Activity {
         paint.setTextSize(11);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
         paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("🏆  FIXTURES", 297, 25, paint);
+        canvas.drawText("FIXTURES", 297, 25, paint);
 
         paint.setColor(Color.WHITE);
         paint.setTextSize(24);

@@ -41,12 +41,7 @@ public class ThemeManager {
     }
 
     public static String getResolvedTheme(Context context) {
-        String saved = getSavedTheme(context);
-        if (THEME_SYSTEM.equals(saved)) {
-            int nightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            return (nightMode == Configuration.UI_MODE_NIGHT_YES) ? THEME_DARK : THEME_LIGHT;
-        }
-        return saved;
+        return THEME_LIGHT;
     }
 
     public static boolean isDarkVariant(Context context) {
@@ -55,323 +50,123 @@ public class ThemeManager {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // DYNAMIC COLORS
+    // DYNAMIC COLORS (MATCHING USER IMAGE)
     // ─────────────────────────────────────────────────────────────────────────
     public static int getCanvasColor(Context context) {
-        String theme = getResolvedTheme(context);
-        switch (theme) {
-            case THEME_LIGHT:   return Color.parseColor("#F1F5F9");
-            case THEME_EMERALD: return Color.parseColor("#06140B");
-            case THEME_NAVY:    return Color.parseColor("#0A1227");
-            case THEME_DARK:
-            default:            return Color.parseColor("#0B0E14");
-        }
+        return Color.parseColor("#FFFFFF");
     }
 
     public static int getPrimaryTextColor(Context context) {
-        String theme = getResolvedTheme(context);
-        switch (theme) {
-            case THEME_LIGHT:   return Color.parseColor("#0F172A");
-            case THEME_EMERALD: return Color.parseColor("#F0FDF4");
-            case THEME_NAVY:    return Color.parseColor("#F8FAFC");
-            case THEME_DARK:
-            default:            return Color.parseColor("#F8FAFC");
-        }
+        return Color.parseColor("#111827");
     }
 
     public static int getSecondaryTextColor(Context context) {
-        String theme = getResolvedTheme(context);
-        switch (theme) {
-            case THEME_LIGHT:   return Color.parseColor("#475569");
-            case THEME_EMERALD: return Color.parseColor("#86EFAC");
-            case THEME_NAVY:    return Color.parseColor("#93C5FD");
-            case THEME_DARK:
-            default:            return Color.parseColor("#94A3B8");
-        }
+        return Color.parseColor("#6B7280");
     }
 
     public static int getMutedTextColor(Context context) {
-        String theme = getResolvedTheme(context);
-        switch (theme) {
-            case THEME_LIGHT:   return Color.parseColor("#64748B");
-            case THEME_EMERALD: return Color.parseColor("#4ADE80");
-            case THEME_NAVY:    return Color.parseColor("#60A5FA");
-            case THEME_DARK:
-            default:            return Color.parseColor("#64748B");
-        }
+        return Color.parseColor("#9CA3AF");
     }
 
     public static int getAccentColor(Context context) {
-        String theme = getResolvedTheme(context);
-        switch (theme) {
-            case THEME_LIGHT:   return Color.parseColor("#059669");
-            case THEME_EMERALD: return Color.parseColor("#34D399");
-            case THEME_NAVY:    return Color.parseColor("#38BDF8");
-            case THEME_DARK:
-            default:            return Color.parseColor("#10B981");
-        }
+        return Color.parseColor("#059669");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // DYNAMIC DRAWABLES
     // ─────────────────────────────────────────────────────────────────────────
     public static Drawable getCanvasBackground(Context context) {
-        String theme = getResolvedTheme(context);
-        GradientDrawable gd;
-        switch (theme) {
-            case THEME_LIGHT:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    new int[]{Color.parseColor("#EEF6FF"), Color.parseColor("#E7F1FE"), Color.parseColor("#DDEBFC")});
-                break;
-            case THEME_EMERALD:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    new int[]{Color.parseColor("#07180D"), Color.parseColor("#051109"), Color.parseColor("#030A05")});
-                break;
-            case THEME_NAVY:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    new int[]{Color.parseColor("#0D1630"), Color.parseColor("#091024"), Color.parseColor("#060A18")});
-                break;
-            case THEME_DARK:
-            default:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    new int[]{Color.parseColor("#0B0E14"), Color.parseColor("#0D1117"), Color.parseColor("#080A0E")});
-                break;
-        }
+        GradientDrawable gd = new GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF")});
         return gd;
     }
 
     public static int getTitleDisplayColor(Context context) {
-        String theme = getResolvedTheme(context);
-        switch (theme) {
-            case THEME_LIGHT:   return Color.parseColor("#1D4ED8");
-            case THEME_EMERALD: return Color.parseColor("#34D399");
-            case THEME_NAVY:    return Color.parseColor("#60A5FA");
-            case THEME_DARK:
-            default:            return Color.parseColor("#38BDF8");
-        }
+        return Color.parseColor("#111827");
     }
 
     public static Drawable getPillMenuBackground(Context context) {
-        String theme = getResolvedTheme(context);
         GradientDrawable shape = new GradientDrawable();
         shape.setCornerRadius(dp(context, 32));
-        int strokeW = dp(context, 1);
-
-        switch (theme) {
-            case THEME_LIGHT:
-                shape.setColor(Color.parseColor("#FFFFFF"));
-                shape.setStroke(strokeW, Color.parseColor("#E2E8F0"));
-                break;
-            case THEME_EMERALD:
-                shape.setColor(Color.parseColor("#0D2315"));
-                shape.setStroke(strokeW, Color.parseColor("#1B4D2C"));
-                break;
-            case THEME_NAVY:
-                shape.setColor(Color.parseColor("#101D40"));
-                shape.setStroke(strokeW, Color.parseColor("#223977"));
-                break;
-            case THEME_DARK:
-            default:
-                shape.setColor(Color.parseColor("#141923"));
-                shape.setStroke(strokeW, Color.parseColor("#252E3E"));
-                break;
-        }
-
-        int rippleColor = THEME_LIGHT.equals(theme) ? Color.parseColor("#18000000") : Color.parseColor("#25FFFFFF");
-        return new RippleDrawable(ColorStateList.valueOf(rippleColor), shape, null);
+        shape.setColor(Color.parseColor("#FFFFFF"));
+        shape.setStroke(dp(context, 1), Color.parseColor("#E2E8F0"));
+        return new RippleDrawable(ColorStateList.valueOf(Color.parseColor("#14059669")), shape, null);
     }
 
     public static Drawable getHeroCardBackground(Context context) {
-        String theme = getResolvedTheme(context);
-        GradientDrawable gd;
-        int corner = dp(context, 20);
-        int strokeW = dp(context, 1);
+        GradientDrawable gd = new GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            new int[]{Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF")});
+        gd.setCornerRadius(dp(context, 20));
+        gd.setStroke(dp(context, 1), Color.parseColor("#E2E8F0"));
+        return new RippleDrawable(ColorStateList.valueOf(Color.parseColor("#14059669")), gd, null);
+    }
 
-        switch (theme) {
-            case THEME_LIGHT:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TL_BR,
-                    new int[]{Color.parseColor("#FFFFFF"), Color.parseColor("#F8FAFC"), Color.parseColor("#F1F5F9")});
-                gd.setCornerRadius(corner);
-                gd.setStroke(strokeW, Color.parseColor("#CBD5E1"));
-                break;
-            case THEME_EMERALD:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TL_BR,
-                    new int[]{Color.parseColor("#0E2A18"), Color.parseColor("#0A1E11"), Color.parseColor("#07160D")});
-                gd.setCornerRadius(corner);
-                gd.setStroke(strokeW, Color.parseColor("#1B4D2C"));
-                break;
-            case THEME_NAVY:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TL_BR,
-                    new int[]{Color.parseColor("#14234C"), Color.parseColor("#0F1A3A"), Color.parseColor("#0A1229")});
-                gd.setCornerRadius(corner);
-                gd.setStroke(strokeW, Color.parseColor("#223977"));
-                break;
-            case THEME_DARK:
-            default:
-                gd = new GradientDrawable(
-                    GradientDrawable.Orientation.TL_BR,
-                    new int[]{Color.parseColor("#131B24"), Color.parseColor("#101720"), Color.parseColor("#0D131A")});
-                gd.setCornerRadius(corner);
-                gd.setStroke(strokeW, Color.parseColor("#283547"));
-                break;
-        }
-        return gd;
+    public static Drawable getGridCardBackground(Context context) {
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(dp(context, 18));
+        shape.setColor(Color.parseColor("#FFFFFF"));
+        shape.setStroke(dp(context, 1), Color.parseColor("#E2E8F0"));
+        return new RippleDrawable(ColorStateList.valueOf(Color.parseColor("#14059669")), shape, null);
+    }
+
+    public static Drawable getHeaderButtonBackground(Context context) {
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.OVAL);
+        shape.setColor(Color.parseColor("#FFFFFF"));
+        shape.setStroke(dp(context, 1), Color.parseColor("#E2E8F0"));
+        return new RippleDrawable(ColorStateList.valueOf(Color.parseColor("#14059669")), shape, null);
     }
 
     public static Drawable getCardBackground(Context context, boolean withRipple) {
-        String theme = getResolvedTheme(context);
         GradientDrawable shape = new GradientDrawable();
         shape.setCornerRadius(dp(context, 18));
-        int strokeW = dp(context, 1);
-
-        switch (theme) {
-            case THEME_LIGHT:
-                shape.setColor(Color.parseColor("#FFFFFF"));
-                shape.setStroke(strokeW, Color.parseColor("#CBD5E1"));
-                break;
-            case THEME_EMERALD:
-                shape.setColor(Color.parseColor("#0D2315"));
-                shape.setStroke(strokeW, Color.parseColor("#194429"));
-                break;
-            case THEME_NAVY:
-                shape.setColor(Color.parseColor("#101D40"));
-                shape.setStroke(strokeW, Color.parseColor("#1C326E"));
-                break;
-            case THEME_DARK:
-            default:
-                shape.setColor(Color.parseColor("#141922"));
-                shape.setStroke(strokeW, Color.parseColor("#232B38"));
-                break;
-        }
+        shape.setColor(Color.parseColor("#FFFFFF"));
+        shape.setStroke(dp(context, 1), Color.parseColor("#E2E8F0"));
 
         if (withRipple) {
-            int rippleColor = THEME_LIGHT.equals(theme) ? Color.parseColor("#20000000") : Color.parseColor("#26FFFFFF");
-            return new RippleDrawable(ColorStateList.valueOf(rippleColor), shape, null);
+            return new RippleDrawable(ColorStateList.valueOf(Color.parseColor("#14059669")), shape, null);
         }
         return shape;
     }
 
     public static Drawable getGlassChipBackground(Context context) {
-        String theme = getResolvedTheme(context);
         GradientDrawable shape = new GradientDrawable();
         shape.setCornerRadius(dp(context, 16));
-        int strokeW = dp(context, 1);
-
-        switch (theme) {
-            case THEME_LIGHT:
-                shape.setColor(Color.parseColor("#FFFFFF"));
-                shape.setStroke(strokeW, Color.parseColor("#E2E8F0"));
-                break;
-            case THEME_EMERALD:
-                shape.setColor(Color.parseColor("#0A1C11"));
-                shape.setStroke(strokeW, Color.parseColor("#163A23"));
-                break;
-            case THEME_NAVY:
-                shape.setColor(Color.parseColor("#0E1936"));
-                shape.setStroke(strokeW, Color.parseColor("#192B5C"));
-                break;
-            case THEME_DARK:
-            default:
-                shape.setColor(Color.parseColor("#131821"));
-                shape.setStroke(strokeW, Color.parseColor("#212936"));
-                break;
-        }
+        shape.setColor(Color.parseColor("#ECFDF5"));
+        shape.setStroke(dp(context, 1), Color.parseColor("#A7F3D0"));
         return shape;
     }
 
     public static Drawable getPillPresetBackground(Context context, boolean isSelected) {
-        String theme = getResolvedTheme(context);
         GradientDrawable shape = new GradientDrawable();
         shape.setCornerRadius(dp(context, 12));
         int strokeW = dp(context, 1);
 
         if (isSelected) {
-            shape.setColor(THEME_LIGHT.equals(theme) ? Color.parseColor("#DCFCE7") : Color.parseColor("#1A3D24"));
-            shape.setStroke(dp(context, 2), getAccentColor(context));
+            shape.setColor(Color.parseColor("#ECFDF5"));
+            shape.setStroke(dp(context, 2), Color.parseColor("#059669"));
         } else {
-            switch (theme) {
-                case THEME_LIGHT:
-                    shape.setColor(Color.parseColor("#F1F5F9"));
-                    shape.setStroke(strokeW, Color.parseColor("#CBD5E1"));
-                    break;
-                case THEME_EMERALD:
-                    shape.setColor(Color.parseColor("#112918"));
-                    shape.setStroke(strokeW, Color.parseColor("#1D4D2B"));
-                    break;
-                case THEME_NAVY:
-                    shape.setColor(Color.parseColor("#13224B"));
-                    shape.setStroke(strokeW, Color.parseColor("#203878"));
-                    break;
-                case THEME_DARK:
-                default:
-                    shape.setColor(Color.parseColor("#1A222E"));
-                    shape.setStroke(strokeW, Color.parseColor("#2D3849"));
-                    break;
-            }
+            shape.setColor(Color.parseColor("#FFFFFF"));
+            shape.setStroke(strokeW, Color.parseColor("#E2E8F0"));
         }
 
-        int rippleColor = THEME_LIGHT.equals(theme) ? Color.parseColor("#20000000") : Color.parseColor("#26FFFFFF");
-        return new RippleDrawable(ColorStateList.valueOf(rippleColor), shape, null);
+        return new RippleDrawable(ColorStateList.valueOf(Color.parseColor("#14059669")), shape, null);
     }
 
     public static Drawable getIconBadgeBackground(Context context) {
-        String theme = getResolvedTheme(context);
         GradientDrawable shape = new GradientDrawable();
         shape.setShape(GradientDrawable.OVAL);
-        int strokeW = dp(context, 1);
-
-        switch (theme) {
-            case THEME_LIGHT:
-                shape.setColor(Color.parseColor("#F1F5F9"));
-                shape.setStroke(strokeW, Color.parseColor("#CBD5E1"));
-                break;
-            case THEME_EMERALD:
-                shape.setColor(Color.parseColor("#102A19"));
-                shape.setStroke(strokeW, Color.parseColor("#1E5030"));
-                break;
-            case THEME_NAVY:
-                shape.setColor(Color.parseColor("#13234F"));
-                shape.setStroke(strokeW, Color.parseColor("#223C82"));
-                break;
-            case THEME_DARK:
-            default:
-                shape.setColor(Color.parseColor("#1A222E"));
-                shape.setStroke(strokeW, Color.parseColor("#2D3849"));
-                break;
-        }
+        shape.setColor(Color.parseColor("#ECFDF5"));
+        shape.setStroke(dp(context, 1), Color.parseColor("#A7F3D0"));
         return shape;
     }
 
     public static Drawable getCtaButtonBackground(Context context) {
-        String theme = getResolvedTheme(context);
         GradientDrawable shape = new GradientDrawable();
         shape.setCornerRadius(dp(context, 14));
-        shape.setOrientation(GradientDrawable.Orientation.BOTTOM_TOP);
-
-        switch (theme) {
-            case THEME_NAVY:
-                shape.setColors(new int[]{Color.parseColor("#0284C7"), Color.parseColor("#0EA5E9")});
-                shape.setStroke(dp(context, 1), Color.parseColor("#38BDF8"));
-                break;
-            case THEME_EMERALD:
-                shape.setColors(new int[]{Color.parseColor("#047857"), Color.parseColor("#10B981")});
-                shape.setStroke(dp(context, 1), Color.parseColor("#34D399"));
-                break;
-            case THEME_LIGHT:
-            case THEME_DARK:
-            default:
-                shape.setColors(new int[]{Color.parseColor("#059669"), Color.parseColor("#10B981")});
-                shape.setStroke(dp(context, 1), Color.parseColor("#34D399"));
-                break;
-        }
-
+        shape.setColor(Color.parseColor("#059669"));
         return new RippleDrawable(ColorStateList.valueOf(Color.parseColor("#40FFFFFF")), shape, null);
     }
 

@@ -131,23 +131,6 @@
                 </FrameLayout>
 
                 <FrameLayout
-                    android:id="@+id/btnGuest"
-                    android:layout_height="48dp"
-                    android:layout_width="match_parent"
-                    android:background="@drawable/btn_guest_modern"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginBottom="8dp">
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#A5D6A7"
-                        android:text="Continue as Guest (Offline)"
-                        android:layout_gravity="center" />
-                </FrameLayout>
-
-                <FrameLayout
                     android:id="@+id/btnViewer"
                     android:layout_height="48dp"
                     android:layout_width="match_parent"

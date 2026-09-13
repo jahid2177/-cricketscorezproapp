@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ViewerActivity extends Activity {
 
@@ -1378,6 +1379,8 @@ public class ViewerActivity extends Activity {
         ImageView btnTournamentsBack = view.findViewById(R.id.btnTournamentsBack);
         if (btnTournamentsBack != null) btnTournamentsBack.setOnClickListener(v -> showNavTab(0));
 
+        ImageView btnTournamentsRefresh = view.findViewById(R.id.btnTournamentsRefresh);
+
         LinearLayout subtabFixtures = view.findViewById(R.id.subtabFixtures);
         LinearLayout subtabPoints = view.findViewById(R.id.subtabPoints);
         LinearLayout subtabResult = view.findViewById(R.id.subtabResult);
@@ -1428,7 +1431,7 @@ public class ViewerActivity extends Activity {
 
                 // ✅ FIX: Fixtures/Points/Result সাবট্যাব এখন Firebase-এ ক্যাশ করা
                 // সাম্প্রতিক (active) tournament স্ন্যাপশট থেকে রেন্ডার হয়। Awards
-                // সাবট্যাব সরাসরি "players" নোড থেকে রিয়েলটাইম নিয়ে আসে (নিচে দেখুন)।
+                // সাবট্যাব সরাসরি "players" নোড থেকে রিয়েলটাইম নিয়ে আসে।
                 if (currentTournamentSubtab == 3) {
                     renderAwardsSubtabContent(inflater, tournamentContentContainer);
                     return;
@@ -1461,14 +1464,18 @@ public class ViewerActivity extends Activity {
         if (subtabResult != null) subtabResult.setOnClickListener(v -> { currentTournamentSubtab = 2; updateTournamentSubtabs.run(); });
         if (subtabAwards != null) subtabAwards.setOnClickListener(v -> { currentTournamentSubtab = 3; updateTournamentSubtabs.run(); });
 
+        if (btnTournamentsRefresh != null) {
+            btnTournamentsRefresh.setOnClickListener(v -> {
+                Toast.makeText(this, "Refreshing tournament data…", Toast.LENGTH_SHORT).show();
+                loadActiveTournament(updateTournamentSubtabs);
+            });
+        }
+
         updateTournamentSubtabs.run();
         loadActiveTournament(updateTournamentSubtabs);
     }
 
-    // ✅ FIX: Firebase "tournaments" নোড থেকে সবচেয়ে সাম্প্রতিক (created_at
-    // অনুযায়ী) tournament খুঁজে বের করে cachedTournamentSnapshot-এ রাখা হয়,
-    // যাতে Fixtures/Points/Result সাবট্যাব বদলানোর সময় বারবার নেটওয়ার্ক কল
-    // করতে না হয়।
+    // ✅ FIX: Firebase "tournaments" নোড থেকে সক্রিয় বা সবচেয়ে সাম্প্রতিক টুর্নামেন্ট নির্বাচন করা হয়
     private void loadActiveTournament(Runnable onLoaded) {
         if (tournamentsRef == null) {
             isTournamentLoading = false;
@@ -1476,21 +1483,54 @@ public class ViewerActivity extends Activity {
             return;
         }
         isTournamentLoading = true;
-        tournamentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        SharedPreferences tourPrefs = getSharedPreferences("TournamentData", MODE_PRIVATE);
+        String localTournId = tourPrefs.getString("SUPABASE_TOURNAMENT_ID", "");
+        String localTournName = tourPrefs.getString("TOURNAMENT_NAME", "");
+
+        tournamentsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 isTournamentLoading = false;
-                DataSnapshot latest = null;
+                DataSnapshot selected = null;
                 long latestCreated = -1;
+
                 for (DataSnapshot t : snapshot.getChildren()) {
+                    String tKey = t.getKey();
+                    String tName = getSnapString(t.child("info"), "name", "");
+                    if (tName.isEmpty()) tName = getSnapString(t, "name", "");
+
+                    // ১. লোকাল ডিভাইসের সক্রিয় tournament ID ম্যাচ করলে অগ্রাধিকার
+                    if (!localTournId.isEmpty() && localTournId.equalsIgnoreCase(tKey)) {
+                        selected = t;
+                        break;
+                    }
+                    // ২. টুর্নামেন্টের নাম ম্যাচ করলে অগ্রাধিকার
+                    if (!localTournName.isEmpty() && localTournName.equalsIgnoreCase(tName)) {
+                        selected = t;
+                        break;
+                    }
+
                     long created = getSnapLong(t.child("info"), "created_at", 0L);
-                    if (latest == null || created >= latestCreated) {
-                        latest = t;
+                    if (created == 0L) created = getSnapLong(t, "created_at", 0L);
+                    if (created == 0L) created = getSnapLong(t, "timestamp", 0L);
+
+                    if (selected == null || created >= latestCreated) {
+                        selected = t;
                         latestCreated = created;
                     }
                 }
-                cachedTournamentSnapshot = latest;
-                cachedTournamentName = latest != null ? getSnapString(latest.child("info"), "name", "") : "";
+
+                cachedTournamentSnapshot = selected;
+                if (selected != null) {
+                    String name = getSnapString(selected.child("info"), "name", "");
+                    if (name.isEmpty()) name = getSnapString(selected, "name", "");
+                    if (name.isEmpty()) name = formatSlug(selected.getKey());
+                    cachedTournamentName = name;
+                } else {
+                    cachedTournamentName = "";
+                }
+
                 if (currentNavTab == 1) onLoaded.run();
             }
 
@@ -1501,6 +1541,64 @@ public class ViewerActivity extends Activity {
                 if (currentNavTab == 1) onLoaded.run();
             }
         });
+    }
+
+    private String formatSlug(String s) {
+        if (s == null || s.trim().isEmpty()) return "";
+        String[] words = s.trim().replace('_', ' ').replace('-', ' ').split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (String w : words) {
+            if (w.isEmpty()) continue;
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(Character.toUpperCase(w.charAt(0)));
+            if (w.length() > 1) sb.append(w.substring(1).toLowerCase(Locale.getDefault()));
+        }
+        return sb.toString();
+    }
+
+    private String[] resolveMatchTeamsFromLocalData(String matchId) {
+        if (matchId == null || matchId.isEmpty()) return null;
+        try {
+            SharedPreferences tourPrefs = getSharedPreferences("TournamentData", MODE_PRIVATE);
+            String allData = tourPrefs.getString("ALL_DATA", "");
+            if (allData.isEmpty()) return null;
+
+            JSONObject obj = new JSONObject(allData);
+            JSONArray teamsArr = obj.optJSONArray("teams");
+            List<String> allTeams = new ArrayList<>();
+            if (teamsArr != null) {
+                for (int i = 0; i < teamsArr.length(); i++) allTeams.add(teamsArr.getString(i));
+            } else {
+                allTeams = DataManager.getAllTeams(this);
+            }
+            if (allTeams.isEmpty()) return null;
+
+            JSONArray matches = null;
+            int idx = -1;
+            if (matchId.startsWith("GroupMatch_")) {
+                matches = obj.optJSONArray("MatchesGroup");
+                idx = Integer.parseInt(matchId.replace("GroupMatch_", ""));
+            } else if (matchId.startsWith("QFMatch_")) {
+                matches = obj.optJSONArray("MatchesQF");
+                idx = Integer.parseInt(matchId.replace("QFMatch_", ""));
+            } else if (matchId.startsWith("SFMatch_")) {
+                matches = obj.optJSONArray("MatchesSF");
+                idx = Integer.parseInt(matchId.replace("SFMatch_", ""));
+            } else if (matchId.startsWith("FinalMatch_")) {
+                matches = obj.optJSONArray("MatchesFinal");
+                idx = Integer.parseInt(matchId.replace("FinalMatch_", ""));
+            }
+
+            if (matches != null && idx >= 0 && idx < matches.length()) {
+                JSONObject m = matches.getJSONObject(idx);
+                int t1Idx = m.optInt("team1_idx", -1);
+                int t2Idx = m.optInt("team2_idx", -1);
+                String t1 = (t1Idx >= 0 && t1Idx < allTeams.size()) ? allTeams.get(t1Idx) : "Team 1";
+                String t2 = (t2Idx >= 0 && t2Idx < allTeams.size()) ? allTeams.get(t2Idx) : "Team 2";
+                return new String[]{t1, t2};
+            }
+        } catch (Exception ignored) {}
+        return null;
     }
 
     private double getSnapDouble(DataSnapshot snap, String key, double defaultVal) {
@@ -1794,10 +1892,9 @@ public class ViewerActivity extends Activity {
         return tv;
     }
 
-    // ✅ FIX: আগে লোকাল SharedPreferences("TournamentResult")/"RESULT_DATA"
-    // থেকে ফলাফল পড়া হতো। এখন Firebase-এর tournaments/{id}/results নোড
-    // থেকে পড়া হচ্ছে, যা FirebaseSync.saveTournamentResult() (match শেষে
-    // saveMatchHistory() থেকে অটো-কল হয়) দিয়ে সেভ হয়।
+    // ✅ FIX: Firebase-এর tournaments/{id}/results নোড থেকে ফলাফল নির্ভুলভাবে পড়া হয়।
+    // team_a, team_b, team_1, team_2, score ইত্যাদি সব ধরণের কী-ভ্যারিয়েশন সাপোর্ট করে,
+    // এবং ফিক্সচার অথবা লোকাল ডাটা থেকেও টিমের নাম সঠিকভাবে রিকভার করে।
     private void renderResultSubtabContent(LayoutInflater inflater, ViewGroup container, DataSnapshot tournamentSnap) {
         View subView = inflater.inflate(R.layout.view_subtab_results_content, container, false);
         container.addView(subView);
@@ -1806,27 +1903,209 @@ public class ViewerActivity extends Activity {
         if (list == null) return;
         list.removeAllViews();
 
-        DataSnapshot resultsSnap = tournamentSnap.child("results");
-        if (!resultsSnap.exists() || !resultsSnap.hasChildren()) {
-            list.addView(createEmptyStateView("No Match Results", "No completed tournament match results have been recorded yet."));
+        DataSnapshot resultsSnap = tournamentSnap != null ? tournamentSnap.child("results") : null;
+        List<DataSnapshot> results = new ArrayList<>();
+        if (resultsSnap != null && resultsSnap.exists() && resultsSnap.hasChildren()) {
+            for (DataSnapshot r : resultsSnap.getChildren()) results.add(r);
+            Collections.sort(results, (a, b) -> {
+                long ta = getSnapLong(a, "timestamp", 0L);
+                long tb = getSnapLong(b, "timestamp", 0L);
+                return Long.compare(tb, ta);
+            });
+        }
+
+        // Firebase-এর fixtures থেকে সম্পন্ন ম্যাচ চেক করা
+        if (results.isEmpty() && tournamentSnap != null && tournamentSnap.child("fixtures").exists()) {
+            for (DataSnapshot f : tournamentSnap.child("fixtures").getChildren()) {
+                String status = getSnapString(f, "status", "");
+                if (status.equalsIgnoreCase("completed") || f.hasChild("winner") || f.hasChild("result")) {
+                    results.add(f);
+                }
+            }
+        }
+
+        // যদি Firebase-এ কোনো রেজাল্ট না পাওয়া যায়, তবে লোকাল স্টোরেজ থেকে ফলাফল লোড ও Firebase-এ সিঙ্ক করা
+        if (results.isEmpty()) {
+            boolean localFound = loadAndSyncLocalTournamentResults(list);
+            if (localFound) return;
+        }
+
+        if (results.isEmpty()) {
+            list.addView(createEmptyStateView("No Match Results", "No completed tournament match results have been recorded yet. Match results will automatically appear here once matches are finished."));
             return;
         }
 
-        List<DataSnapshot> results = new ArrayList<>();
-        for (DataSnapshot r : resultsSnap.getChildren()) results.add(r);
-        Collections.sort(results, (a, b) -> {
-            long ta = getSnapLong(a, "timestamp", 0L);
-            long tb = getSnapLong(b, "timestamp", 0L);
-            return Long.compare(tb, ta);
-        });
-
         for (DataSnapshot r : results) {
-            String t1 = getSnapString(r, "team_a", "Team 1");
-            String s1 = getSnapString(r, "team_a_score", "-");
-            String t2 = getSnapString(r, "team_b", "Team 2");
-            String s2 = getSnapString(r, "team_b_score", "-");
-            String txt = getSnapString(r, "result_text", "Match Result");
-            list.addView(createResultCard("Match Result", t1, s1, t2, s2, txt));
+            // ১. Team 1 নাম বের করা (সব সম্ভাব্য ফিল্ড চেক)
+            String t1 = getSnapString(r, "team_a", "");
+            if (t1.isEmpty()) t1 = getSnapString(r, "team_1", "");
+            if (t1.isEmpty()) t1 = getSnapString(r, "team1", "");
+            if (t1.isEmpty()) t1 = getSnapString(r, "teamA", "");
+            if (t1.isEmpty()) t1 = getSnapString(r, "team1_name", "");
+            if (t1.isEmpty()) t1 = getSnapString(r, "team_name_1", "");
+            if (t1.isEmpty()) t1 = getSnapString(r, "team_batting_first", "");
+            if (t1.isEmpty()) t1 = getSnapString(r, "batting_first", "");
+
+            // ২. Team 2 নাম বের করা (সব সম্ভাব্য ফিল্ড চেক)
+            String t2 = getSnapString(r, "team_b", "");
+            if (t2.isEmpty()) t2 = getSnapString(r, "team_2", "");
+            if (t2.isEmpty()) t2 = getSnapString(r, "team2", "");
+            if (t2.isEmpty()) t2 = getSnapString(r, "teamB", "");
+            if (t2.isEmpty()) t2 = getSnapString(r, "team2_name", "");
+            if (t2.isEmpty()) t2 = getSnapString(r, "team_name_2", "");
+            if (t2.isEmpty()) t2 = getSnapString(r, "team_batting_second", "");
+            if (t2.isEmpty()) t2 = getSnapString(r, "batting_second", "");
+
+            // ৩. স্কোর বের করা
+            String s1 = getSnapString(r, "team_a_score", "");
+            if (s1.isEmpty()) s1 = getSnapString(r, "team_1_score", "");
+            if (s1.isEmpty()) s1 = getSnapString(r, "s1", "");
+            if (s1.isEmpty()) s1 = getSnapString(r, "score1", "");
+            if (s1.isEmpty()) s1 = getSnapString(r, "score_a", "");
+            if (s1.isEmpty()) s1 = "-";
+
+            String s2 = getSnapString(r, "team_b_score", "");
+            if (s2.isEmpty()) s2 = getSnapString(r, "team_2_score", "");
+            if (s2.isEmpty()) s2 = getSnapString(r, "s2", "");
+            if (s2.isEmpty()) s2 = getSnapString(r, "score2", "");
+            if (s2.isEmpty()) s2 = getSnapString(r, "score_b", "");
+            if (s2.isEmpty()) s2 = "-";
+
+            // ৪. ফলাফলের বিবরণ (Result summary)
+            String txt = getSnapString(r, "result_text", "");
+            if (txt.isEmpty()) txt = getSnapString(r, "result", "");
+            if (txt.isEmpty()) txt = getSnapString(r, "txt", "");
+            if (txt.isEmpty()) txt = getSnapString(r, "winner", "");
+            if (txt.isEmpty()) txt = "Match Completed";
+
+            // ৫. টিমের নাম যদি এখনও ফাঁকা বা জেনেরিক থাকে, ফিক্সচার থেকে উদ্ধার করা
+            String matchKey = r.getKey() != null ? r.getKey() : "";
+            if (tournamentSnap != null && (t1.isEmpty() || t1.equalsIgnoreCase("Team 1") || t2.isEmpty() || t2.equalsIgnoreCase("Team 2"))) {
+                DataSnapshot fixSnap = tournamentSnap.child("fixtures").child(matchKey);
+                if (fixSnap.exists()) {
+                    String ft1 = getSnapString(fixSnap, "team_a", "");
+                    if (ft1.isEmpty()) ft1 = getSnapString(fixSnap, "team_1", "");
+                    if (ft1.isEmpty()) ft1 = getSnapString(fixSnap, "team1", "");
+                    if (!ft1.isEmpty() && (t1.isEmpty() || t1.equalsIgnoreCase("Team 1"))) t1 = ft1;
+
+                    String ft2 = getSnapString(fixSnap, "team_b", "");
+                    if (ft2.isEmpty()) ft2 = getSnapString(fixSnap, "team_2", "");
+                    if (ft2.isEmpty()) ft2 = getSnapString(fixSnap, "team2", "");
+                    if (!ft2.isEmpty() && (t2.isEmpty() || t2.equalsIgnoreCase("Team 2"))) t2 = ft2;
+                }
+            }
+
+            // লোকাল টুর্নামেন্ট ডাটা থেকেও ফিক্সচার ম্যাচিং করে উদ্ধার করা
+            if (t1.isEmpty() || t1.equalsIgnoreCase("Team 1") || t2.isEmpty() || t2.equalsIgnoreCase("Team 2")) {
+                String[] localTeams = resolveMatchTeamsFromLocalData(matchKey);
+                if (localTeams != null) {
+                    if ((t1.isEmpty() || t1.equalsIgnoreCase("Team 1")) && !localTeams[0].isEmpty()) t1 = localTeams[0];
+                    if ((t2.isEmpty() || t2.equalsIgnoreCase("Team 2")) && !localTeams[1].isEmpty()) t2 = localTeams[1];
+                }
+            }
+
+            if (t1.isEmpty()) t1 = "Team 1";
+            if (t2.isEmpty()) t2 = "Team 2";
+
+            // ৬. ম্যাচ স্টেজ নাম (Stage Label)
+            String stage = getSnapString(r, "stage", "");
+            if (stage.isEmpty()) {
+                if (matchKey.startsWith("GroupMatch_")) {
+                    try {
+                        int num = Integer.parseInt(matchKey.replace("GroupMatch_", "")) + 1;
+                        stage = "Group Stage • Match " + num;
+                    } catch (Exception ignored) { stage = "Group Match"; }
+                } else if (matchKey.startsWith("QFMatch_")) {
+                    try {
+                        int num = Integer.parseInt(matchKey.replace("QFMatch_", "")) + 1;
+                        stage = "Quarter Final • Match " + num;
+                    } catch (Exception ignored) { stage = "Quarter Final"; }
+                } else if (matchKey.startsWith("SFMatch_")) {
+                    try {
+                        int num = Integer.parseInt(matchKey.replace("SFMatch_", "")) + 1;
+                        stage = "Semi Final • Match " + num;
+                    } catch (Exception ignored) { stage = "Semi Final"; }
+                } else if (matchKey.startsWith("FinalMatch_") || matchKey.equalsIgnoreCase("final")) {
+                    stage = "🏆 Grand Final";
+                } else {
+                    stage = "Tournament Match";
+                }
+            }
+
+            list.addView(createResultCard(stage, t1, s1, t2, s2, txt));
+        }
+    }
+
+    private boolean loadAndSyncLocalTournamentResults(LinearLayout list) {
+        try {
+            SharedPreferences resultPrefs = getSharedPreferences("TournamentResult", MODE_PRIVATE);
+            String resData = resultPrefs.getString("RESULT_DATA", "");
+            if (resData.isEmpty()) return false;
+
+            JSONObject obj = new JSONObject(resData);
+            if (obj.length() == 0) return false;
+
+            SharedPreferences tourPrefs = getSharedPreferences("TournamentData", MODE_PRIVATE);
+            String tournId = tourPrefs.getString("SUPABASE_TOURNAMENT_ID", "");
+            String tournName = tourPrefs.getString("TOURNAMENT_NAME", "");
+            if (tournId.isEmpty() && !tournName.isEmpty()) tournId = FirebaseSync.slug(tournName);
+
+            Iterator<String> keys = obj.keys();
+            boolean addedAny = false;
+            while (keys.hasNext()) {
+                String matchId = keys.next();
+                JSONObject matchRes = obj.getJSONObject(matchId);
+                String s1 = matchRes.optString("s1", "-");
+                String s2 = matchRes.optString("s2", "-");
+                String txt = matchRes.optString("txt", "Match Completed");
+
+                String t1 = matchRes.optString("team1", "");
+                if (t1.isEmpty()) t1 = matchRes.optString("team_a", "");
+                String t2 = matchRes.optString("team2", "");
+                if (t2.isEmpty()) t2 = matchRes.optString("team_b", "");
+
+                if (t1.isEmpty() || t2.isEmpty()) {
+                    String[] resolved = resolveMatchTeamsFromLocalData(matchId);
+                    if (resolved != null) {
+                        if (t1.isEmpty()) t1 = resolved[0];
+                        if (t2.isEmpty()) t2 = resolved[1];
+                    }
+                }
+                if (t1.isEmpty()) t1 = "Team 1";
+                if (t2.isEmpty()) t2 = "Team 2";
+
+                String stage = "Tournament Match";
+                if (matchId.startsWith("GroupMatch_")) {
+                    try {
+                        int num = Integer.parseInt(matchId.replace("GroupMatch_", "")) + 1;
+                        stage = "Group Stage • Match " + num;
+                    } catch (Exception ignored) {}
+                } else if (matchId.startsWith("QFMatch_")) {
+                    try {
+                        int num = Integer.parseInt(matchId.replace("QFMatch_", "")) + 1;
+                        stage = "Quarter Final • Match " + num;
+                    } catch (Exception ignored) {}
+                } else if (matchId.startsWith("SFMatch_")) {
+                    try {
+                        int num = Integer.parseInt(matchId.replace("SFMatch_", "")) + 1;
+                        stage = "Semi Final • Match " + num;
+                    } catch (Exception ignored) {}
+                } else if (matchId.startsWith("FinalMatch_")) {
+                    stage = "🏆 Grand Final";
+                }
+
+                list.addView(createResultCard(stage, t1, s1, t2, s2, txt));
+                addedAny = true;
+
+                // Sync to Firebase in background so other viewer devices can see it immediately
+                if (!tournId.isEmpty()) {
+                    FirebaseSync.saveTournamentResult(tournId, matchId, t1, t2, s1, s2, txt);
+                }
+            }
+            return addedAny;
+        } catch (Exception e) {
+            Log.e("ViewerActivity", "loadAndSyncLocalTournamentResults error: " + e.getMessage());
+            return false;
         }
     }
 
@@ -1888,7 +2167,10 @@ public class ViewerActivity extends Activity {
         card.addView(scoreRow2);
 
         TextView tvResult = new TextView(this);
-        tvResult.setText("🏆 " + winner);
+        if (winner == null || winner.trim().isEmpty()) {
+            winner = "Match Completed";
+        }
+        tvResult.setText(winner.startsWith("🏆") ? winner : "🏆 " + winner);
         tvResult.setTextSize(13);
         tvResult.setTypeface(null, Typeface.BOLD);
         tvResult.setTextColor(Color.parseColor("#16A34A"));
@@ -2003,53 +2285,123 @@ public class ViewerActivity extends Activity {
         ImageView btnTeamsBack = view.findViewById(R.id.btnTeamsBack);
         if (btnTeamsBack != null) btnTeamsBack.setOnClickListener(v -> showNavTab(0));
 
+        ImageView btnTeamsRefresh = view.findViewById(R.id.btnTeamsRefresh);
+
         LinearLayout containerTeamsList = view.findViewById(R.id.containerTeamsList);
         if (containerTeamsList == null) return;
         containerTeamsList.removeAllViews();
         containerTeamsList.addView(createEmptyStateView("Loading Teams…", "Fetching teams from Firebase."));
 
-        // ✅ FIX: আগে DataManager.getAllTeams()/getPlayers() দিয়ে এই ডিভাইসের
-        // লোকাল স্টোরেজ থেকে টিম পড়া হতো — অন্য ডিভাইসে (দর্শকের ফোনে) Viewer
-        // খুললে কিছুই দেখাত না। এখন সরাসরি Firebase "teams" নোড থেকে পড়া হচ্ছে,
-        // যেখানে স্কোরারের ডিভাইস FirebaseSync.upsertTeam() দিয়ে টিম/প্লেয়ার সেভ করে।
-        if (teamsRef == null) {
-            containerTeamsList.removeAllViews();
-            containerTeamsList.addView(createEmptyStateView("No Registered Teams", "Teams created in Team Manager will automatically appear here with their complete squads."));
-            return;
+        Runnable loadTeamsAction = () -> {
+            if (teamsRef == null) {
+                containerTeamsList.removeAllViews();
+                containerTeamsList.addView(createEmptyStateView("No Registered Teams", "Teams created in Team Manager will automatically appear here with their complete squads."));
+                return;
+            }
+
+            teamsRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (currentNavTab != 2) return; // ইতিমধ্যে অন্য ট্যাবে চলে গেলে UI আপডেট করার দরকার নেই
+                    containerTeamsList.removeAllViews();
+
+                    // Firebase-এ যদি কোনো টিম না থাকে, তবে লোকাল টিমগুলো চেক করে Firebase-এ সিঙ্ক করা
+                    if (!snapshot.exists() || !snapshot.hasChildren()) {
+                        ArrayList<String> localTeams = DataManager.getAllTeams(ViewerActivity.this);
+                        if (localTeams != null && !localTeams.isEmpty()) {
+                            FirebaseSync.syncAllLocalTeams(ViewerActivity.this);
+                            for (String teamName : localTeams) {
+                                ArrayList<String> players = DataManager.getPlayers(ViewerActivity.this, teamName);
+                                containerTeamsList.addView(createTeamCardView(teamName, players != null ? players.size() : 0, players != null ? players : new ArrayList<>()));
+                            }
+                            return;
+                        }
+                        containerTeamsList.addView(createEmptyStateView("No Registered Teams", "Teams created in Team Manager will automatically appear here with their complete squads."));
+                        return;
+                    }
+
+                    for (DataSnapshot teamSnap : snapshot.getChildren()) {
+                        // ১. টিমের নাম উদ্ধার (সব ধরণের কী ভ্যারিয়েশন চেক করা)
+                        String teamName = getSnapString(teamSnap, "team_name", "");
+                        if (teamName.isEmpty()) teamName = getSnapString(teamSnap, "teamName", "");
+                        if (teamName.isEmpty()) teamName = getSnapString(teamSnap, "name", "");
+                        if (teamName.isEmpty()) teamName = getSnapString(teamSnap, "title", "");
+                        if (teamName.isEmpty()) {
+                            Object val = teamSnap.getValue();
+                            if (val instanceof String && !((String) val).trim().isEmpty()) {
+                                teamName = (String) val;
+                            } else {
+                                teamName = formatSlug(teamSnap.getKey());
+                            }
+                        }
+
+                        // ২. স্কোয়াড/প্লেয়ার তালিকা উদ্ধার
+                        ArrayList<String> players = new ArrayList<>();
+                        DataSnapshot playersSnap = teamSnap.child("players");
+                        if (!playersSnap.exists()) playersSnap = teamSnap.child("squad");
+                        if (!playersSnap.exists()) playersSnap = teamSnap.child("player_list");
+                        if (!playersSnap.exists()) playersSnap = teamSnap.child("members");
+
+                        if (playersSnap.exists()) {
+                            if (playersSnap.hasChildren()) {
+                                for (DataSnapshot pSnap : playersSnap.getChildren()) {
+                                    String pName = "";
+                                    if (pSnap.hasChild("player_name")) {
+                                        pName = getSnapString(pSnap, "player_name", "");
+                                    } else if (pSnap.hasChild("name")) {
+                                        pName = getSnapString(pSnap, "name", "");
+                                    } else if (pSnap.getValue() instanceof String) {
+                                        pName = (String) pSnap.getValue();
+                                    } else if (pSnap.getValue() instanceof Map) {
+                                        Map<?, ?> map = (Map<?, ?>) pSnap.getValue();
+                                        if (map.containsKey("player_name")) pName = String.valueOf(map.get("player_name"));
+                                        else if (map.containsKey("name")) pName = String.valueOf(map.get("name"));
+                                    }
+                                    if (pName.isEmpty() && pSnap.getKey() != null) {
+                                        pName = formatSlug(pSnap.getKey());
+                                    }
+                                    if (!pName.isEmpty() && !players.contains(pName)) {
+                                        players.add(pName);
+                                    }
+                                }
+                            } else if (playersSnap.getValue() instanceof String) {
+                                String str = (String) playersSnap.getValue();
+                                for (String p : str.split(",")) {
+                                    String trimmed = p.trim();
+                                    if (!trimmed.isEmpty() && !players.contains(trimmed)) players.add(trimmed);
+                                }
+                            }
+                        }
+
+                        // যদি Firebase-এ খেলোয়াড় তালিকা খালি থাকে কিন্তু লোকাল ডেটাবেজে খেলোয়াড় থাকে
+                        if (players.isEmpty()) {
+                            ArrayList<String> localP = DataManager.getPlayers(ViewerActivity.this, teamName);
+                            if (localP != null && !localP.isEmpty()) {
+                                players.addAll(localP);
+                            }
+                        }
+
+                        containerTeamsList.addView(createTeamCardView(teamName, players.size(), players));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    if (currentNavTab != 2) return;
+                    containerTeamsList.removeAllViews();
+                    containerTeamsList.addView(createEmptyStateView("Unable to Load Teams", "Could not fetch teams from Firebase: " + error.getMessage()));
+                }
+            });
+        };
+
+        if (btnTeamsRefresh != null) {
+            btnTeamsRefresh.setOnClickListener(v -> {
+                Toast.makeText(this, "Refreshing teams…", Toast.LENGTH_SHORT).show();
+                loadTeamsAction.run();
+            });
         }
 
-        teamsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (currentNavTab != 2) return; // ইতিমধ্যে অন্য ট্যাবে চলে গেলে UI আপডেট করার দরকার নেই
-                containerTeamsList.removeAllViews();
-
-                if (!snapshot.exists() || !snapshot.hasChildren()) {
-                    containerTeamsList.addView(createEmptyStateView("No Registered Teams", "Teams created in Team Manager will automatically appear here with their complete squads."));
-                    return;
-                }
-
-                for (DataSnapshot teamSnap : snapshot.getChildren()) {
-                    String teamName = getSnapString(teamSnap, "team_name", teamSnap.getKey());
-                    ArrayList<String> players = new ArrayList<>();
-                    DataSnapshot playersSnap = teamSnap.child("players");
-                    if (playersSnap.exists()) {
-                        for (DataSnapshot pSnap : playersSnap.getChildren()) {
-                            Object pName = pSnap.getValue();
-                            if (pName != null) players.add(String.valueOf(pName));
-                        }
-                    }
-                    containerTeamsList.addView(createTeamCardView(teamName, players.size(), players));
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                if (currentNavTab != 2) return;
-                containerTeamsList.removeAllViews();
-                containerTeamsList.addView(createEmptyStateView("Unable to Load Teams", "Could not fetch teams from Firebase: " + error.getMessage()));
-            }
-        });
+        loadTeamsAction.run();
     }
 
     private View createTeamCardView(String teamName, int playerCount, ArrayList<String> players) {

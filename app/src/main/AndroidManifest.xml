@@ -118,6 +118,11 @@
             android:screenOrientation="portrait"
             android:label="Scoring Breakdown"/>
 
+        <activity android:name=".PartnershipGraphActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:label="Partnership Analysis"/>
+
         <activity android:name=".ScorecardActivity"
             android:exported="false"
             android:label="Full Scorecard" />
